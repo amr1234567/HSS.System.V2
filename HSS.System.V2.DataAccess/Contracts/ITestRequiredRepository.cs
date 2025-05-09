@@ -1,0 +1,15 @@
+﻿using FluentResults;
+
+using HSS.System.V2.Domain.Medical;
+
+namespace HSS.System.V2.DataAccess.Contracts
+{
+    public interface ITestRequiredRepository
+    {
+        Task<Result> CreateTestRequiredAsync(TestRequired model);
+        Task<Result> UpdateTestRequiredAsync(TestRequired model);
+        Task<Result> DeleteTestRequiredAsync(string id);
+        Task<Result<IEnumerable<TestRequired>>> GetTestsRequiredAvailableInTicket(string ticketId);
+        Task<Result<IEnumerable<TestRequired>>> GetDoneTestsRequiredInTicket(string ticketId);
+    }
+}

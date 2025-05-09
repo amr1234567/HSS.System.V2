@@ -1,0 +1,21 @@
+﻿using FluentResults;
+
+using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Domain.Prescriptions;
+
+namespace HSS.System.V2.DataAccess.Contracts
+{
+    public interface ITicketRepository
+    {
+        Task<Result> CreateTicket(Ticket model);
+        Task<Result> UpdateTicket(Ticket model);
+        Task<Result> DeleteTicket(Ticket model);
+        Task<Result<Ticket>> GetTicketById(string ticketId);
+        Task<Result<Ticket>> GetOpenTicketsForPatient(string patientId, int size = 10, int page = 1);
+        Task<Result<PagedResult<Ticket>>> GetAllTicketForPatient(string patientId, int size = 10, int page = 1);
+        Task<Result<PagedResult<Ticket>>> GetAllTicketForPatientByNationalId(string patientNationalId, int size = 10, int page = 1);
+        Task<Result<PagedResult<Ticket>>> GetAllTicketInHospital(string hospitalId, int size = 10, int page = 1);
+        Task<Result> DeleteTicket(string ticketId);
+        Task<Result> IsTicketHasReExaminationNow(string ticketId);
+    }
+}

@@ -1,0 +1,6 @@
+@HSS.System.V2.Presentation_HostAddress = http://localhost:5051
+
+GET {{HSS.System.V2.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
