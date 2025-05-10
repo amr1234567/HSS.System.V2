@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 
+using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.People;
 
@@ -9,7 +10,13 @@ namespace HSS.System.V2.DataAccess.Repositories
 {
     public class PatientRepository : IPatientRepository
     {
-        public Task<Result<Patient>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
+        private readonly AppDbContext _context;
+
+        public PatientRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+        public async Task<Result<Patient>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
         {
             throw new NotImplementedException();
         }
