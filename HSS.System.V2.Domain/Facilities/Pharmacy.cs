@@ -16,7 +16,7 @@ public class Pharmacy : BaseClass, IHospitalDepartmentItem
     public string HospitalId { get; set; }
     [ForeignKey(nameof(HospitalId))]
     public virtual Hospital Hospital { get; set; }
-    public virtual ICollection<Medicine> Medicines { get; set; }
+    public virtual ICollection<MedicinePharmacy> MedicinesPharmacy { get; set; }
 
     public virtual ICollection<Pharmacist> Pharmacists { get; set; }
 } 

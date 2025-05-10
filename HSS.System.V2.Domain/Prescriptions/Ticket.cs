@@ -12,7 +12,7 @@ public class Ticket : BaseClass
     public string PatientName { get; set; }
     public TicketState State { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime? EndedAt { get; set; }
+    public DateTime? ClosedAt { get; set; }
     public string? FirstClinicAppointmentId { get; set; }
     public virtual ClinicAppointment FirstClinicAppointment { get; set; }
     public string PatientId { get; set; }

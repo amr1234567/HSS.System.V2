@@ -36,5 +36,6 @@ public class RadiologyCenter : BaseClass, IHospitalDepartmentItem, ITestableDepa
         return x => x.Tests;
     }
 
+    [NotMapped]
     public IEnumerable<RadiologyTest> DepartmentTests => Tests;
 } 

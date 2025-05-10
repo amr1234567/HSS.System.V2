@@ -1,19 +1,15 @@
-﻿using Azure;
-using FluentResults;
+﻿using FluentResults;
+
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Medical;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
+
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
@@ -35,7 +31,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
             catch (Exception ex)
             {
-                return new UnKnownError(ex);
+                return new RetrievingDataFromDbContextError(ex);
             }
         }
 
@@ -55,23 +51,21 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
             catch (Exception ex)
             {
-                return new UnKnownError(ex);
+                return new RetrievingDataFromDbContextError(ex);
             }
         }
 
-        public async Task<Result<PagedResult<Medicine>>> GetAllMedicinesInPharmacyAsync(string pharmacyId, int page = 1, int size = 10)
+        public async Task<Result<PagedResult<MedicinePharmacy>>> GetAllMedicinesInPharmacyAsync(string pharmacyId, int page = 1, int size = 10)
         {
             try
             {
-                IQueryable<Medicine> medicinesQuery = context.Medicines.Where(item => item.Pharmacies.Any(item => item.Id == pharmacyId));
-                if (medicinesQuery is null)
-                    return Result.Fail("there are not Medicines");
-
-                return await medicinesQuery.GetPagedAsync(page, size);
+                return await context.MedicinePharmacies
+                    .Where(item => item.PharmacyId == pharmacyId)
+                    .GetPagedAsync(page, size);
             }
             catch (Exception ex)
             {
-                return new UnKnownError(ex);
+                return new RetrievingDataFromDbContextError(ex);
             }
         }
 
@@ -92,19 +86,22 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
             catch (Exception ex)
             {
-                return new UnKnownError(ex);
+                return new RetrievingDataFromDbContextError(ex);
             }
         }
 
-        public async Task<Result<Medicine>> GetMedicineInPharmacyAsync(string pharmacyId, string medicineId)
+        public async Task<Result<MedicinePharmacy?>> GetMedicineInPharmacyAsync(string pharmacyId, string medicineId)
         {
             try
             {
-                throw new NotImplementedException();
+                return await context.MedicinePharmacies
+                    .Where(item => item.PharmacyId == pharmacyId && item.MedicineId == medicineId)
+                    .Include(i => i.Medicine)
+                    .FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
-                return new UnKnownError(ex);
+                return new RetrievingDataFromDbContextError(ex);
             }
         }
     }

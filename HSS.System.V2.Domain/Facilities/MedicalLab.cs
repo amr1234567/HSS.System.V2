@@ -35,6 +35,6 @@ public class MedicalLab : BaseClass, IHospitalDepartmentItem, ITestableDepartmen
     {
         return x => x.Tests;
     }
-
+    [NotMapped]
     public IEnumerable<MedicalLabTest> DepartmentTests => Tests;
 } 
