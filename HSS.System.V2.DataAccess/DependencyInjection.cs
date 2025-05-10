@@ -14,7 +14,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(optionsBuilder =>
         {
-            var connectionString = configuration.GetConnectionString("default-amr");
+            var connectionString = configuration.GetConnectionString("default-mido");
             optionsBuilder.UseSqlServer(connectionString);
         });
         return services;
