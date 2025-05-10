@@ -1,8 +1,10 @@
 ﻿using FluentResults;
+
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
-using HSS.System.V2.Domain.Appointments;
+using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

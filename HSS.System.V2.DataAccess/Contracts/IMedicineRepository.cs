@@ -1,7 +1,7 @@
 ﻿using FluentResults;
 
 using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Domain.Medical;
+using HSS.System.V2.Domain.Models.Medical;
 
 using System.Linq.Expressions;
 

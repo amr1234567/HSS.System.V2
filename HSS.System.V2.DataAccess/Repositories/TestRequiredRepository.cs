@@ -1,14 +1,15 @@
 ﻿using FluentResults;
 
 using HSS.System.V2.DataAccess.Contexts;
+using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Enums;
-using HSS.System.V2.Domain.Medical;
-using HSS.System.V2.Domain.Prescriptions;
+using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace HSS.System.V2.DataAccess.Contracts
+namespace HSS.System.V2.DataAccess.Repositories
 {
     public class TestRequiredRepository : ITestRequiredRepository
     {
@@ -141,6 +142,11 @@ namespace HSS.System.V2.DataAccess.Contracts
                 clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
             }
             return tests;
+        }
+
+        public Task<Result<IEnumerable<TestRequired>>> GetAllTestsRequiredAvailableForUser(string userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

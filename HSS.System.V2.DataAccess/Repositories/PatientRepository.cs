@@ -2,7 +2,9 @@
 
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
-using HSS.System.V2.Domain.People;
+using HSS.System.V2.Domain.Models.People;
+
+using Microsoft.EntityFrameworkCore;
 
 using System.Linq.Expressions;
 using System.Text;
@@ -20,7 +22,10 @@ namespace HSS.System.V2.DataAccess.Repositories
         }
         public async Task<Result<Patient>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
         {
-            throw new NotImplementedException();
+            return await _context.Patients.AsNoTracking()
+                .Where(x => x.Id == id)
+                .Include(x => x.Tickets)
+                .FirstOrDefaultAsync();
         }
 
         public Task<Result<Patient>> GetPatientWithMedicalHistoryById(string id)

@@ -13,7 +13,8 @@ namespace HSS.System.V2.Presentation.Controllers.Base
 {
     /// <summary>
     /// Base controller providing common response handling.
-    /// </summary>
+    /// </summary>[
+    [ApiController]
     public abstract class CustomBaseController : ControllerBase
     {
         /// <summary>

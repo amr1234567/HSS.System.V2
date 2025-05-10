@@ -1,6 +1,5 @@
-﻿
-using HSS.System.V2.Domain.Appointments;
-using HSS.System.V2.Domain.Helpers.Models;
+﻿using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Domain.Models.Appointments;
 
 namespace HSS.System.V2.Domain.Helpers.Methods;
 

@@ -2,8 +2,6 @@
 
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
-using HSS.System.V2.Domain.Appointments;
-using HSS.System.V2.Domain.Common;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Domain.Helpers.Methods;
@@ -11,6 +9,9 @@ using HSS.System.V2.Domain.Helpers.Methods;
 using Microsoft.EntityFrameworkCore;
 
 using System.Linq.Expressions;
+using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.Appointments;
+using HSS.System.V2.Domain.Enums;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
@@ -232,6 +233,40 @@ namespace HSS.System.V2.DataAccess.Repositories
             {
                 return new SavingDataInDbContextError(ex);
             }
+        }
+
+        public async Task<Result<Appointment?>> GetAppointmentByIdAsync(string id)
+        {
+            return await _context.Appointments
+                .Where(a => a.Id == id)
+                .Include(a => a.Hospital)
+                .Include(a => a.Ticket)
+                .FirstOrDefaultAsync();
+        }
+
+        public Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination, AppointmentState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<Appointment?>> GetAppointmentByIdBlukIncludeAsync(string appointmentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId, AppointmentState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

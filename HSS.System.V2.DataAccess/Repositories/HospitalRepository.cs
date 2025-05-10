@@ -3,11 +3,11 @@
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.DataAccess.Helpers;
-using HSS.System.V2.Domain.Common;
 using HSS.System.V2.Domain.DTOs;
-using HSS.System.V2.Domain.Facilities;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
 using Microsoft.EntityFrameworkCore;
@@ -156,5 +156,13 @@ public class HospitalRepository : IHospitalRepository
         }
     }
 
-    
+    public Task<Result<IEnumerable<Hospital>>> GetHospitalsBySpecificationId(string specializationId)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<Result<IEnumerable<TDept>>> IHospitalRepository.GetHospitalDepartmentItems<TDept>(string hospitalId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -22,7 +22,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.Appointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.Appointment", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -43,6 +43,14 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.Property<TimeSpan>("ExpectedDuration")
                         .HasColumnType("time");
+
+                    b.Property<string>("HospitalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("HospitalName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PatientNationalId")
                         .IsRequired()
@@ -66,6 +74,8 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("HospitalId");
+
                     b.HasIndex("SystemQueueId");
 
                     b.HasIndex("TicketId");
@@ -77,7 +87,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Common.LoginActivity", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Common.LoginActivity", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -106,7 +116,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("LoginActivities");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Clinic", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Clinic", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -163,7 +173,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Clinics");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Hospital", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Hospital", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -199,7 +209,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Hospitals");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.MedicalLab", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.MedicalLab", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -250,7 +260,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("MedicalLabs");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Pharmacy", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Pharmacy", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -288,7 +298,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Pharmacies");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.RadiologyCenter", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -339,7 +349,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("RadiologyCenters");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Reception", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Reception", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -374,7 +384,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Receptions");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Disease", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Disease", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -398,7 +408,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Diseases");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Medicine", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Medicine", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -422,7 +432,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Medicines");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.MedicinePharmacy", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicinePharmacy", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -460,7 +470,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("MedicinePharmacies");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Specialization", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Specialization", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -484,7 +494,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Specializations");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Test", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Test", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -523,7 +533,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.TestRequired", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.TestRequired", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -562,7 +572,38 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("TestsRequired");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Employee", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Notifications.AppNotification", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("Seen")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Employee", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -636,6 +677,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UrlOfProfilePicutre")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("HospitalId");
@@ -647,7 +691,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Patient", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Patient", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -705,12 +749,15 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UrlOfProfilePicutre")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Patients");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.Prescription", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Prescription", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -739,7 +786,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("Prescriptions");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.PrescriptionMedicineItem", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.PrescriptionMedicineItem", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -783,7 +830,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("PrescriptionMedicineItems");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.Ticket", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Ticket", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -795,6 +842,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FirstClinicAppointmentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("HospitalId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PatientId")
@@ -821,12 +872,14 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .IsUnique()
                         .HasFilter("[FirstClinicAppointmentId] IS NOT NULL");
 
+                    b.HasIndex("HospitalId");
+
                     b.HasIndex("PatientId");
 
                     b.ToTable("Tickets");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.SystemQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.SystemQueue", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -884,13 +937,17 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.ToTable("RadiologyCenterRadiologyTest");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.ClinicAppointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Appointments.Appointment");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Appointments.Appointment");
 
                     b.Property<string>("ClinicId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ClinicName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Diagnosis")
                         .IsRequired()
@@ -902,6 +959,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("DoctorId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DoctorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PreExamiationClinicAppointemntId")
                         .HasColumnType("nvarchar(450)");
@@ -944,9 +1005,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("ClinicAppointment");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.MedicalLabAppointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.MedicalLabAppointment", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Appointments.Appointment");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Appointments.Appointment");
 
                     b.Property<string>("ClinicAppointmentId")
                         .HasColumnType("nvarchar(450)");
@@ -957,6 +1018,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("MedicalLabId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MedicalLabName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("QueueId")
                         .HasColumnType("nvarchar(450)");
@@ -975,6 +1040,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("TesterId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TesterName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("ClinicAppointmentId");
 
@@ -996,9 +1065,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("MedicalLabAppointment");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.RadiologyCeneterAppointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.RadiologyCeneterAppointment", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Appointments.Appointment");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Appointments.Appointment");
 
                     b.Property<string>("ClinicAppointmentId")
                         .HasColumnType("nvarchar(450)");
@@ -1009,6 +1078,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("RadiologyCeneterId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RadiologyCeneterName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Result")
                         .IsRequired()
@@ -1021,6 +1094,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("TesterId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TesterName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("ClinicAppointmentId");
 
@@ -1048,14 +1125,17 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                             t.Property("TesterId")
                                 .HasColumnName("RadiologyCeneterAppointment_TesterId");
+
+                            t.Property("TesterName")
+                                .HasColumnName("RadiologyCeneterAppointment_TesterName");
                         });
 
                     b.HasDiscriminator().HasValue("RadiologyCeneterAppointment");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.MedicalLabTest", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicalLabTest", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Medical.Test");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Medical.Test");
 
                     b.Property<string>("SampleType")
                         .IsRequired()
@@ -1064,9 +1144,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("MedicalLabTest");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.RadiologyTest", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.RadiologyTest", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Medical.Test");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Medical.Test");
 
                     b.Property<string>("BodyPart")
                         .IsRequired()
@@ -1083,9 +1163,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("RadiologyTest");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Doctor", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Doctor", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.People.Employee");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.People.Employee");
 
                     b.Property<string>("ClinicId")
                         .IsRequired()
@@ -1106,9 +1186,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("Doctor");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.MedicalLabTester", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.MedicalLabTester", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.People.Employee");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.People.Employee");
 
                     b.Property<string>("MedicalLabId")
                         .IsRequired()
@@ -1123,9 +1203,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("MedicalLabTester");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Pharmacist", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Pharmacist", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.People.Employee");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.People.Employee");
 
                     b.Property<string>("PharmacyId")
                         .IsRequired()
@@ -1136,9 +1216,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("Pharmacist");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.RadiologyTester", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.RadiologyTester", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.People.Employee");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.People.Employee");
 
                     b.Property<string>("RadiologyCenterId")
                         .IsRequired()
@@ -1153,9 +1233,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("RadiologyTester");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Receptionist", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Receptionist", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.People.Employee");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.People.Employee");
 
                     b.Property<string>("ReceptionId")
                         .IsRequired()
@@ -1166,9 +1246,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("Receptionist");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.ClinicQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.ClinicQueue", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Queues.SystemQueue");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
                     b.Property<string>("ClinicId")
                         .IsRequired()
@@ -1179,9 +1259,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("ClinicQueue");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.MedicalLabQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.MedicalLabQueue", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Queues.SystemQueue");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
                     b.Property<string>("MedicalLabId")
                         .IsRequired()
@@ -1192,9 +1272,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("MedicalLabQueue");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.RadiologyCenterQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.RadiologyCenterQueue", b =>
                 {
-                    b.HasBaseType("HSS.System.V2.Domain.Queues.SystemQueue");
+                    b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
                     b.Property<string>("RadiologyCenterId")
                         .IsRequired()
@@ -1205,24 +1285,32 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("RadiologyCenterQueue");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.Appointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.Appointment", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Queues.SystemQueue", null)
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
+                        .WithMany("Appointments")
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HSS.System.V2.Domain.Models.Queues.SystemQueue", null)
                         .WithMany("Appointments")
                         .HasForeignKey("SystemQueueId");
 
-                    b.HasOne("HSS.System.V2.Domain.Prescriptions.Ticket", "Ticket")
+                    b.HasOne("HSS.System.V2.Domain.Models.Prescriptions.Ticket", "Ticket")
                         .WithMany("Appointments")
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Hospital");
+
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Common.LoginActivity", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Common.LoginActivity", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.People.Employee", "Employee")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1231,25 +1319,25 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Clinic", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Clinic", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.People.Doctor", "CurrentWorkingDoctor")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.Doctor", "CurrentWorkingDoctor")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Facilities.Clinic", "CurrentWorkingDoctorId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.Clinic", "CurrentWorkingDoctorId");
 
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Hospital", "Hospital")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("Clinics")
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Queues.ClinicQueue", "Queue")
+                    b.HasOne("HSS.System.V2.Domain.Models.Queues.ClinicQueue", "Queue")
                         .WithMany()
                         .HasForeignKey("QueueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.Specialization", "Specialization")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.Specialization", "Specialization")
                         .WithMany("Clinics")
                         .HasForeignKey("SpecializationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1264,19 +1352,19 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Specialization");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.MedicalLab", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.MedicalLab", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.People.MedicalLabTester", "CurrentWorkingTester")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.MedicalLabTester", "CurrentWorkingTester")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Facilities.MedicalLab", "CurrentWorkingTesterId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "CurrentWorkingTesterId");
 
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Hospital", "Hospital")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("MedicalLabs")
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Queues.MedicalLabQueue", "Queue")
+                    b.HasOne("HSS.System.V2.Domain.Models.Queues.MedicalLabQueue", "Queue")
                         .WithMany()
                         .HasForeignKey("QueueId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1289,9 +1377,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Queue");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Pharmacy", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Pharmacy", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Hospital", "Hospital")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("Pharmacies")
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1300,19 +1388,19 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Hospital");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.RadiologyCenter", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.People.RadiologyTester", "CurrentWorkingTester")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.RadiologyTester", "CurrentWorkingTester")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Facilities.RadiologyCenter", "CurrentWorkingTesterId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "CurrentWorkingTesterId");
 
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Hospital", "Hospital")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("RadiologyCenters")
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Queues.RadiologyCenterQueue", "Queue")
+                    b.HasOne("HSS.System.V2.Domain.Models.Queues.RadiologyCenterQueue", "Queue")
                         .WithMany()
                         .HasForeignKey("QueueId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1325,9 +1413,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Queue");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Reception", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Reception", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Hospital", "Hospital")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("Receptions")
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1336,15 +1424,15 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Hospital");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.MedicinePharmacy", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicinePharmacy", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Medical.Medicine", "Medicine")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.Medicine", "Medicine")
                         .WithMany("MedicinePharmacies")
                         .HasForeignKey("MedicineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Pharmacy", "Pharmacy")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Pharmacy", "Pharmacy")
                         .WithMany("MedicinesPharmacy")
                         .HasForeignKey("PharmacyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1355,15 +1443,15 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Pharmacy");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.TestRequired", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.TestRequired", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "ClinicAppointment")
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ClinicAppointment")
                         .WithMany("TestsRequired")
                         .HasForeignKey("ClinicAppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.Test", "Test")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.Test", "Test")
                         .WithMany("TestsRequired")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1374,9 +1462,20 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Test");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Employee", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Notifications.AppNotification", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Hospital", "Hospital")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Employee", b =>
+                {
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("Employees")
                         .HasForeignKey("HospitalId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1385,9 +1484,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Hospital");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.Prescription", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Prescription", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "ClinicAppointment")
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ClinicAppointment")
                         .WithMany()
                         .HasForeignKey("ClinicAppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1396,15 +1495,15 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("ClinicAppointment");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.PrescriptionMedicineItem", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.PrescriptionMedicineItem", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Medical.Medicine", "Medicine")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.Medicine", "Medicine")
                         .WithMany("Items")
                         .HasForeignKey("MedicineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Prescriptions.Prescription", "Prescription")
+                    b.HasOne("HSS.System.V2.Domain.Models.Prescriptions.Prescription", "Prescription")
                         .WithMany("Items")
                         .HasForeignKey("PrescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1415,13 +1514,19 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Prescription");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.Ticket", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Ticket", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "FirstClinicAppointment")
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "FirstClinicAppointment")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Prescriptions.Ticket", "FirstClinicAppointmentId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Prescriptions.Ticket", "FirstClinicAppointmentId");
 
-                    b.HasOne("HSS.System.V2.Domain.People.Patient", "Patient")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
+                        .WithMany("Tickets")
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HSS.System.V2.Domain.Models.People.Patient", "Patient")
                         .WithMany("Tickets")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1429,18 +1534,20 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.Navigation("FirstClinicAppointment");
 
+                    b.Navigation("Hospital");
+
                     b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("MedicalLabMedicalLabTest", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.MedicalLab", null)
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.MedicalLab", null)
                         .WithMany()
                         .HasForeignKey("MedicalLabsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.MedicalLabTest", null)
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.MedicalLabTest", null)
                         .WithMany()
                         .HasForeignKey("TestsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1449,54 +1556,54 @@ namespace HSS.System.V2.DataAccess.Migrations
 
             modelBuilder.Entity("RadiologyCenterRadiologyTest", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.RadiologyCenter", null)
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", null)
                         .WithMany()
                         .HasForeignKey("RadiologyCentersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.RadiologyTest", null)
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.RadiologyTest", null)
                         .WithMany()
                         .HasForeignKey("TestsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.ClinicAppointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Clinic", "Clinic")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Clinic", "Clinic")
                         .WithMany("ClinicAppointments")
                         .HasForeignKey("ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.Disease", "Disease")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.Disease", "Disease")
                         .WithMany("ClinicAppointments")
                         .HasForeignKey("DiseaseId");
 
-                    b.HasOne("HSS.System.V2.Domain.People.Doctor", "Doctor")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.Doctor", "Doctor")
                         .WithMany("ClinicAppointments")
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "PreExamiationClinicAppointemnt")
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemnt")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Appointments.ClinicAppointment", "PreExamiationClinicAppointemntId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemntId");
 
-                    b.HasOne("HSS.System.V2.Domain.Prescriptions.Prescription", "Prescription")
+                    b.HasOne("HSS.System.V2.Domain.Models.Prescriptions.Prescription", "Prescription")
                         .WithMany()
                         .HasForeignKey("PrescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Queues.ClinicQueue", "Queue")
+                    b.HasOne("HSS.System.V2.Domain.Models.Queues.ClinicQueue", "Queue")
                         .WithMany("ClinicAppointments")
                         .HasForeignKey("QueueId");
 
-                    b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "ReExamiationClinicAppointemnt")
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemnt")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Appointments.ClinicAppointment", "ReExamiationClinicAppointemntId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemntId");
 
                     b.Navigation("Clinic");
 
@@ -1513,29 +1620,29 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("ReExamiationClinicAppointemnt");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.MedicalLabAppointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.MedicalLabAppointment", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "ClinicAppointment")
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ClinicAppointment")
                         .WithMany("MedicalLabAppointments")
                         .HasForeignKey("ClinicAppointmentId");
 
-                    b.HasOne("HSS.System.V2.Domain.Facilities.MedicalLab", "MedicalLab")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "MedicalLab")
                         .WithMany("MedicalLabAppointments")
                         .HasForeignKey("MedicalLabId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Queues.MedicalLabQueue", "Queue")
+                    b.HasOne("HSS.System.V2.Domain.Models.Queues.MedicalLabQueue", "Queue")
                         .WithMany("MedicalLabAppointments")
                         .HasForeignKey("QueueId");
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.MedicalLabTest", "Test")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.MedicalLabTest", "Test")
                         .WithMany("MedicalLabAppointments")
                         .HasForeignKey("TesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.People.MedicalLabTester", "Tester")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.MedicalLabTester", "Tester")
                         .WithMany("MedicalLabAppointments")
                         .HasForeignKey("TesterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1552,29 +1659,29 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Tester");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.RadiologyCeneterAppointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.RadiologyCeneterAppointment", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "ClinicAppointment")
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ClinicAppointment")
                         .WithMany("RadiologyCeneterAppointments")
                         .HasForeignKey("ClinicAppointmentId");
 
-                    b.HasOne("HSS.System.V2.Domain.Queues.RadiologyCenterQueue", "Queue")
+                    b.HasOne("HSS.System.V2.Domain.Models.Queues.RadiologyCenterQueue", "Queue")
                         .WithMany("RadiologyCeneterAppointments")
                         .HasForeignKey("QueueId");
 
-                    b.HasOne("HSS.System.V2.Domain.Facilities.RadiologyCenter", "RadiologyCeneter")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "RadiologyCeneter")
                         .WithMany()
                         .HasForeignKey("RadiologyCeneterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.RadiologyTest", "Test")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.RadiologyTest", "Test")
                         .WithMany("RadiologyCeneterAppointments")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.People.RadiologyTester", "Tester")
+                    b.HasOne("HSS.System.V2.Domain.Models.People.RadiologyTester", "Tester")
                         .WithMany("RadiologyCeneterAppointments")
                         .HasForeignKey("TesterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1591,15 +1698,15 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Tester");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Doctor", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Doctor", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Clinic", "Clinic")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Clinic", "Clinic")
                         .WithMany("Doctors")
                         .HasForeignKey("ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Medical.Specialization", "Specialization")
+                    b.HasOne("HSS.System.V2.Domain.Models.Medical.Specialization", "Specialization")
                         .WithMany("Doctors")
                         .HasForeignKey("SpecializationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1610,9 +1717,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Specialization");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.MedicalLabTester", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.MedicalLabTester", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.MedicalLab", "MedicalLab")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "MedicalLab")
                         .WithMany("MedicalLabTesters")
                         .HasForeignKey("MedicalLabId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1621,9 +1728,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("MedicalLab");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Pharmacist", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Pharmacist", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Pharmacy", "Pharmacy")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Pharmacy", "Pharmacy")
                         .WithMany("Pharmacists")
                         .HasForeignKey("PharmacyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1632,9 +1739,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Pharmacy");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.RadiologyTester", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.RadiologyTester", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.RadiologyCenter", "RadiologyCenter")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "RadiologyCenter")
                         .WithMany("RadiologyTesters")
                         .HasForeignKey("RadiologyCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1643,9 +1750,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("RadiologyCenter");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Receptionist", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Receptionist", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Reception", "Reception")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Reception", "Reception")
                         .WithMany("Receptionists")
                         .HasForeignKey("ReceptionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1654,9 +1761,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Reception");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.ClinicQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.ClinicQueue", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.Clinic", "Clinic")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.Clinic", "Clinic")
                         .WithMany()
                         .HasForeignKey("ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1665,9 +1772,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Clinic");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.MedicalLabQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.MedicalLabQueue", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.MedicalLab", "MedicalLab")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "MedicalLab")
                         .WithMany()
                         .HasForeignKey("MedicalLabId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1676,9 +1783,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("MedicalLab");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.RadiologyCenterQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.RadiologyCenterQueue", b =>
                 {
-                    b.HasOne("HSS.System.V2.Domain.Facilities.RadiologyCenter", "RadiologyCenter")
+                    b.HasOne("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "RadiologyCenter")
                         .WithMany()
                         .HasForeignKey("RadiologyCenterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1687,15 +1794,17 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("RadiologyCenter");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Clinic", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Clinic", b =>
                 {
                     b.Navigation("ClinicAppointments");
 
                     b.Navigation("Doctors");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Hospital", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Hospital", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Clinics");
 
                     b.Navigation("Employees");
@@ -1707,77 +1816,79 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("RadiologyCenters");
 
                     b.Navigation("Receptions");
+
+                    b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.MedicalLab", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.MedicalLab", b =>
                 {
                     b.Navigation("MedicalLabAppointments");
 
                     b.Navigation("MedicalLabTesters");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Pharmacy", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Pharmacy", b =>
                 {
                     b.Navigation("MedicinesPharmacy");
 
                     b.Navigation("Pharmacists");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.RadiologyCenter", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", b =>
                 {
                     b.Navigation("RadiologyTesters");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Facilities.Reception", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Reception", b =>
                 {
                     b.Navigation("Receptionists");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Disease", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Disease", b =>
                 {
                     b.Navigation("ClinicAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Medicine", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Medicine", b =>
                 {
                     b.Navigation("Items");
 
                     b.Navigation("MedicinePharmacies");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Specialization", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Specialization", b =>
                 {
                     b.Navigation("Clinics");
 
                     b.Navigation("Doctors");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.Test", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Test", b =>
                 {
                     b.Navigation("TestsRequired");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Patient", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Patient", b =>
                 {
                     b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.Prescription", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Prescription", b =>
                 {
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.Ticket", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Ticket", b =>
                 {
                     b.Navigation("Appointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.SystemQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.SystemQueue", b =>
                 {
                     b.Navigation("Appointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Appointments.ClinicAppointment", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", b =>
                 {
                     b.Navigation("MedicalLabAppointments");
 
@@ -1786,42 +1897,42 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("TestsRequired");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.MedicalLabTest", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicalLabTest", b =>
                 {
                     b.Navigation("MedicalLabAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Medical.RadiologyTest", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.RadiologyTest", b =>
                 {
                     b.Navigation("RadiologyCeneterAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.Doctor", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Doctor", b =>
                 {
                     b.Navigation("ClinicAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.MedicalLabTester", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.MedicalLabTester", b =>
                 {
                     b.Navigation("MedicalLabAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.People.RadiologyTester", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.People.RadiologyTester", b =>
                 {
                     b.Navigation("RadiologyCeneterAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.ClinicQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.ClinicQueue", b =>
                 {
                     b.Navigation("ClinicAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.MedicalLabQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.MedicalLabQueue", b =>
                 {
                     b.Navigation("MedicalLabAppointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Queues.RadiologyCenterQueue", b =>
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.RadiologyCenterQueue", b =>
                 {
                     b.Navigation("RadiologyCeneterAppointments");
                 });

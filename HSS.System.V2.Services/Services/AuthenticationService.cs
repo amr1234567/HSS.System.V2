@@ -1,14 +1,15 @@
 ﻿using FluentResults;
 
 using HSS.System.V2.DataAccess.Contexts;
-using HSS.System.V2.Domain.Common;
 using HSS.System.V2.Domain.Constants;
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Domain.People;
+using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.AuthDTOs;
+using HSS.System.V2.Services.Helpers;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -16,12 +17,12 @@ using System.Security.Claims;
 
 namespace HSS.System.V2.Services.Services
 {
-    public class AuthenticationService : IAuthService
+    public class AuthService : IAuthService
     {
         private readonly TokenService _tokenService;
         private readonly AccountServiceHelper _accountServiceHelper;
         private readonly AppDbContext _context;
-        public AuthenticationService(TokenService tokenService, AccountServiceHelper accountServiceHelper, AppDbContext context)
+        public AuthService(TokenService tokenService, AccountServiceHelper accountServiceHelper, AppDbContext context)
         {
             _tokenService = tokenService;
             _accountServiceHelper = accountServiceHelper;
@@ -30,6 +31,8 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result> RegisterPatient(PatientDto dto)
         {
+            var salt = _accountServiceHelper.CreateSalt();
+            var pass = _accountServiceHelper.HashPasswordWithSalt(salt, "@Aa123456789");
             var patient = new Patient
             {
                 Name = dto.Name,
@@ -37,13 +40,15 @@ namespace HSS.System.V2.Services.Services
                 BirthOfDate = dto.DateOfBirth,
                 Gender = dto.Gender,
                 Id = Guid.NewGuid().ToString(),
-                Salt = _accountServiceHelper.CreateSalt(),
-                HashPassword = null,
+                HashPassword = pass,
                 PhoneNumber = dto.PhoneNumber,
                 Role = UserRole.Patient,
                 NationalId = dto.NationalId,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
+                Salt = salt,
+                Lat = 10,
+                Lng = 30,
             };
             await _context.Patients.AddAsync(patient);
             await _context.SaveChangesAsync();
