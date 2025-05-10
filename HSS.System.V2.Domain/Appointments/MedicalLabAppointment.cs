@@ -4,11 +4,13 @@ using HSS.System.V2.Domain.Facilities;
 using HSS.System.V2.Domain.People;
 using HSS.System.V2.Domain.Medical;
 using HSS.System.V2.Domain.Queues;
+using System.Diagnostics.CodeAnalysis;
 
 namespace HSS.System.V2.Domain.Appointments;
 
 public class MedicalLabAppointment : Appointment
 {
+    [AllowNull]
     public string Result { get; set; }
     public MedicalLabAppointmentState MedicalLabAppointmentState { get; set; }
     public DateTime ReceiveResultDate { get; set; }

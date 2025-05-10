@@ -24,8 +24,4 @@
     <ProjectReference Include="..\HSS.System.V2.Domain\HSS.System.V2.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>
