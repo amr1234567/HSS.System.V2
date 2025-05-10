@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HSS.System.V2.Domain.Appointments;
 
-public class MedicalLabAppointment : Appointment
+public class MedicalLabAppointment : Appointment, IAppointmentModel<MedicalLabQueue>
 {
     [AllowNull]
     public string Result { get; set; }
@@ -20,7 +20,7 @@ public class MedicalLabAppointment : Appointment
     public string MedicalLabId { get; set; }
     [ForeignKey(nameof(MedicalLabId))]
     public virtual MedicalLab MedicalLab { get; set; }
-    public string QueueId { get; set; }
+    public string? QueueId { get; set; }
     [ForeignKey(nameof(QueueId))]
     public virtual MedicalLabQueue Queue { get; set; }
     public string TesterId { get; set; }
@@ -29,4 +29,15 @@ public class MedicalLabAppointment : Appointment
     public string TestId { get; set; }
     [ForeignKey(nameof(TesterId))]
     public virtual MedicalLabTest Test { get; set; }
+
+    public void SetQueue(MedicalLabQueue? queue)
+    {
+        Queue = queue;
+        QueueId = queue is null ? null : queue.Id;
+    }
+
+    public MedicalLabQueue? GetQueue()
+    {
+        return Queue;
+    }
 } 
