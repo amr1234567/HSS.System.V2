@@ -1,7 +1,7 @@
-﻿
-#nullable disable
-
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
 
 namespace HSS.System.V2.DataAccess.Migrations
 {
@@ -75,7 +75,12 @@ namespace HSS.System.V2.DataAccess.Migrations
                     NationalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HashPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,6 +186,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                     ExpectedDuration = table.Column<TimeSpan>(type: "time", nullable: false),
                     TicketId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
+                    SystemQueueId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Result = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Diagnosis = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReExaminationNeeded = table.Column<bool>(type: "bit", nullable: true),
@@ -269,7 +275,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.ClinicAppointmentId,
                         principalTable: "Appointments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,7 +299,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.ClinicAppointmentId,
                         principalTable: "Appointments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TestsRequired_Tests_TestId",
                         column: x => x.TestId,
@@ -329,7 +335,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.PatientId,
                         principalTable: "Patients",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -355,13 +361,13 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.MedicineId,
                         principalTable: "Medicines",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PrescriptionMedicineItems_Prescriptions_PrescriptionId",
                         column: x => x.PrescriptionId,
                         principalTable: "Prescriptions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -389,13 +395,13 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.HospitalId,
                         principalTable: "Hospitals",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Clinics_Specializations_SpecializationId",
                         column: x => x.SpecializationId,
                         principalTable: "Specializations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -427,7 +433,11 @@ namespace HSS.System.V2.DataAccess.Migrations
                     NationalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HashPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -437,7 +447,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.ClinicId,
                         principalTable: "Clinics",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Employees_Hospitals_HospitalId",
                         column: x => x.HospitalId,
@@ -460,6 +470,28 @@ namespace HSS.System.V2.DataAccess.Migrations
                         name: "FK_Employees_Specializations_SpecializationId",
                         column: x => x.SpecializationId,
                         principalTable: "Specializations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LoginActivities",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActivityType = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginActivities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LoginActivities_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -493,7 +525,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.HospitalId,
                         principalTable: "Hospitals",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -511,7 +543,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.TestsId,
                         principalTable: "Tests",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -543,7 +575,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.HospitalId,
                         principalTable: "Hospitals",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -551,6 +583,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PeriodPerAppointment = table.Column<TimeSpan>(type: "time", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     ClinicId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     MedicalLabId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -566,7 +599,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                         column: x => x.ClinicId,
                         principalTable: "Clinics",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_SystemQueues_MedicalLabs_MedicalLabId",
                         column: x => x.MedicalLabId,
@@ -661,6 +694,11 @@ namespace HSS.System.V2.DataAccess.Migrations
                 filter: "[ReExamiationClinicAppointemntId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Appointments_SystemQueueId",
+                table: "Appointments",
+                column: "SystemQueueId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Appointments_TesterId",
                 table: "Appointments",
                 column: "TesterId");
@@ -726,6 +764,11 @@ namespace HSS.System.V2.DataAccess.Migrations
                 name: "IX_Employees_SpecializationId",
                 table: "Employees",
                 column: "SpecializationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoginActivities_EmployeeId",
+                table: "LoginActivities",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalLabs_CurrentWorkingTesterId",
@@ -834,7 +877,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 column: "ClinicId",
                 principalTable: "Clinics",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Appointments_Employees_DoctorId",
@@ -889,24 +932,28 @@ namespace HSS.System.V2.DataAccess.Migrations
                 table: "Appointments",
                 column: "MedicalLabAppointment_QueueId",
                 principalTable: "SystemQueues",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Appointments_SystemQueues_QueueId",
                 table: "Appointments",
                 column: "QueueId",
                 principalTable: "SystemQueues",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Appointments_SystemQueues_RadiologyCeneterAppointment_QueueId",
                 table: "Appointments",
                 column: "RadiologyCeneterAppointment_QueueId",
                 principalTable: "SystemQueues",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Appointments_SystemQueues_SystemQueueId",
+                table: "Appointments",
+                column: "SystemQueueId",
+                principalTable: "SystemQueues",
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Appointments_Tickets_TicketId",
@@ -1044,6 +1091,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                 table: "Appointments");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_Appointments_SystemQueues_SystemQueueId",
+                table: "Appointments");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Appointments_Tests_RadiologyCeneterAppointment_TestId",
                 table: "Appointments");
 
@@ -1054,6 +1105,9 @@ namespace HSS.System.V2.DataAccess.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Appointments_Tickets_TicketId",
                 table: "Appointments");
+
+            migrationBuilder.DropTable(
+                name: "LoginActivities");
 
             migrationBuilder.DropTable(
                 name: "PrescriptionMedicineItems");

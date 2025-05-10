@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HSS.System.V2.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250509213851_EditInPerson")]
-    partial class EditInPerson
+    [Migration("20250510082702_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
+                    b.Property<string>("SystemQueueId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("TicketId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -65,6 +68,8 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SystemQueueId");
 
                     b.HasIndex("TicketId");
 
@@ -799,6 +804,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
 
+                    b.Property<TimeSpan>("PeriodPerAppointment")
+                        .HasColumnType("time");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -853,7 +861,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ReExamiationClinicAppointemntId")
@@ -902,7 +909,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ReceiveResultDate")
@@ -948,7 +954,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RadiologyCeneterId")
@@ -1152,6 +1157,10 @@ namespace HSS.System.V2.DataAccess.Migrations
 
             modelBuilder.Entity("HSS.System.V2.Domain.Appointments.Appointment", b =>
                 {
+                    b.HasOne("HSS.System.V2.Domain.Queues.SystemQueue", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("SystemQueueId");
+
                     b.HasOne("HSS.System.V2.Domain.Prescriptions.Ticket", "Ticket")
                         .WithMany("Appointments")
                         .HasForeignKey("TicketId")
@@ -1399,9 +1408,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Queues.ClinicQueue", "Queue")
                         .WithMany("ClinicAppointments")
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.HasOne("HSS.System.V2.Domain.Appointments.ClinicAppointment", "ReExamiationClinicAppointemnt")
                         .WithOne()
@@ -1436,9 +1443,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Queues.MedicalLabQueue", "Queue")
                         .WithMany("MedicalLabAppointments")
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.HasOne("HSS.System.V2.Domain.Medical.MedicalLabTest", "Test")
                         .WithMany("MedicalLabAppointments")
@@ -1471,9 +1476,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Queues.RadiologyCenterQueue", "Queue")
                         .WithMany("RadiologyCeneterAppointments")
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.HasOne("HSS.System.V2.Domain.Facilities.RadiologyCenter", "RadiologyCeneter")
                         .WithMany()
@@ -1677,6 +1680,11 @@ namespace HSS.System.V2.DataAccess.Migrations
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Prescriptions.Ticket", b =>
+                {
+                    b.Navigation("Appointments");
+                });
+
+            modelBuilder.Entity("HSS.System.V2.Domain.Queues.SystemQueue", b =>
                 {
                     b.Navigation("Appointments");
                 });

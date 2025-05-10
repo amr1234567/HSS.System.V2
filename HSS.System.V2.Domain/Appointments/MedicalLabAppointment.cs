@@ -5,6 +5,7 @@ using HSS.System.V2.Domain.People;
 using HSS.System.V2.Domain.Medical;
 using HSS.System.V2.Domain.Queues;
 using System.Diagnostics.CodeAnalysis;
+using HSS.System.V2.Domain.Common;
 
 namespace HSS.System.V2.Domain.Appointments;
 
