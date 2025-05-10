@@ -11,7 +11,7 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result> UpdateTicket(Ticket model);
         Task<Result> DeleteTicket(Ticket model);
         Task<Result<Ticket>> GetTicketById(string ticketId);
-        Task<Result<Ticket>> GetOpenTicketsForPatient(string patientId, int size = 10, int page = 1);
+        Task<Result<PagedResult<Ticket>>> GetOpenTicketsForPatient(string patientId, int size = 10, int page = 1);
         Task<Result<PagedResult<Ticket>>> GetAllTicketForPatient(string patientId, int size = 10, int page = 1);
         Task<Result<PagedResult<Ticket>>> GetAllTicketForPatientByNationalId(string patientNationalId, int size = 10, int page = 1);
         Task<Result<PagedResult<Ticket>>> GetAllTicketInHospital(string hospitalId, int size = 10, int page = 1);

@@ -4,5 +4,6 @@ public enum TicketState
 {
     Active,
     Completed,
-    Cancelled
+    Cancelled,
+    Open
 } 

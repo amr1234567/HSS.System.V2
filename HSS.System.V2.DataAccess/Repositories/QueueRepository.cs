@@ -12,12 +12,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
-    public class QueueRepository(AppDbContext context, IAppointmentRepository appointmentRepository) 
-        : IQueueRepository
+    public class QueueRepository : IQueueRepository
     {
-        public async Task<Result<TQueue>> GetQueueById<TQueue>(string queueId) where TQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<TQueue>
+        private readonly AppDbContext _context;
+        private readonly IAppointmentRepository _appointmentRepository;
+
+        public QueueRepository(AppDbContext context, IAppointmentRepository appointmentRepository)
         {
-            var queue = await context.Set<TQueue>()
+            _context = context;
+            _appointmentRepository = appointmentRepository;
+        }
+
+        public async Task<Result<TQueue>> GetQueueById<TQueue>(string queueId)
+            where TQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<TQueue>
+        {
+            var queue = await _context.Set<TQueue>()
               .Where(q => q.Id == queueId)
               .Include(q => q.GetInclude())
               .FirstOrDefaultAsync();
@@ -27,7 +36,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                var entity = await context.Set<TQueue>()
+                var entity = await _context.Set<TQueue>()
                                     .AsNoTracking()
                                     .Where(q => q.DepartmentId == departmentId)
                                     .Include(q => q.GetInclude())
@@ -44,8 +53,8 @@ namespace HSS.System.V2.DataAccess.Repositories
         }
         public async Task<Result> CreateQueue(SystemQueue queue)
         {
-            await context.SystemQueues.AddAsync(queue);
-            await context.SaveChangesAsync();
+            await _context.SystemQueues.AddAsync(queue);
+            await _context.SaveChangesAsync();
             return Result.Ok();
         }
         public async Task<Result> DeleteQueue(string queueId)
@@ -54,8 +63,8 @@ namespace HSS.System.V2.DataAccess.Repositories
             if (queue is null)
                 return EntityNotExistsError.Happen<SystemQueue>(queueId);
 
-            context.SystemQueues.Remove(queue);
-            await context.SaveChangesAsync();
+            _context.SystemQueues.Remove(queue);
+            await _context.SaveChangesAsync();
             return Result.Ok();
         }
         public async Task<Result> DeleteQueue(SystemQueue model)
@@ -63,8 +72,8 @@ namespace HSS.System.V2.DataAccess.Repositories
             var queue = await GetQueue(model.Id);
             if (queue is null)
                 return EntityNotExistsError.Happen<SystemQueue>(model.Id);
-            context.SystemQueues.Remove(queue);
-            await context.SaveChangesAsync();
+            _context.SystemQueues.Remove(queue);
+            await _context.SaveChangesAsync();
             return Result.Ok();
         }
 
@@ -72,8 +81,8 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                context.SystemQueues.Update(queue);
-                await context.SaveChangesAsync();
+                _context.SystemQueues.Update(queue);
+                await _context.SaveChangesAsync();
                 return Result.Ok();
             }
             catch (Exception ex)
@@ -89,7 +98,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             var queueResult = await GetQueueById<TQueue>(queueId);
             if (queueResult.IsFailed)
                 return Result.Fail(queueResult.Errors);
-            var appointmentResult = await appointmentRepository.GetAppointmentByIdAsync<TApp>(appointmentId);
+            var appointmentResult = await _appointmentRepository.GetAppointmentByIdAsync<TApp>(appointmentId);
             if (appointmentResult.IsFailed)
                 return Result.Fail(appointmentResult.Errors);
             var appointment = appointmentResult.Value;
@@ -100,7 +109,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             appointment.SetQueue(queue);
             appointment.ActualStartAt = CalculateNextAvailableAppointmentTime(queue, appointment.SchaudleStartAt.Date);
             RecalculateQueueAppointmentTimes(queue);
-            return await appointmentRepository.UpdateAppointmentAsync(appointment)
+            return await _appointmentRepository.UpdateAppointmentAsync(appointment)
                         .ThenAsync(() => UpdateQueue(queue));
         }
 
@@ -110,11 +119,11 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                var appointment = await appointmentRepository.GetAppointmentByIdAsync<TApp>(appointmentId);
+                var appointment = await _appointmentRepository.GetAppointmentByIdAsync<TApp>(appointmentId);
                 if (appointment is null)
                     return EntityNotExistsError.Happen<TApp>(appointmentId);
                 appointment.Value.SetQueue(null);
-                await appointmentRepository.UpdateAppointmentAsync(appointment.Value);
+                await _appointmentRepository.UpdateAppointmentAsync(appointment.Value);
                 var queue = appointment.Value.GetQueue();
                 if (queue is not null)
                     RecalculateQueueAppointmentTimes(queue);
@@ -128,7 +137,7 @@ namespace HSS.System.V2.DataAccess.Repositories
 
         private Task<SystemQueue?> GetQueue(string id)
         {
-            return context.SystemQueues
+            return _context.SystemQueues
                 .FirstOrDefaultAsync(q => q.Id == id);
         }
 
@@ -197,37 +206,24 @@ namespace HSS.System.V2.DataAccess.Repositories
             if (q == null)
                 throw new ArgumentNullException(nameof(q));
 
-            // Base time is the department's start time on today's date.
             DateTime baseTime = DateTime.Today.Add(q.DepartmentStartAt);
 
-            // Calculate the department's end time for today.
             DateTime departmentEndTime = DateTime.Today.Add(q.DepartmentEndAt);
 
-            // Define effective arrival time:
-            // If the appointment's ExpectedTimeForStart is in the future (patient arrived early), use DateTime.UtcNow.
-            // Otherwise, use the ExpectedTimeForStart.
             DateTime GetEffectiveTime(Appointment a) =>
                 DateTime.UtcNow < a.SchaudleStartAt ? DateTime.UtcNow : a.SchaudleStartAt;
 
-            // Order the appointments based on effective arrival times.
             var orderedAppointments = (q.Appointments ?? new List<Appointment>())
                                         .OrderBy(a => GetEffectiveTime(a))
                                         .ToList();
 
-            // Assign new StartAt times based on the appointment order.
             for (int i = 0; i < orderedAppointments.Count; i++)
             {
                 DateTime proposedTime = baseTime.Add(q.PeriodPerAppointment * i);
                 if (proposedTime <= departmentEndTime)
-                {
                     orderedAppointments[i].ActualStartAt = proposedTime;
-                }
                 else
-                {
-                    // If the proposed time exceeds the department's working hours,
-                    // you might decide to mark the appointment as unscheduled.
                     orderedAppointments[i].ActualStartAt = null;
-                }
             }
         }
 

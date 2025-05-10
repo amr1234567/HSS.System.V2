@@ -5,17 +5,28 @@ using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Medical;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
+using HSS.System.V2.Domain.Helpers.Methods;
+using Microsoft.EntityFrameworkCore;
+using HSS.System.V2.Domain.Common;
+
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
-    public class TestsRepository(AppDbContext context) : ITestsRepository
+    public class TestsRepository : ITestsRepository
     {
+        private readonly AppDbContext _context;
+
+        public TestsRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<Result> CreateTestAsync(Test model)
         {
             try
             {
-                await context.Tests.AddAsync(model);
-                await context.SaveChangesAsync();
+                await _context.Tests.AddAsync(model);
+                await _context.SaveChangesAsync();
                 return Result.Ok();
             }
             catch (Exception ex)
@@ -29,8 +40,8 @@ namespace HSS.System.V2.DataAccess.Repositories
 
             try
             {
-                context.Tests.Update(model);
-                await context.SaveChangesAsync();
+                _context.Tests.Update(model);
+                await _context.SaveChangesAsync();
                 return Result.Ok();
             }
             catch (Exception ex)
@@ -43,11 +54,11 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                var test = await context.Tests.FindAsync(id);
+                var test = await _context.Tests.FindAsync(id);
                 if (test == null)
                     return EntityNotExistsError.Happen<Test>(id);
-                context.Tests.Remove(test);
-                await context.SaveChangesAsync();
+                _context.Tests.Remove(test);
+                await _context.SaveChangesAsync();
                 return Result.Ok();
             }
             catch (Exception ex)
@@ -56,19 +67,28 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public Task<Result<IEnumerable<Test>>> GetAllTestsAsync<T>() where T : Test
+        public async Task<Result<PagedResult<T>>> GetAllTestsAsync<T>(PaginationRequest pagination) where T : Test
         {
-            throw new NotImplementedException();
+            return await _context.Set<T>().AsNoTracking().GetPagedAsync(pagination);
         }
 
-        public Task<Result<Test>> GetTestByIdAsync(string id)
+        public async Task<Result<Test>> GetTestByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var test = await _context.Tests.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            if (test == null)
+                return EntityNotExistsError.Happen<Test>(id);
+            return test;
         }
 
-        public Task<Result> IsTestInHospital(string testId, string hospitalId)
+        public async Task<Result> IsTestInHospital<TDept, ITest>(string testId, string hospitalId)
+            where TDept : BaseClass, IHospitalDepartmentItem, ITestableDepartment<TDept, ITest>
+            where ITest : Test
         {
-            throw new NotImplementedException();
+            var test = await _context.Set<TDept>()
+                .Include(x => x.GetInclude())
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == hospitalId);
+            return test is not null ? Result.Ok() : Result.Fail(new Error(""));
         }
 
         public Task<Result<PagedResult<Test>>> GetAllTestsInHospitalAsync(string hospitalId, int size = 10, int page = 1)
