@@ -59,13 +59,20 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public Task<Result<PagedResult<Medicine>>> GetAllMedicinesInPharmacyAsync(string pharmacyId, int page = 1, int size = 10)
+        public async Task<Result<PagedResult<Medicine>>> GetAllMedicinesInPharmacyAsync(string pharmacyId, int page = 1, int size = 10)
         {
-            //try
-            //{
-            //    IQueryable<Medicine> medicinesQuery = context.Pharmacies.Where(item => item.P== pharmacyId)
-            //}
-            throw new NotImplementedException();
+            try
+            {
+                IQueryable<Medicine> medicinesQuery = context.Medicines.Where(item => item.Pharmacies.Any(item => item.Id == pharmacyId));
+                if (medicinesQuery is null)
+                    return Result.Fail("there are not Medicines");
+
+                return await medicinesQuery.GetPagedAsync(page, size);
+            }
+            catch (Exception ex)
+            {
+                return new UnKnownError(ex);
+            }
         }
 
         public async Task<Result<Medicine>> GetMedicineByIdAsync(string id, params Expression<Func<Medicine, object>>[]? includes)
@@ -89,9 +96,16 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public Task<Result<PagedResult<Medicine>>> GetMedicineInPharmacyAsync(string pharmacyId, string medicineId)
+        public async Task<Result<Medicine>> GetMedicineInPharmacyAsync(string pharmacyId, string medicineId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                return new UnKnownError(ex);
+            }
         }
     }
 }
