@@ -60,6 +60,7 @@ namespace HSS.System.V2.DataAccess.Contexts
         public DbSet<TestRequired> TestsRequired { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
+        public DbSet<MedicinePharmacy> MedicinePharmacies { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

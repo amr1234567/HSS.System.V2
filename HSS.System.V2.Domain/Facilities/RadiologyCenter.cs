@@ -3,10 +3,11 @@ using HSS.System.V2.Domain.Common;
 using HSS.System.V2.Domain.People;
 using HSS.System.V2.Domain.Medical;
 using HSS.System.V2.Domain.Queues;
+using System.Linq.Expressions;
 
 namespace HSS.System.V2.Domain.Facilities;
 
-public class RadiologyCenter : BaseClass, IHospitalDepartmentItem
+public class RadiologyCenter : BaseClass, IHospitalDepartmentItem, ITestableDepartment<RadiologyCenter, RadiologyTest>
 {
     public string Name { get; set; }
     public int NumberOfShifts { get; set; }
@@ -29,4 +30,12 @@ public class RadiologyCenter : BaseClass, IHospitalDepartmentItem
 
     [InverseProperty(nameof(RadiologyTester.RadiologyCenter))]
     public virtual ICollection<RadiologyTester> RadiologyTesters { get; set; }
+
+    public Expression<Func<RadiologyCenter, IEnumerable<RadiologyTest>>> GetInclude()
+    {
+        return x => x.Tests;
+    }
+
+    [NotMapped]
+    public IEnumerable<RadiologyTest> DepartmentTests => Tests;
 } 

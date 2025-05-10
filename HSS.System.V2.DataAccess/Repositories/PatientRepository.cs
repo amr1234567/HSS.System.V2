@@ -1,29 +1,24 @@
 ﻿using FluentResults;
+
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.People;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
-    public class PatientRepository(AppDbContext context) : IPatientRepository
+    public class PatientRepository : IPatientRepository
     {
-        public Task<Result> CreateMedicalHistoryRecordFromEndedTicket(string ticketId)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly AppDbContext _context;
 
-        public Task<Result<Patient>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
+        public PatientRepository(AppDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
-
-        public Task<Result<Patient>> GetPatientByNationalId(string nationalId, params Expression<Func<Patient, object>>[] includes)
+        public async Task<Result<Patient>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
         {
             throw new NotImplementedException();
         }
@@ -38,7 +33,17 @@ namespace HSS.System.V2.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<Result<Patient>> GetPatientByNationalId(string nationalId, params Expression<Func<Patient, object>>[] includes)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Result> UpdatePatientDetails(Patient patient)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result> CreateMedicalHistoryRecordFromEndedTicket(string ticketId)
         {
             throw new NotImplementedException();
         }
