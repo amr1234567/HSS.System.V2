@@ -19,7 +19,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             try
             {
                 if (string.IsNullOrEmpty(medicalLapAppointmentId) || result is null)
-                    return Result.Fail("Medical Lab Appointment Id and Result not found");
+                    return Result.Fail("Medical Lab Appointment Id and Result is Requried");
 
                 var medicalLapAppointment = await context.MedicalLabAppointments.FindAsync(medicalLapAppointmentId);
                 if (medicalLapAppointment is null)
@@ -85,7 +85,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             try
             {
                 if (string.IsNullOrEmpty(medicalLapAppointmentId) || result is null)
-                    return Result.Fail("Medical Lab Appointment Id and Result not found");
+                    return Result.Fail("Medical Lab Appointment Id and Result is Required");
 
                 var medicalLapAppointment = await context.MedicalLabAppointments.FindAsync(medicalLapAppointmentId);
                 if (medicalLapAppointment == null)

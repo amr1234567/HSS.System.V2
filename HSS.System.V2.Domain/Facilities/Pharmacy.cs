@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using HSS.System.V2.Domain.Common;
 using HSS.System.V2.Domain.People;
 using HSS.System.V2.Domain.Enums;
+using HSS.System.V2.Domain.Medical;
 
 namespace HSS.System.V2.Domain.Facilities;
 
@@ -15,6 +16,7 @@ public class Pharmacy : BaseClass, IHospitalDepartmentItem
     public string HospitalId { get; set; }
     [ForeignKey(nameof(HospitalId))]
     public virtual Hospital Hospital { get; set; }
+    public virtual ICollection<Medicine> Medicines { get; set; }
 
     public virtual ICollection<Pharmacist> Pharmacists { get; set; }
 } 
