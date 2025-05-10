@@ -28,7 +28,6 @@ namespace HSS.System.V2.Services.DTOs.AuthDTOs
         public DateTime DateOfBirth { get; set; }
 
         [Required]
-        [MaxLength(10)]
         public Gender Gender { get; set; }
     }
 }

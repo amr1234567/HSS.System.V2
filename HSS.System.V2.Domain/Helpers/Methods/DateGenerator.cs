@@ -21,7 +21,7 @@ namespace HSS.System.V2.Domain.Helpers.Methods
         }
     }
 
-        public enum Region
+    public enum Region
     {
         Egypt,
     }

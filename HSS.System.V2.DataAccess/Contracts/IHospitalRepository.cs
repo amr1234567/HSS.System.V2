@@ -1,9 +1,9 @@
 ﻿using FluentResults;
 
-using HSS.System.V2.Domain.Common;
 using HSS.System.V2.Domain.DTOs;
-using HSS.System.V2.Domain.Facilities;
 using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.Facilities;
 
 namespace HSS.System.V2.DataAccess.Contracts
 {
@@ -19,6 +19,8 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<Hospital>> GetHospitalByName(string hospitalName);
         Task<Result<HospitalDepartments>> GetAllHospitalDepartments(string hospitalId);
         Task<Result<PagedResult<TDept>>> GetHospitalDepartmentItems<TDept>(string hospitalId, PaginationRequest pagination) where TDept : class, IHospitalDepartmentItem;
+        Task<Result<IEnumerable<TDept>>> GetHospitalDepartmentItems<TDept>(string hospitalId) where TDept : class, IHospitalDepartmentItem;
         Task<Result<PagedResult<Hospital>>> GetNearByHospitals(double lat, double lng, int size = 10, int page = 1);
+        Task<Result<IEnumerable<Hospital>>> GetHospitalsBySpecificationId(string specializationId);
     }
 }

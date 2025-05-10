@@ -3,11 +3,12 @@
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Domain.Medical;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Domain.Helpers.Methods;
 using Microsoft.EntityFrameworkCore;
-using HSS.System.V2.Domain.Common;
+using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Models.Facilities;
 
 
 namespace HSS.System.V2.DataAccess.Repositories
@@ -92,6 +93,11 @@ namespace HSS.System.V2.DataAccess.Repositories
         }
 
         public Task<Result<PagedResult<Test>>> GetAllTestsInHospitalAsync(string hospitalId, int size = 10, int page = 1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<IEnumerable<Hospital>>> GetAllHospitalsDoTest<TTest>(string testId) where TTest : Test
         {
             throw new NotImplementedException();
         }

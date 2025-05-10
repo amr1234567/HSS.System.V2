@@ -1,11 +1,12 @@
 ﻿using HSS.System.V2.Domain;
-using HSS.System.V2.Domain.Appointments;
-using HSS.System.V2.Domain.Common;
-using HSS.System.V2.Domain.Facilities;
-using HSS.System.V2.Domain.Medical;
-using HSS.System.V2.Domain.People;
-using HSS.System.V2.Domain.Prescriptions;
-using HSS.System.V2.Domain.Queues;
+using HSS.System.V2.Domain.Models.Appointments;
+using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.Facilities;
+using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Models.Notifications;
+using HSS.System.V2.Domain.Models.People;
+using HSS.System.V2.Domain.Models.Prescriptions;
+using HSS.System.V2.Domain.Models.Queues;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,7 @@ namespace HSS.System.V2.DataAccess.Contexts
         public DbSet<Pharmacist> Pharmacists { get; set; }
         public DbSet<Receptionist> Receptionists { get; set; }
         public DbSet<LoginActivity> LoginActivities { get; set; }
+        public DbSet<AppNotification> Notifications { get; set; }
 
         #endregion
 

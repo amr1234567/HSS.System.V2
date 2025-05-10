@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-using HSS.System.V2.Domain.People;
+using HSS.System.V2.Domain.Models.People;
 
 using System.Linq.Expressions;
 

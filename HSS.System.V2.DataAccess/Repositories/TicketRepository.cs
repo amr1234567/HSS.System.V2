@@ -5,8 +5,7 @@ using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Domain.People;
-using HSS.System.V2.Domain.Prescriptions;
+using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
 using Microsoft.EntityFrameworkCore;
@@ -92,7 +91,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             return await _context.Tickets
                 .AsNoTracking()
-                .Where(t => t.PatientId == patientId && t.State == TicketState.Open)
+                .Where(t => t.PatientId == patientId && t.State == TicketState.Active)
                 .GetPagedAsync(page, size);
         }
 
@@ -100,7 +99,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             return await _context.Tickets
                 .AsNoTracking()
-                .Where(t => t.PatientNationalId == nationalId && t.State == TicketState.Open)
+                .Where(t => t.PatientNationalId == nationalId && t.State == TicketState.Active)
                 .GetPagedAsync(page, size);
         }
 
@@ -120,7 +119,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .GetPagedAsync(page, size);
         }
 
-        public Task<Result<PagedResult<Ticket>>> GetAllTicketInHospital(string hospitalId, int size = 10, int page = 1)
+        public Task<Result<PagedResult<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId, int size = 10, int page = 1)
         {
             throw new NotImplementedException();
         }
@@ -161,6 +160,16 @@ namespace HSS.System.V2.DataAccess.Repositories
             return result ?
                 Result.Ok() :
                 Result.Fail(new Error(""));
+        }
+
+        public Task<Result<IEnumerable<Ticket>>> GetAllTicketForPatient(string patientId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<IEnumerable<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

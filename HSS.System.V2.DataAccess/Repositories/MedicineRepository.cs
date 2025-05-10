@@ -4,7 +4,7 @@ using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Domain.Medical;
+using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
 using Microsoft.EntityFrameworkCore;

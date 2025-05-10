@@ -2,10 +2,10 @@
 
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
-using HSS.System.V2.Domain.Appointments;
-using HSS.System.V2.Domain.Common;
 using HSS.System.V2.Domain.Helpers.Methods;
-using HSS.System.V2.Domain.Queues;
+using HSS.System.V2.Domain.Models.Appointments;
+using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
 using Microsoft.EntityFrameworkCore;
@@ -227,5 +227,9 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
+        public Task<(DateTime StartAt, int Index)> GetAppointemntCustomDetails(Appointment appointment)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

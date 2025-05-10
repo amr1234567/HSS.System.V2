@@ -1,9 +1,12 @@
 ﻿using FluentResults;
+
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
-using HSS.System.V2.Domain.Prescriptions;
+using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +88,11 @@ namespace HSS.System.V2.DataAccess.Repositories
             {
                 return new UnKnownError(ex);
             }
+        }
+
+        public Task<Result<IEnumerable<Prescription>>> GetAllMedicalPrescription(string userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
