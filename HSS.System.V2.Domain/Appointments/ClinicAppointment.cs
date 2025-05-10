@@ -4,10 +4,11 @@ using HSS.System.V2.Domain.People;
 using HSS.System.V2.Domain.Medical;
 using HSS.System.V2.Domain.Prescriptions;
 using HSS.System.V2.Domain.Queues;
+using HSS.System.V2.Domain.Common;
 
 namespace HSS.System.V2.Domain.Appointments;
 
-public class ClinicAppointment : Appointment
+public class ClinicAppointment : Appointment, IAppointmentModel<ClinicQueue>
 {
     public string Result { get; set; }
     public string Diagnosis { get; set; }
@@ -22,7 +23,7 @@ public class ClinicAppointment : Appointment
     public virtual Clinic Clinic { get; set; }
     public string DoctorId { get; set; }
     public virtual Doctor Doctor { get; set; }
-    public string QueueId { get; set; }
+    public string? QueueId { get; set; }
     public ClinicQueue Queue { get; set; }
     public string PrescriptionId { get; set; }
     [ForeignKey(nameof(PrescriptionId))]
@@ -31,4 +32,15 @@ public class ClinicAppointment : Appointment
     public virtual ICollection<MedicalLabAppointment> MedicalLabAppointments { get; set; }
     public virtual ICollection<RadiologyCeneterAppointment> RadiologyCeneterAppointments { get; set; }
     public virtual ICollection<TestRequired> TestsRequired { get; set; }
+
+    public void SetQueue(ClinicQueue? queue)
+    {
+        Queue = queue;
+        QueueId = queue is null ? null : queue.Id;
+    }
+
+    public ClinicQueue? GetQueue()
+    {
+        return Queue;
+    }
 } 
