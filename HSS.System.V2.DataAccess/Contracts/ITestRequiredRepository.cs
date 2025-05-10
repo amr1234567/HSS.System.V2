@@ -9,7 +9,8 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result> CreateTestRequiredAsync(TestRequired model);
         Task<Result> UpdateTestRequiredAsync(TestRequired model);
         Task<Result> DeleteTestRequiredAsync(string id);
-        Task<Result<IEnumerable<TestRequired>>> GetTestsRequiredAvailableInTicket(string ticketId);
+        Task<Result<IEnumerable<TestRequired>>> GetNotUsedTestsRequiredAvailableInTicket(string ticketId);
         Task<Result<IEnumerable<TestRequired>>> GetDoneTestsRequiredInTicket(string ticketId);
+        Task<Result<IEnumerable<TestRequired>>> GetAllTestsRequiredAvailableInTicket(string ticketId);
     }
 }
