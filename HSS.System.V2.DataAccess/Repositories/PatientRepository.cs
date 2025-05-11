@@ -20,7 +20,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             _context = context;
         }
-        public async Task<Result<Patient>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
+        public async Task<Result<Patient?>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
         {
             return await _context.Patients.AsNoTracking()
                 .Where(x => x.Id == id)
@@ -38,9 +38,19 @@ namespace HSS.System.V2.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Result<Patient>> GetPatientByNationalId(string nationalId, params Expression<Func<Patient, object>>[] includes)
+        public async Task<Result<Patient?>> GetPatientByNationalId(string nationalId, params Expression<Func<Patient, object>>[] includes)
         {
-            throw new NotImplementedException();
+            var query = _context.Patients.AsNoTracking()
+                .Where(x => x.NationalId == nationalId);
+            if (includes != null && includes.Length > 0)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+            var patient = await query.FirstOrDefaultAsync();
+            return Result.Ok(patient);
         }
 
         public Task<Result> UpdatePatientDetails(Patient patient)

@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Enums;
+using HSS.System.V2.Domain.Models.Medical;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
@@ -196,19 +197,49 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync(string hospitalId, DateFilterationRequest dateFilters, PaginationRequest pagination)
+        public async Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync(string hospitalId, DateFilterationRequest dateFilters, PaginationRequest pagination)
         {
-            throw new NotImplementedException();
+            return await _context.Hospitals
+               .Where(c => c.Id == hospitalId)
+               .Include(c => c.Appointments)
+               .SelectMany(c => c.Appointments)
+               .Where(a => a.SchaudleStartAt >= dateFilters.DateFrom && a.SchaudleStartAt <= dateFilters.DateTo)
+               .AsNoTracking()
+               .OrderByDescending(a => a.SchaudleStartAt)
+               .GetPagedAsync(pagination);
         }
 
-        public Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync(string hospitalId, string specializationId, DateFilterationRequest dateFilters, PaginationRequest pagination)
+        public async Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync
+            (string hospitalId, string specializationId, DateFilterationRequest dateFilters, PaginationRequest pagination)
         {
-            throw new NotImplementedException();
+            return await _context.Clinics
+                .Where(c => c.HospitalId == hospitalId && c.SpecializationId == specializationId)
+                .Include(c => c.ClinicAppointments)
+                .SelectMany(c => c.ClinicAppointments)
+                .Where(a => a.SchaudleStartAt >= dateFilters.DateFrom && a.SchaudleStartAt <= dateFilters.DateTo)
+                .AsNoTracking()
+                .OrderByDescending(a => a.SchaudleStartAt)
+                .Cast<Appointment>()
+                .GetPagedAsync(pagination);
         }
 
-        public Task<Result> DeleteAppointmentAsync(string appointmentId)
+        public async Task<Result> DeleteAppointmentAsync(string appointmentId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var appointment = await _context.Appointments
+               .Where(a => a.Id == appointmentId)
+               .FirstOrDefaultAsync();
+                if (appointment is null)
+                    return EntityNotExistsError.Happen<Appointment>(appointmentId);
+                _context.Appointments.Remove(appointment);
+                await _context.SaveChangesAsync();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return new SavingDataInDbContextError(ex);
+            }
         }
 
         public async Task<Result> SwapAppointmentsAsync<T>(string appointmentId1, string appointmentId2) where T: Appointment
@@ -244,29 +275,55 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination)
+        public async Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.PatientNationalId == apiUserId)
+                .AsNoTracking()
+                .OrderByDescending(a => a.SchaudleStartAt)
+                .GetPagedAsync(pagination);
         }
 
-        public Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination, AppointmentState state)
+        public async Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination, AppointmentState state)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.PatientNationalId == apiUserId && a.State == state)
+                .AsNoTracking()
+                .OrderByDescending(a => a.SchaudleStartAt)
+                .GetPagedAsync(pagination);
         }
 
-        public Task<Result<Appointment?>> GetAppointmentByIdBlukIncludeAsync(string appointmentId)
+        public async Task<Result<Appointment?>> GetAppointmentByIdBlukIncludeAsync(string appointmentId)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.Id == appointmentId)
+                .Include(a => a.Hospital)
+                .Include(a => a.Ticket)
+                .Include(a => ((ClinicAppointment)a).Clinic)
+                    .ThenInclude(c => c.CurrentWorkingDoctor)
+                .Include(a => ((MedicalLabAppointment)a).MedicalLab)
+                    .ThenInclude(c => c.CurrentWorkingTester)
+                .Include(a => ((RadiologyCeneterAppointment)a).RadiologyCeneter)
+                    .ThenInclude(c => c.CurrentWorkingTester)
+                .FirstOrDefaultAsync();
         }
 
-        public Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId, AppointmentState state)
+        public async Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId, AppointmentState state)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.PatientNationalId == apiUserId && a.State == state)
+                .AsNoTracking()
+                .OrderByDescending(a => a.SchaudleStartAt)
+                .ToListAsync();
         }
 
-        public Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId)
+        public async Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId)
         {
-            throw new NotImplementedException();
+            return await _context.Appointments
+                .Where(a => a.PatientNationalId == apiUserId)
+                .AsNoTracking()
+                .OrderByDescending(a => a.SchaudleStartAt)
+                .ToListAsync();
         }
     }
 }

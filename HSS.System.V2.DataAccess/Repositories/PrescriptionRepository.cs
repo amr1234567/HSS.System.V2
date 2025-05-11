@@ -2,6 +2,7 @@
 
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
+using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
@@ -90,9 +91,14 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public Task<Result<IEnumerable<Prescription>>> GetAllMedicalPrescription(string userId)
+        public async Task<Result<IEnumerable<Prescription>>> GetAllMedicalPrescription(string userId)
         {
-            throw new NotImplementedException();
+            return await context.Tickets
+                .Where(x => x.PatientId == userId)
+                .SelectMany(x => x.Appointments)
+                .OfType<ClinicAppointment>()
+                .Select(x => x.Prescription)
+                .ToListAsync();
         }
 
         public async Task<Result> DeleteMedicalPrescription(Prescription model)

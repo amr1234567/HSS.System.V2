@@ -1,26 +1,43 @@
 ﻿using FluentResults;
 
+using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Helpers.Methods;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
     public class SpecializationReporitory : ISpecializationReporitory
     {
-        public Task<Result<IEnumerable<Specialization>>> GetAllAsync()
+        private readonly AppDbContext _context;
+
+        public SpecializationReporitory(AppDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public async Task<Result<IEnumerable<Specialization>>> GetAllAsync()
+        {
+            return await _context.Specializations.AsNoTracking()
+                .Include(s => s.Clinics)
+                .ToListAsync();
         }
 
-        public Task<Result<PagedResult<Specialization>>> GetAllAsync(PaginationRequest pagination)
+        public async Task<Result<PagedResult<Specialization>>> GetAllAsync(PaginationRequest pagination)
         {
-            throw new NotImplementedException();
+            return await _context.Specializations.AsNoTracking()
+                .Include(s => s.Clinics)
+                .GetPagedAsync(pagination.Page, pagination.Size);
         }
 
-        public Task<Result<IEnumerable<Specialization>>> GetAllInHospitalAsync(string hospitalId)
+        public async Task<Result<IEnumerable<Specialization>>> GetAllInHospitalAsync(string hospitalId)
         {
-            throw new NotImplementedException();
+            return await _context.Specializations.AsNoTracking()
+                .Include(s => s.Clinics)
+                .Where(s => s.Clinics.Any(c => c.HospitalId == hospitalId))
+                .ToListAsync();
         }
     }
 }

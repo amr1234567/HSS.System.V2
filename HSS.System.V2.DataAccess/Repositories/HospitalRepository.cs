@@ -156,13 +156,54 @@ public class HospitalRepository : IHospitalRepository
         }
     }
 
-    public Task<Result<IEnumerable<Hospital>>> GetHospitalsBySpecificationId(string specializationId)
+    public async Task<Result<IEnumerable<Hospital>>> GetHospitalsBySpecificationId(string specializationId)
     {
-        throw new NotImplementedException();
+        return await _context.Specializations.AsNoTracking()
+            .Include(s => s.Clinics)
+                .ThenInclude(c => c.Hospital)
+            .Where(h => h.Clinics.Any(s => s.SpecializationId == specializationId))
+            .SelectMany(s => s.Clinics)
+            .Select(c => c.Hospital)
+            .ToListAsync();
     }
 
-    Task<Result<IEnumerable<TDept>>> IHospitalRepository.GetHospitalDepartmentItems<TDept>(string hospitalId)
+    public async Task<Result<IEnumerable<TDept>>> GetHospitalDepartmentItems<TDept>(string hospitalId) where TDept : class, IHospitalDepartmentItem
     {
-        throw new NotImplementedException();
+        return typeof(TDept) switch
+        {
+            Type t when t == typeof(Clinic) =>
+                await _context.Clinics
+                    .Where(c => c.HospitalId == hospitalId)
+                    .Include(c => c.CurrentWorkingDoctor)
+                    .Include(c => c.Queue)
+                    .Cast<TDept>()
+                    .ToListAsync(),
+            Type t when t == typeof(Reception) =>
+                await _context.Receptions
+                    .Where(c => c.HospitalId == hospitalId)
+                    .Include(c => c.Receptionists)
+                    .Cast<TDept>()
+                    .ToListAsync(),
+            Type t when t == typeof(Pharmacy) =>
+                await _context.Pharmacies
+                    .Where(c => c.HospitalId == hospitalId)
+                    .Cast<TDept>()
+                    .ToListAsync(),
+            Type t when t == typeof(RadiologyCenter) =>
+                await _context.RadiologyCenters
+                    .Where(c => c.HospitalId == hospitalId)
+                    .Include(t => t.CurrentWorkingTester)
+                    .Include(c => c.Tests)
+                    .Cast<TDept>()
+                    .ToListAsync(),
+            Type t when t == typeof(MedicalLab) =>
+                await _context.MedicalLabs
+                    .Where(c => c.HospitalId == hospitalId)
+                    .Include(c => c.Tests)
+                    .Include(t => t.CurrentWorkingTester)
+                    .Cast<TDept>()
+                    .ToListAsync(),
+            _ => Result.Fail(new Error(""))
+        };
     }
 }
