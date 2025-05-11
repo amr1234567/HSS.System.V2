@@ -7,8 +7,6 @@ using HSS.System.V2.Domain.Models.People;
 using Microsoft.EntityFrameworkCore;
 
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
@@ -20,12 +18,20 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             _context = context;
         }
+
         public async Task<Result<Patient?>> GetPatientById(string id, params Expression<Func<Patient, object>>[] includes)
         {
-            return await _context.Patients.AsNoTracking()
-                .Where(x => x.Id == id)
-                .Include(x => x.Tickets)
-                .FirstOrDefaultAsync();
+            var query = _context.Patients.AsNoTracking()
+                .Where(x => x.Id == id);
+            if (includes != null && includes.Length > 0)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+            var patient = await query.FirstOrDefaultAsync();
+            return patient;
         }
 
         public Task<Result<Patient>> GetPatientWithMedicalHistoryById(string id)

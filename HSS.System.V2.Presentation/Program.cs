@@ -49,6 +49,10 @@ builder.Services.AddSwaggerGen(option =>
             new string[] { }
         }
     });
+    string xmlPath2 = Path.Combine(Environment.CurrentDirectory, "HSS.xml");
+
+    option.IncludeXmlComments(xmlPath2);
+
 });
 builder.Services.AddContextDI(builder.Configuration);
 builder.Services.AddServiceLayerDI(builder.Configuration);

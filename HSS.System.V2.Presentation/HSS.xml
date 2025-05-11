@@ -1,0 +1,310 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HSS.System.V2.Presentation</name>
+    </assembly>
+    <members>
+        <member name="T:HSS.System.V2.Presentation.Controllers.Base.CustomBaseController">
+            <summary>
+            Base controller providing common response handling.
+            </summary>[
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.Base.CustomBaseController.GetResponse``1(FluentResults.Result{``0})">
+            <summary>
+            Generates an appropriate IActionResult based on the result.
+            </summary>
+            <typeparam name="T">The type of the result value.</typeparam>
+            <param name="result">The result object.</param>
+            <returns>An IActionResult representing the result.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.Base.CustomBaseController.GetResponseWithoutType(FluentResults.Result)">
+            <summary>
+            Generates an appropriate IActionResult based on the result.
+            </summary>
+            <param name="result">The result object.</param>
+            <returns>An IActionResult representing the result.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.Base.CustomBaseController.GenerateErrorResponse``1(FluentResults.ResultBase)">
+            <summary>
+            Generates an appropriate IActionResult based on the result.
+            </summary>
+            <param name="result">The result object.</param>
+            <returns>An IActionResult representing the result.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.NotificationCount">
+            <summary>
+            Get the count of notifications for the patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /notifications/count
+            </code>
+            </remarks>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetNotifications">
+            <summary>
+            Get all notifications for the patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /notifications
+            </code>
+            </remarks>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetNotificationData(System.String)">
+            <summary>
+            Get specific notification data by ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /notifications/{notificationId}
+            </code>
+            </remarks>
+            <param name="notificationId">The ID of the notification to retrieve</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.SeenNotification(System.String)">
+            <summary>
+            Mark a notification as seen.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            PUT /notifications/{notificationId}/seen
+            </code>
+            </remarks>
+            <param name="notificationId">The ID of the notification to mark as seen</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.SugerTest(HSS.System.V2.Services.DTOs.PatientDTOs.DiabetesTestModel)">
+            <summary>
+            Submit a sugar test result.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /sugar-test
+            </code>
+            </remarks>
+            <param name="model">The diabetes test model containing test results</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAppointmentDetails(System.String)">
+            <summary>
+            Get details of a specific appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /appointments/{appointmentId}
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment to retrieve</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllSpecifications(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllRadiologyTests(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllMedicalLabTests(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsBySpecificationId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByRadiologyTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByMedicalLabTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetActiveTicketsInHospital(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTicketsInHospital(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetClinics(System.String,System.String)">
+            <summary>
+            Get clinics in a hospital for a specific specialization.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/{hospitalId}/specializations/{specificationId}/clinics
+            </code>
+            </remarks>
+            <param name="hospitalId">The ID of the hospital</param>
+            <param name="specificationId">The ID of the specialization</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetRadiologyCenters(System.String,System.String)">
+            <summary>
+            Get radiology centers in a hospital for a specific test.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/{hospitalId}/radiology-tests/{testId}/centers
+            </code>
+            </remarks>
+            <param name="hospitalId">The ID of the hospital</param>
+            <param name="testId">The ID of the radiology test</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetMedicalLabs(System.String,System.String)">
+            <summary>
+            Get medical labs in a hospital for a specific test.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/{hospitalId}/medical-lab-tests/{testId}/labs
+            </code>
+            </remarks>
+            <param name="hospitalId">The ID of the hospital</param>
+            <param name="testId">The ID of the medical lab test</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateTicket(System.String)">
+            <summary>
+            Create a new ticket in a hospital.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /hospitals/{hospitalId}/tickets
+            </code>
+            </remarks>
+            <param name="hospitalId">The ID of the hospital</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateClinicAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateClinicAppointmentModel)">
+            <summary>
+            Create a new clinic appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /appointments/clinic
+            </code>
+            </remarks>
+            <param name="model">The clinic appointment creation model</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateRadiologyAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateRadiologyAppointmentModel)">
+            <summary>
+            Create a new radiology appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /appointments/radiology
+            </code>
+            </remarks>
+            <param name="model">The radiology appointment creation model</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateMedicalLabAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateMedicalLabAppointmentModel)">
+            <summary>
+            Create a new medical lab appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /appointments/medical-lab
+            </code>
+            </remarks>
+            <param name="model">The medical lab appointment creation model</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetMedicalLabTestsRequired">
+            <summary>
+            Get required medical lab tests.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /medical-lab-tests/required
+            </code>
+            </remarks>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetRadiologyTestsRequired">
+            <summary>
+            Get required radiology tests.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /radiology-tests/required
+            </code>
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllPrescriptionsRequired(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetMedicineByPrescriptionId(System.String)">
+            <summary>
+            Get medicines by prescription ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /prescriptions/{prescriptionId}/medicines
+            </code>
+            </remarks>
+            <param name="prescriptionId">The ID of the prescription</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentClinicAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentMedicalLabAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentRadiologyCenterAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.UploadProfilePicture(HSS.System.V2.Presentation.Controllers.UploadProfilePictureParam)">
+            <summary>
+            Upload a profile picture.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /profile/picture
+            </code>
+            </remarks>
+            <param name="param">The profile picture upload parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetPatientProfileInformation">
+            <summary>
+            Get patient profile information.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /profile
+            </code>
+            </remarks>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTicketsOfPatient">
+            <summary>
+            Get all active tickets of the patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /tickets/active
+            </code>
+            </remarks>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllInactiveTicketsOfPatient">
+            <summary>
+            Get all inactive tickets of the patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /tickets/inactive
+            </code>
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetTicketContent(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAppointmentContent(System.String)">
+            <summary>
+            Get appointment content.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /appointments/{appointmentId}/content
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllSpecificationsPaged(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CancelAppointment(System.String)">
+            <summary>
+            Cancel an appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            DELETE /appointments/{appointmentId}
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment to cancel</param>
+        </member>
+    </members>
+</doc>

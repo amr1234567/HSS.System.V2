@@ -634,7 +634,9 @@ namespace HSS.System.V2.Services.Seeding
 
         private static async Task SeedTestsAndSpecilizations(AppDbContext context)
         {
-            var radiologyTests = new List<Test>
+            if (!context.Tests.Any())
+            {
+                var radiologyTests = new List<Test>
             {
                 new RadiologyTest() {
                     Id = Guid.NewGuid().ToString(),
@@ -681,8 +683,13 @@ namespace HSS.System.V2.Services.Seeding
                     EstimatedDurationInMinutes = 10,
                 }
             };
-            await context.Tests.AddRangeAsync(radiologyTests);
-            await context.Specializations.AddRangeAsync(specializations);
+                await context.Tests.AddRangeAsync(radiologyTests);
+            }
+
+            if (!context.Specializations.Any())
+            {
+                await context.Specializations.AddRangeAsync(specializations);
+            }
             await context.SaveChangesAsync();
         }
 
