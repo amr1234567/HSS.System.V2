@@ -94,5 +94,19 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Result> DeleteMedicalPrescription(Prescription model)
+        {
+            try
+            {
+                context.Prescriptions.Remove(model);
+                await context.SaveChangesAsync();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return new UnKnownError(ex);
+            }
+        }
     }
 }

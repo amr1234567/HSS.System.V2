@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.Facilities;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace HSS.System.V2.DataAccess.Repositories
@@ -36,7 +37,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public async Task<Result> UpdateRadiologyTestAsync(Test model)
+        public async Task<Result> UpdateTestAsync(Test model)
         {
 
             try
@@ -51,7 +52,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public async Task<Result> DeleteRadiologyTestAsync(string id)
+        public async Task<Result> DeleteTestAsync(string id)
         {
             try
             {
@@ -92,14 +93,70 @@ namespace HSS.System.V2.DataAccess.Repositories
             return test is not null ? Result.Ok() : Result.Fail(new Error(""));
         }
 
-        public Task<Result<PagedResult<Test>>> GetAllTestsInHospitalAsync(string hospitalId, int size = 10, int page = 1)
+        public async Task<Result<PagedResult<TTest>>> GetAllTestsInHospitalAsync<TTest>(string hospitalId, int size = 10, int page = 1) where TTest : Test
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (typeof(TTest) == typeof(MedicalLabTest))
+                {
+                    return await _context.MedicalLabs.AsNoTracking()
+                       .Include(x => x.Hospital)
+                       .Where(x => x.HospitalId == hospitalId)
+                       .SelectMany(x => x.Tests)
+                       .Cast<TTest>()
+                       .GetPagedAsync(page, size);
+                }
+                else if (typeof(TTest) == typeof(RadiologyTest))
+                {
+                    return await _context.RadiologyCenters.AsNoTracking()
+                        .Include(x => x.Hospital)
+                        .Where(x => x.HospitalId == hospitalId)
+                        .SelectMany(x => x.Tests)
+                        .Cast<TTest>()
+                        .GetPagedAsync(page, size);
+                }
+                return Result.Fail("there are not tests");
+            }
+            catch (Exception ex)
+            {
+                return new UnKnownError(ex);
+            }
         }
 
-        public Task<Result<IEnumerable<Hospital>>> GetAllHospitalsDoTest<TTest>(string testId) where TTest : Test
+        public async Task<Result<IEnumerable<Hospital>>> GetAllHospitalsDoTest<TTest>(string testId) where TTest : Test
         {
-            throw new NotImplementedException();
+            try
+            {
+                var hospitals = Enumerable.Empty<Hospital>();
+                if (typeof(TTest) == typeof(MedicalLabTest))
+                {
+                    hospitals = await _context.MedicalLabTests
+                    .AsNoTracking()
+                    .Include(t => t.MedicalLabs)
+                        .ThenInclude(m => m.Hospital)
+                    .Where(x => x.Id == testId)
+                    .SelectMany(t => t.MedicalLabs.Select(m => m.Hospital))
+                    .Distinct()
+                    .ToListAsync();
+                }
+                else if (typeof(TTest) == typeof(RadiologyTest))
+                {
+                    hospitals = await _context.RadiologyTests
+                    .AsNoTracking()
+                    .Include(t => t.RadiologyCenters)
+                        .ThenInclude(m => m.Hospital)
+                    .Where(x => x.Id == testId)
+                    .SelectMany(t => t.RadiologyCenters.Select(m => m.Hospital))
+                    .Distinct()
+                    .ToListAsync();
+                }
+
+                return hospitals is null || !hospitals.Any() ? Result.Fail("there are not Hospitals") : Result.Ok(hospitals);
+            }
+            catch (Exception ex)
+            {
+                return new UnKnownError(ex);
+            }
         }
     }
 }

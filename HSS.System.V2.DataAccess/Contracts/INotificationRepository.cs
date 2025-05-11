@@ -12,6 +12,7 @@ namespace HSS.System.V2.DataAccess.Contracts
 {
     public interface INotificationRepository
     {
+        Task<Result> CreateNotification(AppNotification model);
         Task<Result<IEnumerable<AppNotification>>> GetAllNotificationsForUser(string userId);
         Task<Result<IEnumerable<AppNotification>>> GetAllNotificationsForUser(string userId, bool isSeen);
 
