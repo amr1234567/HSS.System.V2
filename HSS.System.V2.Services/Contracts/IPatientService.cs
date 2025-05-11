@@ -69,6 +69,7 @@ namespace HSS.System.V2.Services.Contracts
         Task<Result<PagedResult<AppointmentView>>> GetTicketContent(string ticketId, PaginationRequest pagination);
         Task<Result<object>> GetAppointmentContent(string appointmentId);
         Task<Result> CancelAppointment(string appointmentId);
+        Task<Result<List<SpecialzationDto>>> GetAllSpecialzations();
         #endregion
     }
 } 

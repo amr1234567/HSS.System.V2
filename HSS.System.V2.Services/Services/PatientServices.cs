@@ -290,9 +290,15 @@ namespace HSS.System.V2.Services.Services
             });
         }
 
-        public async Task<Result<List<SpecialzationDto>>> GetAllSpecifications()
+        public async Task<Result<List<SpecialzationDto>>> GetAllSpecialzations()
         {
-            throw new NotImplementedException();
+            return await _specializationReporitory.GetAllAsync()
+                .MapAsync(data => data.Select(s => new SpecialzationDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Icon = s.Icon
+                }).ToList());
         }
 
         public async Task<Result<PagedResult<RadiologyTestDto>>> GetAllRadiologyTest(PaginationRequest pagination)
@@ -327,6 +333,7 @@ namespace HSS.System.V2.Services.Services
                 return Result.Fail(hospitalsResult.Errors);
 
             return hospitalsResult.Value
+                .DistinctBy(h => h.Id)
                 .OrderBy(h => DistanceHelper.GetDistance(patient.Lat, patient.Lng, h.Lat, h.Lng))
                 .Select(h => new HospitalDto
                 {
@@ -347,6 +354,7 @@ namespace HSS.System.V2.Services.Services
             if (hospitalsResult.IsFailed)
                 return Result.Fail(hospitalsResult.Errors);
             return hospitalsResult.Value
+                .DistinctBy(h => h.Id)
                 .OrderBy(h => DistanceHelper.GetDistance(patient.Lat, patient.Lng, h.Lat, h.Lng))
                 .Select(h => new HospitalDto
                 {
@@ -865,6 +873,7 @@ namespace HSS.System.V2.Services.Services
                 {
                     Id = s.Id,
                     Name = s.Name,
+                    Icon = s.Icon
                 }).GetPaged(pagination);
         }
 
