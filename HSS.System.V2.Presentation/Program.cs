@@ -14,6 +14,7 @@ using System.Text;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.Services;
 using Microsoft.OpenApi.Models;
+using HSS.System.V2.Services.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +104,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+using (var scope = app.Services.CreateScope())
+{
+    using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+    {
+        await dbContext.Database.MigrateAsync();
+        await SeedingData.SeedAsync(dbContext);
+    }
+}
 
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();

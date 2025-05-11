@@ -16,7 +16,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(optionsBuilder =>
         {
-            var connectionString = configuration.GetConnectionString("default-amr");
+            var connectionString = configuration.GetConnectionString("default");
             optionsBuilder.UseSqlServer(connectionString);
         });
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
