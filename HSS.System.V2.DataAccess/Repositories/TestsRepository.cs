@@ -71,7 +71,7 @@ namespace HSS.System.V2.DataAccess.Repositories
 
         public async Task<Result<PagedResult<T>>> GetAllTestsAsync<T>(PaginationRequest pagination) where T : Test
         {
-            return await _context.Set<T>().AsNoTracking().GetPagedAsync(pagination);
+            return await _context.Set<T>().AsNoTracking().Distinct().GetPagedAsync(pagination);
         }
 
         public async Task<Result<Test>> GetTestByIdAsync(string id)
