@@ -144,9 +144,10 @@ namespace HSS.System.V2.DataAccess.Repositories
             return tests;
         }
 
-        public Task<Result<IEnumerable<TestRequired>>> GetAllTestsRequiredAvailableForUser(string userId)
+        public async Task<Result<IEnumerable<TestRequired>>> GetAllTestsRequiredAvailableForUser(string userId)
         {
-            throw new NotImplementedException();
+            return await _context.TestsRequired.AsNoTracking()
+                .Where(x => x.PatientNationalId == userId || x.Used == false).ToListAsync();
         }
     }
 }

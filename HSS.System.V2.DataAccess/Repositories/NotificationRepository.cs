@@ -49,5 +49,12 @@ namespace HSS.System.V2.DataAccess.Repositories
             return await _context.Notifications
                 .FirstOrDefaultAsync(n => n.Id == notificationId);
         }
+
+        public async Task<Result> CreateNotification(AppNotification model)
+        {
+            await _context.Notifications.AddAsync(model);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
     }
 }

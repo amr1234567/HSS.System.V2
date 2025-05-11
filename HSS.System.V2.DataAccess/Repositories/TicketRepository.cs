@@ -9,6 +9,7 @@ using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.Xml;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
@@ -119,9 +120,11 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .GetPagedAsync(page, size);
         }
 
-        public Task<Result<PagedResult<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId, int size = 10, int page = 1)
+        public async Task<Result<PagedResult<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId, int size = 10, int page = 1)
         {
-            throw new NotImplementedException();
+            return await _context.Tickets.AsNoTracking()
+                .Where(x => x.HospitalId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
+                .GetPagedAsync(page, size);
         }
 
         public async Task<Result> DeleteTicket(string ticketId)
@@ -162,14 +165,24 @@ namespace HSS.System.V2.DataAccess.Repositories
                 Result.Fail(new Error(""));
         }
 
-        public Task<Result<IEnumerable<Ticket>>> GetAllTicketForPatient(string patientId)
+        public async Task<Result<IEnumerable<Ticket>>> GetAllTicketForPatient(string patientId)
         {
-            throw new NotImplementedException();
+            IEnumerable<Ticket> tickets = await _context.Tickets.AsNoTracking()
+                .Where(x => x.PatientId == patientId)
+                .ToListAsync();
+            return tickets is null || !tickets.Any() 
+                ? Result.Fail("there are not ticket") 
+                : Result.Ok(tickets);
         }
 
-        public Task<Result<IEnumerable<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId)
+        public async Task<Result<IEnumerable<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId)
         {
-            throw new NotImplementedException();
+            IEnumerable<Ticket> tickets = await _context.Tickets.AsNoTracking()
+                .Where(x => x.HospitalId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
+                .ToListAsync();
+            return tickets is null || !tickets.Any() 
+                ? Result.Fail("there are not openen ticket in this hospital")
+                : Result.Ok(tickets);
         }
     }
 }
