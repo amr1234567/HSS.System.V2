@@ -59,9 +59,11 @@ namespace HSS.System.V2.DataAccess.Repositories
             return Result.Ok(patient);
         }
 
-        public Task<Result> UpdatePatientDetails(Patient patient)
+        public async Task<Result> UpdatePatientPicture(string userId, string imagePath)
         {
-            throw new NotImplementedException();
+            var user = await _context.Patients.FindAsync(userId);
+            user!.UrlOfProfilePicutre = imagePath;
+            return Result.Ok();
         }
 
         public Task<Result> CreateMedicalHistoryRecordFromEndedTicket(string ticketId)

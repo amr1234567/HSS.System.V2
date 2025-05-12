@@ -394,7 +394,7 @@ namespace HSS.System.V2.Services.Services
             {
                 Id = t.Id,
                 TicketState = t.State.ToString(),
-                AppointmentCount = t.Appointments.Count,
+                AppointmentCount = t.Appointments != null ? t.Appointments.Count : 0,
                 CreatedAt = t.CreatedAt
             }).ToList();
             var result = new PagedResult<TicketViewDto>(tickets, ticketsResult.Value.TotalCount, ticketsResult.Value.CurrentPage, ticketsResult.Value.PageSize);
@@ -673,9 +673,7 @@ namespace HSS.System.V2.Services.Services
                 if (!string.IsNullOrEmpty(user.UrlOfProfilePicutre) && File.Exists(user.UrlOfProfilePicutre))
                     File.Delete(user.UrlOfProfilePicutre);
 
-                user.UrlOfProfilePicutre = imagePath.Value;
-
-                return await _patientRepository.UpdatePatientDetails(user);
+                return await _patientRepository.UpdatePatientPicture(_userContext.ApiUserId, imagePath.Value);
             }
             catch (Exception ex)
             {

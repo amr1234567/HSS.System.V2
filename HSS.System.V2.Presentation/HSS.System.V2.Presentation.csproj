@@ -28,4 +28,8 @@
     <ProjectReference Include="..\HSS.System.V2.Services\HSS.System.V2.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\ProfilePicturesPictures\" />
+  </ItemGroup>
+
 </Project>

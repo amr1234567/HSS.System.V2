@@ -109,14 +109,14 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-using (var scope = app.Services.CreateScope())
-{
-    using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
-    {
-        await dbContext.Database.MigrateAsync();
-        await SeedingData.SeedAsync(dbContext);
-    }
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+//    {
+//        await dbContext.Database.MigrateAsync();
+//        await SeedingData.SeedAsync(dbContext);
+//    }
+//}
 
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();

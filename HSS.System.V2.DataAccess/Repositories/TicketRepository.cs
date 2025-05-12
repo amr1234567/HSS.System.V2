@@ -124,6 +124,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             return await _context.Tickets.AsNoTracking()
                 .Where(x => x.HospitalId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
+                .OrderBy(x=>x.CreatedAt)
                 .GetPagedAsync(page, size);
         }
 

@@ -136,6 +136,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                         .ThenInclude(m => m.Hospital)
                     .Where(x => x.Id == testId)
                     .SelectMany(t => t.MedicalLabs.Select(m => m.Hospital))
+                    .Distinct()
                     .ToListAsync();
                 }
                 else if (typeof(TTest) == typeof(RadiologyTest))
@@ -146,6 +147,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                         .ThenInclude(m => m.Hospital)
                     .Where(x => x.Id == testId)
                     .SelectMany(t => t.RadiologyCenters.Select(m => m.Hospital))
+                    .Distinct()
                     .ToListAsync();
                 }
 
