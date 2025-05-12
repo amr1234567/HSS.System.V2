@@ -63,6 +63,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             var user = await _context.Patients.FindAsync(userId);
             user!.UrlOfProfilePicutre = imagePath;
+            await _context.SaveChangesAsync();
             return Result.Ok();
         }
 
