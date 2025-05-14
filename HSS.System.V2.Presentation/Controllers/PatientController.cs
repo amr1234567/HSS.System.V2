@@ -14,7 +14,6 @@ namespace HSS.System.V2.Presentation.Controllers
 {
     [Authorize]
     [ApiExplorerSettings(GroupName = "PatientAPI")]
-    [Route(ApiRoutes.Patient.Base)]
     public class PatientController : CustomBaseController
     {
         private readonly IPatientService _patientService;

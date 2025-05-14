@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class ReceptionController : CustomBaseController
     {
         private readonly IReceptionServices _receptionServices;

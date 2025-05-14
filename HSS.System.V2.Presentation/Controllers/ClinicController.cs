@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class ClinicController : CustomBaseController
     {
         private readonly IClinicServices _clinicServices;

@@ -11,8 +11,6 @@ using System.Security.Claims;
 namespace HSS.System.V2.Presentation.Controllers
 {
     [ApiExplorerSettings(GroupName = "PatientAPI")]
-    [Route("api/[controller]")]
-    [ApiController]
     public class AuthPatientController : CustomBaseController
     {
         private readonly IAuthService _authServiceRepo;

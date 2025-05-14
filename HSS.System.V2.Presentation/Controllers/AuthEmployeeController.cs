@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace HSS.System.V2.Presentation.Controllers
 {
     [ApiExplorerSettings(GroupName = "EmployeeAuthAPI")]
-    [Route("api/[controller]")]
-    [ApiController]
     public class AuthEmployeeController : CustomBaseController
     {
         private readonly IAuthService _authServiceRepo;
