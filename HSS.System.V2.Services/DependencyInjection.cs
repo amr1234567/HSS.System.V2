@@ -17,6 +17,8 @@ namespace HSS.System.V2.Services
             services.AddScoped<TokenService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPatientService, PatientServices>();
+            services.AddScoped<IClinicServices, ClinicServices>();
+            services.AddScoped<IReceptionServices, ReceptionServices>();
 
             return services;
         }
