@@ -13,5 +13,6 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<IEnumerable<TestRequired>>> GetDoneTestsRequiredInTicket(string ticketId);
         Task<Result<IEnumerable<TestRequired>>> GetAllTestsRequiredAvailableInTicket(string ticketId);
         Task<Result<IEnumerable<TestRequired>>> GetAllTestsRequiredAvailableForUser(string userId);
+        Task<Result<TestRequired?>> GetTestRequiredByIdAsync(string? textRequiredId);
     }
 }

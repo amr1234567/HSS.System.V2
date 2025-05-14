@@ -78,6 +78,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                     .AsNoTracking()
                     .Where(t => t.Id == ticketId)
                     .Include(t => t.FirstClinicAppointment)
+                        .ThenInclude(t => t.ReExamiationClinicAppointemnt)
                     .Include(t => t.Appointments)
                     .FirstOrDefaultAsync();
                 return ticket is null ? EntityNotExistsError.Happen<Ticket>(ticketId) : ticket;
@@ -123,7 +124,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         public async Task<Result<PagedResult<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId, int size = 10, int page = 1)
         {
             return await _context.Tickets.AsNoTracking()
-                .Where(x => x.HospitalId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
+                .Where(x => x.HospitalCreatedInId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
                 .OrderBy(x=>x.CreatedAt)
                 .GetPagedAsync(page, size);
         }
@@ -139,7 +140,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             return Result.Ok();
         }
 
-        public async Task<Result> IsTicketHasReExaminationNow(string ticketId)
+        public async Task<Result<bool>> IsTicketHasReExaminationNow(string ticketId)
         {
             var ticket = await _context.Tickets
                     .AsNoTracking()
@@ -160,10 +161,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             {
                 clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
             }
-            var result = clinicAppointment.ReExaminationNeeded;
-            return result ?
-                Result.Ok() :
-                Result.Fail(new Error(""));
+            return clinicAppointment.ReExaminationNeeded;
         }
 
         public async Task<Result<IEnumerable<Ticket>>> GetAllTicketForPatient(string patientId)
@@ -179,7 +177,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         public async Task<Result<IEnumerable<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId)
         {
             IEnumerable<Ticket> tickets = await _context.Tickets.AsNoTracking()
-                .Where(x => x.HospitalId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
+                .Where(x => x.HospitalCreatedInId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
                 .ToListAsync();
             return tickets is null || !tickets.Any() 
                 ? Result.Fail("there are not openen ticket in this hospital")

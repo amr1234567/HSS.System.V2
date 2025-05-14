@@ -1,29 +1,26 @@
 using HSS.System.V2.Domain.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
-using HSS.System.V2.Domain.Models.People;
-using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Appointments;
+using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Facilities;
+using HSS.System.V2.Domain.Models.People;
 
-namespace HSS.System.V2.Domain.Models.Prescriptions;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Ticket : BaseClass
+namespace HSS.System.V2.Domain.Models.Medical;
+
+public class MedicalHistory : BaseClass
 {
+    public string PatientId { get; set; }
+    public virtual Patient Patient { get; set; }
     public string PatientNationalId { get; set; }
     public string PatientName { get; set; }
     public TicketState State { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ClosedAt { get; set; }
     public string? FirstClinicAppointmentId { get; set; }
+    [ForeignKey(nameof(FirstClinicAppointmentId))]
     public virtual ClinicAppointment FirstClinicAppointment { get; set; }
-    public string PatientId { get; set; }
-    [ForeignKey(nameof(PatientId))]
-    public virtual Patient Patient { get; set; }
 
-    [ForeignKey(nameof(HospitalCreatedInId))]
-    public virtual Hospital HospitalCreatedIn { get; set; }
-    public string HospitalCreatedInId { get; set; }
-
-    [InverseProperty(nameof(Appointment.Ticket))]
+    [InverseProperty(nameof(Appointment.MedicalHistory))]
     public virtual ICollection<Appointment> Appointments { get; set; }
-} 
+}

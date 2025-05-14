@@ -62,6 +62,7 @@ namespace HSS.System.V2.DataAccess.Contexts
         public DbSet<TestRequired> TestsRequired { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
+        public DbSet<MedicalHistory> MedicalHistories { get; set; }
         public DbSet<MedicinePharmacy> MedicinePharmacies { get; set; }
 
 
@@ -101,6 +102,12 @@ namespace HSS.System.V2.DataAccess.Contexts
                 .HasOne(c => c.FirstClinicAppointment)
                 .WithOne()
                 .HasForeignKey<Ticket>(c => c.FirstClinicAppointmentId)
+                .IsRequired(false);
+
+            modelBuilder.Entity<MedicalHistory>()
+                .HasOne(c => c.FirstClinicAppointment)
+                .WithOne()
+                .HasForeignKey<MedicalHistory>(c => c.FirstClinicAppointmentId)
                 .IsRequired(false);
         }
     }

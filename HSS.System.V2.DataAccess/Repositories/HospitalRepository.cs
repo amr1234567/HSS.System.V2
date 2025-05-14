@@ -206,4 +206,44 @@ public class HospitalRepository : IHospitalRepository
             _ => Result.Fail(new Error(""))
         };
     }
+
+    public async Task<Result<TDept?>> GetHospitalDepartmentItem<TDept>(string departmentId) where TDept : BaseClass, IHospitalDepartmentItem
+    {
+        return typeof(TDept) switch
+        {
+            Type t when t == typeof(Clinic) =>
+                await _context.Clinics
+                    .Where(c => c.Id == departmentId)
+                    .Include(c => c.CurrentWorkingDoctor)
+                    .Include(c => c.Queue)
+                    .Cast<TDept>()
+                    .FirstOrDefaultAsync(),
+            Type t when t == typeof(Reception) =>
+                await _context.Receptions
+                    .Where(c => c.Id == departmentId)
+                    .Include(c => c.Receptionists)
+                    .Cast<TDept>()
+                    .FirstOrDefaultAsync(),
+            Type t when t == typeof(Pharmacy) =>
+                await _context.Pharmacies
+                    .Where(c => c.Id == departmentId)
+                    .Cast<TDept>()
+                    .FirstOrDefaultAsync(),
+            Type t when t == typeof(RadiologyCenter) =>
+                await _context.RadiologyCenters
+                    .Where(c => c.Id == departmentId)
+                    .Include(t => t.CurrentWorkingTester)
+                    .Include(c => c.Tests)
+                    .Cast<TDept>()
+                    .FirstOrDefaultAsync(),
+            Type t when t == typeof(MedicalLab) =>
+                await _context.MedicalLabs
+                    .Where(c => c.Id == departmentId)
+                    .Include(c => c.Tests)
+                    .Include(t => t.CurrentWorkingTester)
+                    .Cast<TDept>()
+                    .FirstOrDefaultAsync(),
+            _ => Result.Fail(new Error(""))
+        };
+    }
 }

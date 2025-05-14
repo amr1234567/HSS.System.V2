@@ -18,6 +18,6 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<PagedResult<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId, int size = 10, int page = 1);
         Task<Result<IEnumerable<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId);
         Task<Result> DeleteTicket(string ticketId);
-        Task<Result> IsTicketHasReExaminationNow(string ticketId);
+        Task<Result<bool>> IsTicketHasReExaminationNow(string ticketId);
     }
 }

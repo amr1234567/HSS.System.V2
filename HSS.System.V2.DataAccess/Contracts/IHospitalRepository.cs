@@ -19,6 +19,7 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<Hospital>> GetHospitalByName(string hospitalName);
         Task<Result<HospitalDepartments>> GetAllHospitalDepartments(string hospitalId);
         Task<Result<PagedResult<TDept>>> GetHospitalDepartmentItems<TDept>(string hospitalId, PaginationRequest pagination) where TDept : class, IHospitalDepartmentItem;
+        Task<Result<TDept?>> GetHospitalDepartmentItem<TDept>(string departmentId) where TDept : BaseClass, IHospitalDepartmentItem;
         Task<Result<IEnumerable<TDept>>> GetHospitalDepartmentItems<TDept>(string hospitalId) where TDept : class, IHospitalDepartmentItem;
         Task<Result<PagedResult<Hospital>>> GetNearByHospitals(double lat, double lng, int size = 10, int page = 1);
         Task<Result<IEnumerable<Hospital>>> GetHospitalsBySpecificationId(string specializationId);

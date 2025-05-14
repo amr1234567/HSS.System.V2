@@ -149,5 +149,15 @@ namespace HSS.System.V2.DataAccess.Repositories
             return await _context.TestsRequired.AsNoTracking()
                 .Where(x => x.PatientNationalId == userId || x.Used == false).ToListAsync();
         }
+
+        public async Task<Result<TestRequired?>> GetTestRequiredByIdAsync(string? testRequiredId)
+        {
+            return await _context.TestsRequired.AsNoTracking()
+                .Where(t => t.Id == testRequiredId)
+                .Include(t => t.Test)
+                .Include(t => t.ClinicAppointment)
+                    .ThenInclude(t => t.Ticket)
+                .FirstOrDefaultAsync();
+        }
     }
 }

@@ -453,11 +453,9 @@ namespace HSS.System.V2.Services.Services
             {
                 Id = Guid.NewGuid().ToString(),
                 PatientId = patient.Id,
-                //Patient = patient,
                 PatientNationalId = patient.NationalId,
                 PatientName = patient.Name,
-                HospitalId = hospital.Id,
-                //Hospital = hospital,
+                HospitalCreatedInId = hospital.Id,
                 State = TicketState.Active,
                 CreatedAt = DateTime.UtcNow,
             };
@@ -466,40 +464,122 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result> CreateClinicAppointment(CreateClinicAppointmentModel model)
         {
-            //if (model.ExpectedTimeForStart < DateTime.UtcNow)
-            //    return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
-            //if (model.IsReExamination)
-            //{
-            //    var result = await _appointmentRepository.UpdateAppointmentAsync<ClinicAppointment>(
-            //        a => a.TicketId == model.TicketId && a.ReExaminationNeeded,
-            //        a => a.ReExaminationNeeded = false);
+            if (model.ExpectedTimeForStart < DateTime.UtcNow)
+                return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
+            var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
+            if(patient.IsFailed)
+                return Result.Fail(patient.Errors);
+            var hospital = await _hospitalRepository.GetHospitalById(model.HospitalId);
+            if (hospital.IsFailed)
+                return Result.Fail(hospital.Errors);
+            var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId);
+            if(clinic.IsFailed)
+                return Result.Fail(clinic.Errors);
+            var ticket = await _ticketRepository.GetTicketById(model.TicketId);
+            if(ticket.IsFailed)
+                return Result.Fail(ticket.Errors);
+            var clinicAppointment = ticket.Value.FirstClinicAppointment;
+            var entity = model.ToModel();
+            var check = await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId);
+            if (check.Value)
+            {
+              
+                while (clinicAppointment.ReExamiationClinicAppointemnt is not null)
+                {
+                    clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
+                }
+                clinicAppointment.ReExamiationClinicAppointemntId = entity.Id;
+                entity.PreExamiationClinicAppointemntId = clinicAppointment.Id;
+            }
+            else
+            {
+                ticket.Value.FirstClinicAppointment = entity;
+            }
 
-            //    if (result.IsFailed)
-            //        return Result.Fail(result.Errors);
-            //}
-            //return await _hospitalDepartmentRepository.GetHospitalDepartmentById<Clinic>(model.ClinicId)
-            //    .EnsureNoneAsync(
-            //        (d => model.ExpectedTimeForStart >= model.ExpectedTimeForStart.Date.Add(d.EndAt ?? TimeSpan.MinValue), new BadRequestError("لا يمكن بدأ الموعد بعد موعد انتهاء القسم")),
-            //        (d => model.ExpectedTimeForStart < model.ExpectedTimeForStart.Date.Add(d.StartAt), new BadRequestError("لا يمكن بدأ الموعد قبل موعد بدأ القسم")))
-            //    .OnSuccessAsync(c =>
-            //    {
-            //        model.ExpectedPeriodPerApp = c.PeriodPerAppointment;
-            //    })
-            //    .ThenAsync(_ => CreateAppointment(
-            //        model,
-            //        m => m.ClinicId,
-            //        m => m.ToModel()));
-            throw new Exception();
+            entity.ClinicId = clinic.Value!.Id;
+            entity.HospitalName = hospital.Value.Name;
+            entity.PatientNationalId = patient.Value.NationalId;
+
+            return await _appointmentRepository.CreateAppointmentAsync(entity)
+                .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
         }
 
-        public Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModel model)
+        public async Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModel model)
         {
-            throw new NotImplementedException();
+            if (model.ExpectedTimeForStart < DateTime.UtcNow)
+                return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
+            var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
+            if (patient.IsFailed)
+                return Result.Fail(patient.Errors);
+            var hospital = await _hospitalRepository.GetHospitalById(model.HospitalId);
+            if (hospital.IsFailed)
+                return Result.Fail(hospital.Errors);
+            var radiologyCenter = await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(model.RadiologyCenterId);
+            if (radiologyCenter.IsFailed)
+                return Result.Fail(radiologyCenter.Errors);
+            var entity = model.ToModel();
+            var ticket = await _ticketRepository.GetTicketById(model.TicketId);
+            if (ticket.IsFailed)
+            {
+                var testRequired = await _testRequiredRepository.GetTestRequiredByIdAsync(model.TextRequiredId);
+                if (!testRequired.IsFailed && testRequired.Value is not null)
+                {
+                    entity.ClinicAppointmentId = testRequired.Value.ClinicAppointmentId;
+                    testRequired.Value.Used = true;
+                    await _testRequiredRepository.UpdateTestRequiredAsync(testRequired.Value);
+                }
+                else
+                {
+                    return new BadRequestError("you must provide ticket id or test required id");
+                }
+            }
+            entity.TicketId = ticket.Value.Id;
+            entity.ClinicAppointmentId = null;
+            entity.RadiologyCeneterId = radiologyCenter.Value!.Id;
+            entity.HospitalName = hospital.Value.Name;
+            entity.PatientNationalId = patient.Value.NationalId;
+
+            return await _appointmentRepository.CreateAppointmentAsync(entity)
+                .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
         }
 
-        public Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModel model)
+        public async Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModel model)
         {
-            throw new NotImplementedException();
+            if (model.ExpectedTimeForStart < DateTime.UtcNow)
+                return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
+            var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
+            if (patient.IsFailed)
+                return Result.Fail(patient.Errors);
+            var hospital = await _hospitalRepository.GetHospitalById(model.HospitalId);
+            if (hospital.IsFailed)
+                return Result.Fail(hospital.Errors);
+            var medicalLab = await _hospitalRepository.GetHospitalDepartmentItem<MedicalLab>(model.MedicalLabId);
+            if (medicalLab.IsFailed)
+                return Result.Fail(medicalLab.Errors);
+            var entity = model.ToModel();
+            var ticket = await _ticketRepository.GetTicketById(model.TicketId);
+            if (ticket.IsFailed)
+            {
+                var testRequired = await _testRequiredRepository.GetTestRequiredByIdAsync(model.TextRequiredId);
+                if (!testRequired.IsFailed && testRequired.Value is not null)
+                {
+                    entity.ClinicAppointmentId = testRequired.Value.ClinicAppointmentId;
+                    testRequired.Value.Used = true;
+                    await _testRequiredRepository.UpdateTestRequiredAsync(testRequired.Value);
+                }
+                else
+                {
+                    return new BadRequestError("you must provide ticket id or test required id");
+                }
+            }
+            entity.TicketId = ticket.Value.Id;
+            entity.ClinicAppointmentId = null;
+            entity.MedicalLabId = medicalLab.Value!.Id;
+            entity.HospitalName = hospital.Value.Name;
+            entity.PatientNationalId = patient.Value.NationalId;
+
+            return await _appointmentRepository.CreateAppointmentAsync(entity)
+                .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
         }
 
         public async Task<Result<List<TestRquired>>> GetMedicalLabTestRequired()
@@ -594,6 +674,7 @@ namespace HSS.System.V2.Services.Services
             }
         }
 
+        /// <inheritdoc/>
         public async Task<Result<PagedResult<AppointmentView>>> GetCurrentMedicalLabAppointments(PaginationRequest pagination)
         {
             try
