@@ -109,6 +109,31 @@ namespace HSS.System.V2.DataAccess.Contexts
                 .WithOne()
                 .HasForeignKey<MedicalHistory>(c => c.FirstClinicAppointmentId)
                 .IsRequired(false);
+
+            //#region Global Includes 
+            //modelBuilder.Entity<ClinicAppointment>()
+            //    .Navigation(c => c.Clinic)
+            //    .AutoInclude();
+            //modelBuilder.Entity<ClinicAppointment>()
+            //    .Navigation(c => c.Doctor)
+            //    .AutoInclude();
+
+
+            //modelBuilder.Entity<MedicalLabAppointment>()
+            //    .Navigation(c => c.MedicalLab)
+            //    .AutoInclude();
+            //modelBuilder.Entity<MedicalLabAppointment>()
+            //    .Navigation(c => c.Tester)
+            //    .AutoInclude();
+
+            //modelBuilder.Entity<RadiologyCeneterAppointment>()
+            //    .Navigation(c => c.RadiologyCeneter)
+            //    .AutoInclude();
+            //modelBuilder.Entity<RadiologyCeneterAppointment>()
+            //    .Navigation(c => c.Tester)
+            //    .AutoInclude();
+            //#endregion
+
         }
     }
 }

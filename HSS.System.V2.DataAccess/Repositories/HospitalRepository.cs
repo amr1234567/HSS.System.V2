@@ -216,12 +216,14 @@ public class HospitalRepository : IHospitalRepository
                     .Where(c => c.Id == departmentId)
                     .Include(c => c.CurrentWorkingDoctor)
                     .Include(c => c.Queue)
+                    .Include(c => c.Hospital)
                     .Cast<TDept>()
                     .FirstOrDefaultAsync(),
             Type t when t == typeof(Reception) =>
                 await _context.Receptions
                     .Where(c => c.Id == departmentId)
                     .Include(c => c.Receptionists)
+                    .Include(c => c.Hospital)
                     .Cast<TDept>()
                     .FirstOrDefaultAsync(),
             Type t when t == typeof(Pharmacy) =>
@@ -234,6 +236,7 @@ public class HospitalRepository : IHospitalRepository
                     .Where(c => c.Id == departmentId)
                     .Include(t => t.CurrentWorkingTester)
                     .Include(c => c.Tests)
+                    .Include(c => c.Hospital)
                     .Cast<TDept>()
                     .FirstOrDefaultAsync(),
             Type t when t == typeof(MedicalLab) =>
@@ -241,6 +244,7 @@ public class HospitalRepository : IHospitalRepository
                     .Where(c => c.Id == departmentId)
                     .Include(c => c.Tests)
                     .Include(t => t.CurrentWorkingTester)
+                    .Include(c => c.Hospital)
                     .Cast<TDept>()
                     .FirstOrDefaultAsync(),
             _ => Result.Fail(new Error(""))

@@ -13,6 +13,7 @@ using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Models.Queues;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
@@ -310,9 +311,12 @@ namespace HSS.System.V2.DataAccess.Repositories
 
         public async Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId, AppointmentState state)
         {
-            return await _context.Appointments
-                .Where(a => a.PatientNationalId == apiUserId && a.State == state)
-                .AsNoTracking()
+            return await _context.Tickets.AsNoTracking()
+                .Where(t => t.PatientId == apiUserId)
+                .Include(t => t.Appointments)
+                .SelectMany(t => t.Appointments)
+                .Where(t => t.State == state)
+                .Include(a => a.Hospital)
                 .OrderByDescending(a => a.SchaudleStartAt)
                 .ToListAsync();
         }

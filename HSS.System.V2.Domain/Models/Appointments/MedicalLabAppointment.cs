@@ -6,10 +6,13 @@ using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Medical;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.Domain.Models.Appointments;
 
-public class MedicalLabAppointment : Appointment, IAppointmentModel<MedicalLabQueue>
+public class MedicalLabAppointment : Appointment, 
+    IAppointmentModel<MedicalLabQueue>
 {
     [AllowNull]
     public string Result { get; set; }
@@ -47,4 +50,15 @@ public class MedicalLabAppointment : Appointment, IAppointmentModel<MedicalLabQu
     public string EmployeeName => TesterName;
 
     public string DepartmentName => MedicalLabName;
+
+
+    public override Func<Appointment, object> GetIncludeDepartment()
+    {
+        return x => ((MedicalLabAppointment)x).MedicalLab;
+    }
+
+    public override Func<Appointment, object> GetIncludeEmployee()
+    {
+        return x => ((MedicalLabAppointment)x).Tester;
+    }
 } 

@@ -4,6 +4,8 @@ using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Medical;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.Domain.Models.Appointments;
 
@@ -42,4 +44,14 @@ public class RadiologyCeneterAppointment : Appointment, IAppointmentModel<Radiol
     public string EmployeeName => TesterName;
 
     public string DepartmentName => RadiologyCeneterName;
+
+    public override Func<Appointment, object> GetIncludeDepartment()
+    {
+        return x => ((RadiologyCeneterAppointment)x).RadiologyCeneter;
+    }
+
+    public override Func<Appointment, object> GetIncludeEmployee()
+    {
+        return x => ((RadiologyCeneterAppointment)x).Tester;
+    }
 } 

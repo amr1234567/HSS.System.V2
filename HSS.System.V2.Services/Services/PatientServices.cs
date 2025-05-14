@@ -251,7 +251,7 @@ namespace HSS.System.V2.Services.Services
                 var allTicketAppintments = appointments.Items.Select(a => new AppointmentView()
                 {
                     Id = a.Id,
-                    Name = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
+                    DepartmentName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
                     HospitalName = a.HospitalName,
                     EmployeeName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
                     StartAt = a.ActualStartAt ?? a.SchaudleStartAt,
@@ -469,9 +469,6 @@ namespace HSS.System.V2.Services.Services
             var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
             if(patient.IsFailed)
                 return Result.Fail(patient.Errors);
-            var hospital = await _hospitalRepository.GetHospitalById(model.HospitalId);
-            if (hospital.IsFailed)
-                return Result.Fail(hospital.Errors);
             var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId);
             if(clinic.IsFailed)
                 return Result.Fail(clinic.Errors);
@@ -480,10 +477,16 @@ namespace HSS.System.V2.Services.Services
                 return Result.Fail(ticket.Errors);
             var clinicAppointment = ticket.Value.FirstClinicAppointment;
             var entity = model.ToModel();
+            entity.ClinicId = clinic.Value!.Id;
+            entity.ClinicName = clinic.Value.Name;
+            entity.HospitalName = clinic.Value.Hospital.Name;
+            entity.HospitalId = clinic.Value.HospitalId;
+            entity.PatientNationalId = patient.Value.NationalId;
+            entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
+
             var check = await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId);
             if (check.Value)
             {
-              
                 while (clinicAppointment.ReExamiationClinicAppointemnt is not null)
                 {
                     clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
@@ -496,12 +499,8 @@ namespace HSS.System.V2.Services.Services
                 ticket.Value.FirstClinicAppointment = entity;
             }
 
-            entity.ClinicId = clinic.Value!.Id;
-            entity.HospitalName = hospital.Value.Name;
-            entity.PatientNationalId = patient.Value.NationalId;
 
-            return await _appointmentRepository.CreateAppointmentAsync(entity)
-                .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
+            return await _ticketRepository.UpdateTicket(ticket.Value);
         }
 
         public async Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModel model)
@@ -511,9 +510,6 @@ namespace HSS.System.V2.Services.Services
             var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
             if (patient.IsFailed)
                 return Result.Fail(patient.Errors);
-            var hospital = await _hospitalRepository.GetHospitalById(model.HospitalId);
-            if (hospital.IsFailed)
-                return Result.Fail(hospital.Errors);
             var radiologyCenter = await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(model.RadiologyCenterId);
             if (radiologyCenter.IsFailed)
                 return Result.Fail(radiologyCenter.Errors);
@@ -536,8 +532,11 @@ namespace HSS.System.V2.Services.Services
             entity.TicketId = ticket.Value.Id;
             entity.ClinicAppointmentId = null;
             entity.RadiologyCeneterId = radiologyCenter.Value!.Id;
-            entity.HospitalName = hospital.Value.Name;
+            entity.RadiologyCeneterName = radiologyCenter.Value!.Name;
+            entity.HospitalName = radiologyCenter.Value.Hospital.Name;
+            entity.HospitalId = radiologyCenter.Value.Hospital.Id;
             entity.PatientNationalId = patient.Value.NationalId;
+            entity.ExpectedDuration = radiologyCenter.Value.PeriodPerAppointment;
 
             return await _appointmentRepository.CreateAppointmentAsync(entity)
                 .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
@@ -550,9 +549,6 @@ namespace HSS.System.V2.Services.Services
             var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
             if (patient.IsFailed)
                 return Result.Fail(patient.Errors);
-            var hospital = await _hospitalRepository.GetHospitalById(model.HospitalId);
-            if (hospital.IsFailed)
-                return Result.Fail(hospital.Errors);
             var medicalLab = await _hospitalRepository.GetHospitalDepartmentItem<MedicalLab>(model.MedicalLabId);
             if (medicalLab.IsFailed)
                 return Result.Fail(medicalLab.Errors);
@@ -575,8 +571,11 @@ namespace HSS.System.V2.Services.Services
             entity.TicketId = ticket.Value.Id;
             entity.ClinicAppointmentId = null;
             entity.MedicalLabId = medicalLab.Value!.Id;
-            entity.HospitalName = hospital.Value.Name;
+            entity.MedicalLabName = medicalLab.Value.Name;
+            entity.HospitalName = medicalLab.Value.Hospital.Name;
+            entity.HospitalId = medicalLab.Value.HospitalId;
             entity.PatientNationalId = patient.Value.NationalId;
+            entity.ExpectedDuration = medicalLab.Value.PeriodPerAppointment;
 
             return await _appointmentRepository.CreateAppointmentAsync(entity)
                 .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
@@ -662,7 +661,7 @@ namespace HSS.System.V2.Services.Services
                     .Select(c => new AppointmentView
                     {
                         Id = c.Id,
-                        Name = ((IAppointmentModel<ClinicQueue>)c).DepartmentName,
+                        DepartmentName = ((IAppointmentModel<ClinicQueue>)c).DepartmentName,
                         HospitalName = c.Hospital.Name,
                         EmployeeName = ((IAppointmentModel<ClinicQueue>)c).EmployeeName,
                         StartAt = c.ActualStartAt ?? c.SchaudleStartAt,
@@ -688,7 +687,7 @@ namespace HSS.System.V2.Services.Services
                     .Select(c => new AppointmentView
                     {
                         Id = c.Id,
-                        Name = ((IAppointmentModel<MedicalLabQueue>)c).DepartmentName,
+                        DepartmentName = ((IAppointmentModel<MedicalLabQueue>)c).DepartmentName,
                         HospitalName = c.Hospital.Name,
                         EmployeeName = ((IAppointmentModel<MedicalLabQueue>)c).EmployeeName,
                         StartAt = c.ActualStartAt ?? c.SchaudleStartAt,
@@ -713,7 +712,7 @@ namespace HSS.System.V2.Services.Services
                     .Select(c => new AppointmentView
                     {
                         Id = c.Id,
-                        Name = ((IAppointmentModel<RadiologyCenterQueue>)c).DepartmentName,
+                        DepartmentName = ((IAppointmentModel<RadiologyCenterQueue>)c).DepartmentName,
                         HospitalName = c.Hospital.Name,
                         EmployeeName = ((IAppointmentModel<RadiologyCenterQueue>)c).EmployeeName,
                         StartAt = c.ActualStartAt ?? c.SchaudleStartAt,
@@ -856,7 +855,7 @@ namespace HSS.System.V2.Services.Services
                     .Select(a => new AppointmentView()
                     {
                         Id = a.Id,
-                        Name = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
+                        DepartmentName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
                         HospitalName = a.HospitalName,
                         EmployeeName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
                         StartAt = a.ActualStartAt ?? a.SchaudleStartAt,
@@ -882,8 +881,9 @@ namespace HSS.System.V2.Services.Services
 
                 if (appointment is ClinicAppointment)
                 {
-                    var clinicAppointment = await _context.ClinicAppointments.AsNoTracking()
-                        .Where(x => x.Id.Equals(appointment.Id))
+                    var clinicAppointment = await _context.Appointments.AsNoTracking()
+                        .OfType<ClinicAppointment>()
+                        .Where(x => x.Id == appointmentId)
                         .Include(c => c.TestsRequired)
                         .Include(c => c.Disease)
                         .Include(c => c.Prescription)
@@ -897,7 +897,8 @@ namespace HSS.System.V2.Services.Services
                             RadiologyTestsRequired = c.TestsRequired != null && c.TestsRequired.Any() ?
                             c.TestsRequired.Select(r => r.TestName).ToList() :
                             null,
-                            Prescriptions = c.Prescription != null ?  c.Prescription.Items.Select(m => m.MedicineName).ToList() : null,
+                            Prescriptions = c.Prescription != null ?
+                            c.Prescription.Items.Select(m => m.MedicineName).ToList() : null,
                             Disease = c.Disease!.Name
                         }).FirstOrDefaultAsync();
 

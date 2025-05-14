@@ -5,6 +5,8 @@ using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Medical;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.Domain.Models.Appointments;
 
@@ -50,4 +52,15 @@ public class ClinicAppointment : Appointment, IAppointmentModel<ClinicQueue>
 
 
     public string DepartmentName => ClinicName;
+
+    public override Func<Appointment, object> GetIncludeDepartment()
+    {
+        return x => ((ClinicAppointment)x).Clinic;
+    }
+
+    public override Func<Appointment, object> GetIncludeEmployee()
+    {
+        return x => ((ClinicAppointment)x).Doctor;
+    }
+
 } 

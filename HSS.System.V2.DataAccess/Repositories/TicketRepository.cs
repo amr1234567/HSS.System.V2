@@ -154,9 +154,7 @@ namespace HSS.System.V2.DataAccess.Repositories
 
             var clinicAppointment = ticket.FirstClinicAppointment;
             if (clinicAppointment is null)
-            {
-                return Result.Fail(new Error(""));
-            }
+                return false;
             while(clinicAppointment.ReExamiationClinicAppointemnt is not null)
             {
                 clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;

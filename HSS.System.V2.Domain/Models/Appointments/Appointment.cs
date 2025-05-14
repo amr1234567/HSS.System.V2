@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
 
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.Prescriptions;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.Domain.Models.Appointments;
 
@@ -28,4 +31,15 @@ public class Appointment : BaseClass
     [InverseProperty(nameof(MedicalHistory.Appointments))]
     [ForeignKey(nameof(MedicalHistoryId))]
     public virtual MedicalHistory MedicalHistory {  get; set; }
+
+
+    public virtual Func<Appointment, object> GetIncludeDepartment()
+    {
+        return x => Hospital;
+    }
+
+    public virtual Func<Appointment, object> GetIncludeEmployee()
+    {
+        return x => Hospital;
+    }
 } 

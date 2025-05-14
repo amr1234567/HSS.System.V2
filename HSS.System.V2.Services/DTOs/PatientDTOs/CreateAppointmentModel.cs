@@ -10,7 +10,6 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
     {
         [Required]
         public DateTime ExpectedTimeForStart { get; set; }
-        public string HospitalId { get; set; }
     }
 
     public record CreateClinicAppointmentModel : CreateAppointmentModel, IInputModel<ClinicAppointment>
@@ -27,7 +26,6 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
                 ClinicId = ClinicId,
                 Id = Guid.NewGuid().ToString(),
                 TicketId = TicketId,
-                HospitalId = HospitalId,
                 State = Domain.Enums.AppointmentState.NotStarted,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
@@ -52,7 +50,6 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
                 CreatedAt = DateTime.UtcNow,
                 Id = Guid.NewGuid().ToString(),
                 UpdatedAt = DateTime.UtcNow,
-                HospitalId = HospitalId,
                 State = Domain.Enums.AppointmentState.NotStarted,
                 RadiologyCeneterId = RadiologyCenterId
             };
@@ -75,7 +72,6 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
                 CreatedAt = DateTime.UtcNow,
                 Id = Guid.NewGuid().ToString(),
                 UpdatedAt = DateTime.UtcNow,
-                HospitalId = HospitalId,
                 State = Domain.Enums.AppointmentState.NotStarted,
                 MedicalLabId = MedicalLabId
             };
