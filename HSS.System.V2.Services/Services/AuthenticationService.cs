@@ -20,45 +20,79 @@ namespace HSS.System.V2.Services.Services
     public class AuthService : IAuthService
     {
         private readonly TokenService _tokenService;
+        private readonly IUserContext _userContext;
         private readonly AccountServiceHelper _accountServiceHelper;
         private readonly AppDbContext _context;
-        public AuthService(TokenService tokenService, AccountServiceHelper accountServiceHelper, AppDbContext context)
+        public AuthService(TokenService tokenService, IUserContext userContext, AccountServiceHelper accountServiceHelper, AppDbContext context)
         {
             _tokenService = tokenService;
+            _userContext = userContext;
             _accountServiceHelper = accountServiceHelper;
             _context = context;
         }
 
         public async Task<Result> RegisterPatient(PatientDto dto)
         {
-            var salt = _accountServiceHelper.CreateSalt();
-            var pass = _accountServiceHelper.HashPasswordWithSalt(salt, "@Aa123456789");
+            var check = await _context.Patients.FirstOrDefaultAsync(p => p.NationalId == dto.NationalId);
+            if (check is not null)
+                return new BadRequestError("this national id is already in the system");
             var patient = new Patient
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = dto.Name,
                 Address = dto.Address,
                 BirthOfDate = dto.DateOfBirth,
                 Gender = dto.Gender,
-                Id = Guid.NewGuid().ToString(),
-                HashPassword = pass,
                 PhoneNumber = dto.PhoneNumber,
                 Role = UserRole.Patient,
                 NationalId = dto.NationalId,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                Salt = salt,
-                Lat = 10,
-                Lng = 30,
             };
+
             await _context.Patients.AddAsync(patient);
             await _context.SaveChangesAsync();
             return Result.Ok();
         }
+
+        public async Task<Result<ConfirmPatientAccountDto>> ConfirmPatientAccount(string patientNationalId)
+        {
+            var salt = _accountServiceHelper.CreateSalt();
+            var pass = _accountServiceHelper.HashPasswordWithSalt(salt, "@Aa123456789");
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.NationalId == patientNationalId);
+            if (patient is null)
+                return new BadRequestError("no patient with this national id");
+            patient.Salt = salt;
+            patient.HashPassword = pass;
+            await _context.SaveChangesAsync();
+            var customClaims = new List<Claim>
+            {
+                new(CustomClaimTypes.NationalId, patient.NationalId),
+                new(ClaimTypes.NameIdentifier, patient.Id),
+                new(ClaimTypes.Name, patient.Name),
+                new(CustomClaimTypes.Gender, patient.Gender.ToString()),
+                new(ClaimTypes.MobilePhone, patient.PhoneNumber),
+                new(CustomClaimTypes.CustomRole, patient.Role.ToString()),
+                new(ClaimTypes.Role, patient.Role.ToString()),
+                new(CustomClaimTypes.Name, patient.Name)
+            };
+            var token = _tokenService.GenerateAccessToken(customClaims);
+            return new ConfirmPatientAccountDto()
+            {
+                NationalId = patientNationalId,
+                Password = "@Aa123456789",
+                Token = token
+            };
+        }
+
         public async Task<Result<TokenModel>> LoginPatient(LoginModelDto model)
         {
             var user = await _context.Patients.FirstOrDefaultAsync(x => x.NationalId == model.NationalId);
             if (user == null)
                 return EntityNotExistsError.Happen<Patient>(model.NationalId);
+
+            if (string.IsNullOrEmpty(user.HashPassword))
+                return new BadRequestError("patient must confirm his account first");
 
             var hashed = _accountServiceHelper.HashPasswordWithSalt(user.Salt, model.Password);
             if (hashed != user.HashPassword)
@@ -75,15 +109,7 @@ namespace HSS.System.V2.Services.Services
                 new(ClaimTypes.Role, user.Role.ToString()),
                 new(CustomClaimTypes.Name, user.Name)
             };
-
             var token = _tokenService.GenerateAccessToken(customClaims);
-            var refreshToken = _tokenService.GenerateRefreshToken();
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpirationDate = token.RefreshTokenExpirationTime;
-
-            _context.Patients.Update(user);
-
-            await _context.SaveChangesAsync();
             return token;
         }
 
@@ -126,11 +152,6 @@ namespace HSS.System.V2.Services.Services
 
             var token = _tokenService.GenerateAccessToken(customClaims);
 
-            user.RefreshToken = token.RefreshToken;
-            user.RefreshTokenExpirationDate = token.RefreshTokenExpirationTime;
-
-            _context.Employees.Update(user);
-
             await _context.LoginActivities.AddAsync(new()
             {
                 ActivityType = ActivityType.Login,
@@ -144,84 +165,18 @@ namespace HSS.System.V2.Services.Services
             return token;
         }
 
-        public async Task<Result<TokenModel>> RefreshTheTokenForPatient(string refreshToken, string accessToken)
-        {
-            var user = await _context.Patients.FirstOrDefaultAsync(p => p.RefreshToken == refreshToken);
-            if (user == null)
-                return EntityNotExistsError.Happen<Patient>();
-
-            if(user.RefreshTokenExpirationDate < DateTime.Now)
-                return new BadRequestError("Refresh Token Is Expired");
-            var principles = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-
-            var newToken = _tokenService.GenerateAccessToken(principles);
-            newToken.RefreshToken = refreshToken;
-            newToken.RefreshTokenExpirationTime = user.RefreshTokenExpirationDate ?? DateTime.MinValue;
-            
-            _context.Patients.Update(user);
-            await _context.SaveChangesAsync();
-
-            return newToken;
-        }
-
-        public async Task<Result<TokenModel>> RefreshTheTokenForEmployee(string refreshToken, string accessToken)
-        {
-            var user = await _context.Employees.FirstOrDefaultAsync(p => p.RefreshToken == refreshToken);
-            if (user == null)
-                return EntityNotExistsError.Happen<Employee>();
-
-            if (user.RefreshTokenExpirationDate < DateTime.Now)
-                return new BadRequestError("Refresh Token Is Expired");
-            var principles = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-
-            var newToken = _tokenService.GenerateAccessToken(principles);
-            newToken.RefreshToken = refreshToken;
-            newToken.RefreshTokenExpirationTime = user.RefreshTokenExpirationDate ?? DateTime.MinValue;
-
-            _context.Employees.Update(user);
-            await _context.SaveChangesAsync();
-
-            return newToken;
-        }
-
-        public async Task<Result> LogoutPatient(string refreshToken)
-        {
-            // Find the patient by refreshToken.
-            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.RefreshToken == refreshToken);
-            if (patient == null)
-            {
-                return EntityNotExistsError.Happen<Patient>();
-            }
-
-            // Clear the refresh token values.
-            patient.RefreshToken = null;
-            patient.RefreshTokenExpirationDate = null;
-            _context.Patients.Update(patient);
-
-            await _context.SaveChangesAsync();
-            return Result.Ok();
-        }
-
-        public async Task<Result> LogoutEmployee(string refreshToken)
+        public async Task<Result> LogoutEmployee()
         {
             // Find the employee by refreshToken.
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.RefreshToken == refreshToken);
+            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == _userContext.ApiUserId);
             if (employee == null)
-            {
                 return EntityNotExistsError.Happen<Employee>();
-            }
 
-            // Clear the refresh token values.
-            employee.RefreshToken = null;
-            employee.RefreshTokenExpirationDate = null;
-            _context.Employees.Update(employee);
-
-            // Record the logout activity.
             await _context.LoginActivities.AddAsync(new LoginActivity
             {
                 ActivityType = ActivityType.Logout,
                 CreatedAt = DateTime.Now,
-                EmployeeId = employee.Id,
+                EmployeeId = _userContext.ApiUserId,
                 Id = Guid.NewGuid().ToString(),
                 UpdatedAt = DateTime.Now,
             });

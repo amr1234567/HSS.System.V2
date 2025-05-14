@@ -6,82 +6,79 @@
         {
             public const string Base = "api/patient";
 
+            //Auth
+            public const string Register = "/register";
+            public const string ConfirmAccount = "/confirm-account/{nationalId}";
+            public const string login = "/login";
+
             // Notifications
-            public const string NotificationCount = "/Notifications/count";
-            public const string GetNotifications = "/Notifications";
-            public const string GetNotification = "/Notifications/{notificationId}";
-            public const string SeenNotification = "/Notifications/{notificationId}/seen";
+            public const string NotificationCount = "/notifications/count";
+            public const string GetNotifications = "/notifications";
+            public const string GetNotification = "/notifications/{notificationId}";
+            public const string SeenNotification = "/notifications/{notificationId}/seen";
 
             // Tests
-            public const string SugerTest = "/Survey/tests suger";
+            public const string SugerTest = "/survey/tests-suger";
 
             // Appointments
-            public const string GetCurrentAppointments = "/Home/appointments current";
-            public const string GetAppointmentDetails = "/Home/appointments_details/{appointmentId}";
-            public const string CancelAppointment = "/Home/appointments_cancel/{appointmentId}";
-            public const string GetAppointmentContent = "/appointments/{appointmentId}/content";
+            public const string GetCurrentAppointments = "/current-appointments";
+            public const string GetAppointmentDetails = "/appointment-details/{appointmentId}";
+            public const string CancelAppointment = "/cancel-appointment/{appointmentId}";
+            public const string GetAppointmentContent = "/appointment-content/{appointmentId}";
 
             #region Appointment
             // Specifications
-            public const string GetAllSpecifications = "/Appointment/Get_All_Specilzation";
+            public const string GetAllSpecifications = "/specilzation";
 
             // Radiology & Medical Lab Tests
-            public const string GetAllRadiologyTests = "/Appointment/Get_All_Radiology_Tests";
-            public const string GetAllMedicalLabTests = "/Appointment/Get_All_Medical-Lab_Tests";
+            public const string GetAllRadiologyTests = "/radiology-tests";
+            public const string GetAllMedicalLabTests = "/medical-lab-tests";
 
             // Hospitals
-            public const string GetHospitalsBySpecificationId = "/Appointment/Get_Hospitals_By_Specification-Id/{specializationId}";
-            public const string GetHospitalsByRadiologyTestId = "/Appointment/Get_Hospitals_By_RadiologyTest-Id/{radiologyTestId}";
-            public const string GetHospitalsByMedicalLabTestId = "/Appointment/Get_Hospitals_By_Medical-LabTest-Id/{medicalLabTestId}";
+            public const string GetHospitalsBySpecificationId = "/specilization/{specializationId}/hospitals";
+            public const string GetHospitalsByRadiologyTestId = "/radiology-test/{radiologyTestId}/hospitals";
+            public const string GetHospitalsByMedicalLabTestId = "/medical-lab-test/{medicalLabTestId}/hospitals";
 
             // Tickets
-            public const string GetActiveTicketsInHospital = "/Appointment/Get_Active_Ticket_In_Hospital/{hospitalId}";
-            public const string CreateTicket = "/Appointment/Create_Ticket/{hospitalId}";
+            public const string GetActiveTicketsInHospital = "/hospital/{hospitalId}/tickets/active";
+            public const string CreateTicket = "/create-ticket/{hospitalId}";
 
             // Departments
-            public const string GetClinics = "/Appointment/Get_Clinics/{hospitalId}/{specificationId}";
-            public const string GetRadiologyCenters = "/Appointment/Get_Radiology-Center/{hospitalId}/{testId}";
-            public const string GetMedicalLabs = "/Appointment/Get_Medical-Labs/{hospitalId}/{testId}";
+            public const string GetClinics = "/hospital/{hospitalId}/clinics/{specificationId}";
+            public const string GetRadiologyCenters = "/hospital/{hospitalId}/radiology-centers/{testId}";
+            public const string GetMedicalLabs = "/hospital/{hospitalId}/medical-labs/{testId}";
 
             // Appointments Creation
-            public const string CreateClinicAppointment = "/Appointment/Create_Clinic_Appointment";
-            public const string CreateRadiologyAppointment = "/Appointment/Create_Radiology_Appointment";
-            public const string CreateMedicalLabAppointment = "/Appointment/Create_Medical-Lab_Appointment";
+            public const string CreateClinicAppointment = "/create/clinic-appointment";
+            public const string CreateRadiologyAppointment = "/create/radiology-appointment";
+            public const string CreateMedicalLabAppointment = "/create/medical-Lab-appointment";
             #endregion
 
-            public const string GetAllSpecificationsPaged = "/specifications/paged";
+            public const string GetAllSpecilizations = "/specilizations";
 
             
-
+            public const string GetAllActiveTicketsInHospital = "/hospitals/{hospitalId}/tickets/active";
             
-
-            
-            public const string GetAllActiveTicketsInHospital = "/hospitals/{hospitalId}/tickets/active/all";
-            
-            public const string GetTicketContent = "/Profile/tickets_content/{ticketId}";
-            public const string GetAllActiveTickets = "/Profile/active_tickets";
-            public const string GetAllInactiveTickets = "/Profile/inactive_tickets";
-
-            
-
-            
+            public const string GetTicketContent = "/Profile/ticket/{ticketId}";
+            public const string GetAllActiveTickets = "/Profile/tickets/active";
+            public const string GetAllInactiveTickets = "/Profile/tickets/inactive";
 
             // Required Tests
-            public const string GetMedicalLabTestsRequired = "/Required/medical-lab/tests";
-            public const string GetRadiologyTestsRequired = "/Required/radiology/tests";
+            public const string GetMedicalLabTestsRequired = "/tests-required/medical-lab";
+            public const string GetRadiologyTestsRequired = "/tests-required/radiology";
 
             // Prescriptions
-            public const string GetAllPrescriptionsRequired = "/Required/prescriptions";
-            public const string GetMedicineByPrescriptionId = "/Required/Medicines/{prescriptionId}";
+            public const string GetAllPrescriptionsRequired = "/prescriptions";
+            public const string GetMedicineByPrescriptionId = "/prescription/{prescriptionId}/medicines";
 
             // Current Appointments by Type
-            public const string GetCurrentClinicAppointments = "/Current Appointments/clinic";
-            public const string GetCurrentMedicalLabAppointments = "/Current Appointments/medical-lab";
-            public const string GetCurrentRadiologyCenterAppointments = "/Current Appointments/radiology-center";
+            public const string GetCurrentClinicAppointments = "/appointments/clinic/current";
+            public const string GetCurrentMedicalLabAppointments = "/appointments/medical-lab/current";
+            public const string GetCurrentRadiologyCenterAppointments = "/appointments/radiology-center/current";
 
             // Profile
-            public const string UploadProfilePicture = "/Profile/picture";
-            public const string GetPatientProfile = "/Profile/Informations";
+            public const string UploadProfilePicture = "/profile/picture";
+            public const string GetPatientProfile = "/profile";
         }
     }
 }

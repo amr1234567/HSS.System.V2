@@ -5,8 +5,11 @@ namespace HSS.System.V2.Domain.Models.People;
 
 public class Patient : Person
 {
-    public double Lat { get; set; }
-    public double Lng { get; set; }
+    public double? Lat { get; set; }
+    public double? Lng { get; set; }
+
+    public string? Salt { get; set; }
+    public string? HashPassword { get; set; }
 
     public virtual ICollection<Ticket> Tickets { get; set; }
     public virtual ICollection<MedicalHistory> MedicalHistories { get; set; }

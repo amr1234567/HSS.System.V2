@@ -1,20 +1,13 @@
-using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.DataAccess;
 using HSS.System.V2.Services;
-
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-
-using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using HSS.System.V2.Services.Contracts;
-using HSS.System.V2.Services.Services;
-using Microsoft.OpenApi.Models;
-using HSS.System.V2.Services.Seeding;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using HSS.System.V2.Presentation.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,39 +16,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(option =>
-{
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
-    string xmlPath2 = Path.Combine(Environment.CurrentDirectory, "HSS.xml");
 
-    option.IncludeXmlComments(xmlPath2);
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigration>();
+builder.Services.AddTransient<IConfigureOptions<SwaggerUIOptions>, SwaggerUIConfiguration>();
 
-});
 builder.Services.AddContextDI(builder.Configuration);
 builder.Services.AddServiceLayerDI(builder.Configuration);
+builder.Services.AddSwaggerGen();
 
 #region Auth Services
 
@@ -104,7 +71,17 @@ var app = builder.Build();
 //if (app.Environment.IsDevelopment())
 //{
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    // ???? ????? ?????? ???????
+    //options.InjectStylesheet("/SwaggerCss3.x/theme-feeling-blue.css");
+    //options.InjectStylesheet("/SwaggerCss3.x/theme-flattop.css");
+    options.InjectStylesheet("/SwaggerCss3.x/theme-material.css");
+    //options.InjectStylesheet("/SwaggerCss3.x/theme-monokai.css");
+    //options.InjectStylesheet("/SwaggerCss3.x/theme-muted.css");
+    //options.InjectStylesheet("/SwaggerCss3.x/theme-newspaper.css");
+    // options.InjectStylesheet("/SwaggerCss3.x/theme-outline.css");
+});
 //}
 
 app.UseHttpsRedirection();

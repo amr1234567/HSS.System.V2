@@ -7,6 +7,8 @@ public class Employee : Person
 {
     public TimeSpan StartAt { get; set; }
     public TimeSpan EndAt { get; set; }
+    public string Salt { get; set; }
+    public string HashPassword { get; set; }
     public string PositionName { get; set; }
     public double Salary { get; set; }
     public UserRole Role { get; set; }

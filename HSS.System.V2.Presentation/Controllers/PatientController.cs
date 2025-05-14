@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HSS.System.V2.Presentation.Controllers
 {
     [Authorize]
+    [ApiExplorerSettings(GroupName = "PatientAPI")]
     [Route(ApiRoutes.Patient.Base)]
     public class PatientController : CustomBaseController
     {
@@ -22,6 +23,9 @@ namespace HSS.System.V2.Presentation.Controllers
         {
             _patientService = patientService;
         }
+
+
+
 
         /// <summary>
         /// Get the count of notifications for the patient.
@@ -702,7 +706,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <param name="pagination">Pagination parameters</param>
         [ProducesResponseType(typeof(ApiResponse<PagedResult<SpecialzationDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<PagedResult<SpecialzationDto>>), StatusCodes.Status400BadRequest)]
-        [HttpGet(ApiRoutes.Patient.GetAllSpecificationsPaged)]
+        [HttpGet(ApiRoutes.Patient.GetAllSpecilizations)]
         public async Task<IActionResult> GetAllSpecificationsPaged([FromQuery] PaginationRequest pagination)
         {
             var result = await _patientService.GetAllSpecifications(pagination);

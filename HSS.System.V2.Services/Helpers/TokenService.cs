@@ -36,8 +36,6 @@ namespace HSS.System.V2.Services.Helpers
             return new TokenModel
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                RefreshToken = GenerateRefreshToken(),
-                RefreshTokenExpirationTime = DateTime.UtcNow.AddDays(_jwtHelper.RefreshTokenExpireDays),
                 TokenExpirationDate = expirationDate
             };
         }
@@ -69,39 +67,8 @@ namespace HSS.System.V2.Services.Helpers
             return new TokenModel
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                RefreshToken = GenerateRefreshToken(),  // Implement this method to generate a secure refresh token.
-                RefreshTokenExpirationTime = DateGenerator.GetCurrentDateTimeByRegion(Region.Egypt).AddDays(_jwtHelper.RefreshTokenExpireDays),
                 TokenExpirationDate = expirationDate
             };
-        }
-
-
-        public string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
-        }
-
-        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-        {
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtHelper.JwtKey)),
-                ValidateLifetime = false
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-
-            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                throw new SecurityTokenException("Invalid token");
-
-            return principal;
         }
     }
 }

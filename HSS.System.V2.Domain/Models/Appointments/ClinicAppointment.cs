@@ -12,9 +12,8 @@ namespace HSS.System.V2.Domain.Models.Appointments;
 
 public class ClinicAppointment : Appointment, IAppointmentModel<ClinicQueue>
 {
-    public string Result { get; set; }
-    public string Diagnosis { get; set; }
-    public bool ReExaminationNeeded { get; set; }
+    public string? Diagnosis { get; set; }
+    public bool? ReExaminationNeeded { get; set; }
     public string? ReExamiationClinicAppointemntId { get; set; }
     public virtual ClinicAppointment ReExamiationClinicAppointemnt { get; set; }
     public string? PreExamiationClinicAppointemntId { get; set; }
@@ -24,12 +23,12 @@ public class ClinicAppointment : Appointment, IAppointmentModel<ClinicQueue>
     public string ClinicId { get; set; }
     public string ClinicName { get; set; }
     public virtual Clinic Clinic { get; set; }
-    public string DoctorId { get; set; }
+    public string? DoctorId { get; set; }
     public string DoctorName { get; set; }
     public virtual Doctor Doctor { get; set; }
     public string? QueueId { get; set; }
     public ClinicQueue Queue { get; set; }
-    public string PrescriptionId { get; set; }
+    public string? PrescriptionId { get; set; }
     [ForeignKey(nameof(PrescriptionId))]
     public virtual Prescription Prescription { get; set; }
 
