@@ -158,5 +158,25 @@ namespace HSS.System.V2.DataAccess.Repositories
                 return new UnKnownError(ex);
             }
         }
+
+        public async Task<Result<bool>> IsRadiologyCenterDoTestAsync(string radiologyCenterId, string testId)
+        {
+            return await _context.RadiologyTests.Where(t => t.RadiologyCenters.Any(c => c.Id == radiologyCenterId)).AnyAsync();
+        }
+
+        public Result<bool> IsRadiologyCenterDoTest(string radiologyCenterId, string testId)
+        {
+            return _context.RadiologyTests.Where(t => t.RadiologyCenters.Any(c => c.Id == radiologyCenterId)).Any();
+        }
+
+        public async Task<Result<bool>> IsMedicalLabDoTestAsync(string labId, string testId)
+        {
+            return await _context.MedicalLabTests.Where(t => t.MedicalLabs.Any(c => c.Id == labId)).AnyAsync();
+        }
+
+        public Result<bool> IsMedicalLabDoTest(string labId, string testId)
+        {
+            return _context.MedicalLabTests.Where(t => t.MedicalLabs.Any(c => c.Id == labId)).Any();
+        }
     }
 }

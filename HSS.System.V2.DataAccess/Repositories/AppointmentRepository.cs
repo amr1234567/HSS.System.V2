@@ -154,7 +154,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<PagedResult<ClinicAppointment>>> GetAllForClinicAsync(string clinicId, DateFilterationRequest dateFilters, PaginationRequest pagination)
+        public async Task<Result<List<ClinicAppointment>>> GetAllForClinicAsync(string clinicId, DateFilterationRequest dateFilters)
         {
             var appointments = await _context.ClinicAppointments
                     .Where(a => a.ClinicId == clinicId)
@@ -162,19 +162,20 @@ namespace HSS.System.V2.DataAccess.Repositories
                     .Include(c => c.Clinic)
                     .Include(c => c.Doctor)
                     .Include(c => c.Ticket)
+                        .ThenInclude(t => t.Patient)
                     .FilterByDate(dateFilters.DateFrom, dateFilters.DateTo)
                     .OrderByDescending(a => a.SchaudleStartAt)
-                    .GetPagedAsync(pagination);
+                    .ToListAsync();
             return Result.Ok(appointments);
         }
 
-        public async Task<Result<PagedResult<RadiologyCeneterAppointment>>> GetAllForRadiologyCenterAsync(string radiologyCenterId, DateFilterationRequest dateFilters, PaginationRequest pagination)
+        public async Task<Result<List<RadiologyCeneterAppointment>>> GetAllForRadiologyCenterAsync(string radiologyCenterId, DateFilterationRequest dateFilters)
         {
             try
             {
                 var appointments = await _context.RadiologyCeneterAppointments.Where(a => a.RadiologyCeneterId.Equals(radiologyCenterId))
                     .FilterByDate(dateFilters)
-                    .GetPagedAsync(pagination);
+                    .ToListAsync();
                 return Result.Ok(appointments);
             }
             catch (Exception ex)
@@ -183,13 +184,13 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<PagedResult<MedicalLabAppointment>>> GetAllForMedicalLabAsync(string medicalLabId, DateFilterationRequest dateFilters, PaginationRequest pagination)
+        public async Task<Result<List<MedicalLabAppointment>>> GetAllForMedicalLabAsync(string medicalLabId, DateFilterationRequest dateFilters)
         {
             try
             {
                 var appointments = await _context.MedicalLabAppointments.Where(a => a.MedicalLabId.Equals(medicalLabId))
                     .FilterByDate(dateFilters)
-                    .GetPagedAsync(pagination);
+                    .ToListAsync();
                 return Result.Ok(appointments);
             }
             catch (Exception ex)
@@ -198,7 +199,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync(string hospitalId, DateFilterationRequest dateFilters, PaginationRequest pagination)
+        public async Task<Result<List<Appointment>>> GetAllForHospitalAsync(string hospitalId, DateFilterationRequest dateFilters)
         {
             return await _context.Hospitals
                .Where(c => c.Id == hospitalId)
@@ -207,11 +208,11 @@ namespace HSS.System.V2.DataAccess.Repositories
                .Where(a => a.SchaudleStartAt >= dateFilters.DateFrom && a.SchaudleStartAt <= dateFilters.DateTo)
                .AsNoTracking()
                .OrderByDescending(a => a.SchaudleStartAt)
-               .GetPagedAsync(pagination);
+               .ToListAsync();
         }
 
-        public async Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync
-            (string hospitalId, string specializationId, DateFilterationRequest dateFilters, PaginationRequest pagination)
+        public async Task<Result<List<Appointment>>> GetAllForHospitalAsync
+            (string hospitalId, string specializationId, DateFilterationRequest dateFilters)
         {
             return await _context.Clinics
                 .Where(c => c.HospitalId == hospitalId && c.SpecializationId == specializationId)
@@ -221,7 +222,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .AsNoTracking()
                 .OrderByDescending(a => a.SchaudleStartAt)
                 .Cast<Appointment>()
-                .GetPagedAsync(pagination);
+                .ToListAsync();
         }
 
         public async Task<Result> DeleteAppointmentAsync(string appointmentId)

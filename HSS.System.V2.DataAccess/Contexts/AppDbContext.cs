@@ -132,6 +132,16 @@ namespace HSS.System.V2.DataAccess.Contexts
             //modelBuilder.Entity<RadiologyCeneterAppointment>()
             //    .Navigation(c => c.Tester)
             //    .AutoInclude();
+
+            modelBuilder.Entity<ClinicQueue>()
+                .Navigation(c => c.ClinicAppointments)
+                .AutoInclude();
+            modelBuilder.Entity<MedicalLabQueue>()
+                .Navigation(c => c.MedicalLabAppointments)
+                .AutoInclude();
+            modelBuilder.Entity<RadiologyCenterQueue>()
+                .Navigation(c => c.RadiologyCeneterAppointments)
+                .AutoInclude();
             //#endregion
 
         }

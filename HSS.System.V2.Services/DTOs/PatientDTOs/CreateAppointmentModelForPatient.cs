@@ -6,13 +6,13 @@ using HSS.System.V2.Domain.Models.Facilities;
 
 namespace HSS.System.V2.Services.DTOs.PatientDTOs
 {
-    public record CreateAppointmentModel
+    public record CreateAppointmentModelForPatient
     {
         [Required]
         public DateTime ExpectedTimeForStart { get; set; }
     }
 
-    public record CreateClinicAppointmentModel : CreateAppointmentModel, IInputModel<ClinicAppointment>
+    public record CreateClinicAppointmentModelForPatient : CreateAppointmentModelForPatient, IInputModel<ClinicAppointment>
     {
         [Required]
         public string ClinicId { set; get; }
@@ -34,7 +34,7 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
         }
     }
 
-    public record CreateRadiologyAppointmentModel : CreateAppointmentModel, IInputModel<RadiologyCeneterAppointment>
+    public record CreateRadiologyAppointmentModelForPatient : CreateAppointmentModelForPatient, IInputModel<RadiologyCeneterAppointment>
     {
         [Required]
         public string RadiologyCenterId { get; set; }
@@ -56,7 +56,7 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
         }
     }
 
-    public record CreateMedicalLabAppointmentModel : CreateAppointmentModel, IInputModel<MedicalLabAppointment>
+    public record CreateMedicalLabAppointmentModelForPatient : CreateAppointmentModelForPatient, IInputModel<MedicalLabAppointment>
     {
         [Required]
         public string MedicalLabId { get; set; }

@@ -28,7 +28,6 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             var queue = await _context.Set<TQueue>()
               .Where(q => q.Id == queueId)
-              .Include(q => q.GetInclude())
               .FirstOrDefaultAsync();
             return queue is null ? EntityNotExistsError.Happen<TQueue>(queueId) : queue;
         }
@@ -39,7 +38,6 @@ namespace HSS.System.V2.DataAccess.Repositories
                 var entity = await _context.Set<TQueue>()
                                     .AsNoTracking()
                                     .Where(q => q.DepartmentId == departmentId)
-                                    .Include(q => q.GetInclude())
                                     .FirstOrDefaultAsync();
 
                 return entity is null

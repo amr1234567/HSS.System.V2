@@ -22,14 +22,12 @@ public class MedicalLabAppointment : Appointment,
     [ForeignKey(nameof(ClinicAppointmentId))]
     public virtual ClinicAppointment ClinicAppointment { get; set; }
     public string MedicalLabId { get; set; }
-    public string MedicalLabName { get; set; }
     [ForeignKey(nameof(MedicalLabId))]
     public virtual MedicalLab MedicalLab { get; set; }
-    public string? QueueId { get; set; }
+
     [ForeignKey(nameof(QueueId))]
     public virtual MedicalLabQueue Queue { get; set; }
     public string TesterId { get; set; }
-    public string TesterName { get; set; }  
     [ForeignKey(nameof(TesterId))]
     public virtual MedicalLabTester Tester { get; set; }
     public string TestId { get; set; }
@@ -46,11 +44,6 @@ public class MedicalLabAppointment : Appointment,
     {
         return Queue;
     }
-
-    public string EmployeeName => TesterName;
-
-    public string DepartmentName => MedicalLabName;
-
 
     public override Func<Appointment, object> GetIncludeDepartment()
     {

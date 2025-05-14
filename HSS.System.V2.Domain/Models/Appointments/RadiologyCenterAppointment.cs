@@ -16,17 +16,14 @@ public class RadiologyCeneterAppointment : Appointment, IAppointmentModel<Radiol
     [ForeignKey(nameof(ClinicAppointmentId))]
     public virtual ClinicAppointment? ClinicAppointment { get; set; }
     public string RadiologyCeneterId { get; set; }
-    public string RadiologyCeneterName { get; set; }
     [ForeignKey(nameof(RadiologyCeneterId))]
     public virtual RadiologyCenter RadiologyCeneter { get; set; }
     public string TesterId { get; set; }
-    public string TesterName { get; set; }
     [ForeignKey(nameof(TesterId))]
     public virtual RadiologyTester Tester { get; set; }
     public string TestId { get; set; }
     [ForeignKey(nameof(TestId))]
     public virtual RadiologyTest Test { get; set; }
-    public string? QueueId { get; set; }
     [ForeignKey(nameof(QueueId))]
     public virtual RadiologyCenterQueue Queue { get; set; }
 
@@ -40,11 +37,6 @@ public class RadiologyCeneterAppointment : Appointment, IAppointmentModel<Radiol
     {
         return Queue;
     }
-
-    public string EmployeeName => TesterName;
-
-    public string DepartmentName => RadiologyCeneterName;
-
     public override Func<Appointment, object> GetIncludeDepartment()
     {
         return x => ((RadiologyCeneterAppointment)x).RadiologyCeneter;

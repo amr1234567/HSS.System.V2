@@ -406,7 +406,7 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [HttpPost(ApiRoutes.Patient.CreateClinicAppointment)]
-        public async Task<IActionResult> CreateClinicAppointment([FromBody] CreateClinicAppointmentModel model)
+        public async Task<IActionResult> CreateClinicAppointment([FromBody] CreateClinicAppointmentModelForPatient model)
         {
             var result = await _patientService.CreateClinicAppointment(model);
             return GetResponseWithoutType(result);
@@ -425,7 +425,7 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [HttpPost(ApiRoutes.Patient.CreateRadiologyAppointment)]
-        public async Task<IActionResult> CreateRadiologyAppointment([FromBody] CreateRadiologyAppointmentModel model)
+        public async Task<IActionResult> CreateRadiologyAppointment([FromBody] CreateRadiologyAppointmentModelForPatient model)
         {
             var result = await _patientService.CreateRadiologyAppointMent(model);
             return GetResponseWithoutType(result);
@@ -444,7 +444,7 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
         [HttpPost(ApiRoutes.Patient.CreateMedicalLabAppointment)]
-        public async Task<IActionResult> CreateMedicalLabAppointment([FromBody] CreateMedicalLabAppointmentModel model)
+        public async Task<IActionResult> CreateMedicalLabAppointment([FromBody] CreateMedicalLabAppointmentModelForPatient model)
         {
             var result = await _patientService.CreateMedicalLabAppointment(model);
             return GetResponseWithoutType(result);

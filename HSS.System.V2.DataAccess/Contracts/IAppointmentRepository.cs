@@ -19,11 +19,11 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<Appointment?>> GetAppointmentByIdAsync(string id);
         Task<Result<Appointment?>> GetAppointmentByIdBlukIncludeAsync(string appointmentId);
         Task<Result<Appointment>> GetAppointmentByDateTimeInDepartmentAsync<TDept>(string departmentId, DateTime dateTime) where TDept : IHospitalDepartmentItem;
-        Task<Result<PagedResult<ClinicAppointment>>> GetAllForClinicAsync(string clinicId, DateFilterationRequest dateFilters, PaginationRequest pagination);
-        Task<Result<PagedResult<RadiologyCeneterAppointment>>> GetAllForRadiologyCenterAsync(string radiologyCenterId, DateFilterationRequest dateFilters, PaginationRequest pagination);
-        Task<Result<PagedResult<MedicalLabAppointment>>> GetAllForMedicalLabAsync(string medicalLabId, DateFilterationRequest dateFilters, PaginationRequest pagination);
-        Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync(string hospitalId, DateFilterationRequest dateFilters, PaginationRequest pagination);
-        Task<Result<PagedResult<Appointment>>> GetAllForHospitalAsync(string hospitalId, string specializationId, DateFilterationRequest dateFilters, PaginationRequest pagination);
+        Task<Result<List<ClinicAppointment>>> GetAllForClinicAsync(string clinicId, DateFilterationRequest dateFilters);
+        Task<Result<List<RadiologyCeneterAppointment>>> GetAllForRadiologyCenterAsync(string radiologyCenterId, DateFilterationRequest dateFilters);
+        Task<Result<List<MedicalLabAppointment>>> GetAllForMedicalLabAsync(string medicalLabId, DateFilterationRequest dateFilters);
+        Task<Result<List<Appointment>>> GetAllForHospitalAsync(string hospitalId, DateFilterationRequest dateFilters);
+        Task<Result<List<Appointment>>> GetAllForHospitalAsync(string hospitalId, string specializationId, DateFilterationRequest dateFilters);
         Task<Result> DeleteAppointmentAsync(string appointmentId);
         Task<Result> SwapAppointmentsAsync<T>(string appointmentId1, string appointmentId2) where T : Appointment;
         Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId, AppointmentState state);

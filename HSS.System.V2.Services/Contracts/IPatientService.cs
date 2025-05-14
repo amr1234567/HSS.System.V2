@@ -43,9 +43,9 @@ namespace HSS.System.V2.Services.Contracts
         Task<Result<List<DebartmentDto>>> GetRadiologyCenter(string hospitalId, string TestId);
         Task<Result<List<DebartmentDto>>> GetMedicalLabs(string hospitalId, string TestId);
         Task<Result> CreateTicket(string hospitalId);
-        Task<Result> CreateClinicAppointment(CreateClinicAppointmentModel model);
-        Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModel model);
-        Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModel model);
+        Task<Result> CreateClinicAppointment(CreateClinicAppointmentModelForPatient model);
+        Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModelForPatient model);
+        Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModelForPatient model);
         #endregion
 
         #region Required

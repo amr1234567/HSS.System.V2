@@ -14,6 +14,7 @@ namespace HSS.System.V2.Domain.Models.Appointments;
 public class Appointment : BaseClass
 {
     public string PatientNationalId { get; set; }
+    public string PatientName { get; set; }
     public AppointmentState State { get; set; }
     public DateTime SchaudleStartAt { get; set; }
     public DateTime? ActualStartAt { get; set; }
@@ -26,6 +27,11 @@ public class Appointment : BaseClass
     public virtual Hospital Hospital { get; set; }
     public string HospitalId { get; set; }
     public string HospitalName { get; set; }
+
+    public string EmployeeName { get; set; }
+    public string DepartmentName { get; set; }
+
+    public string? QueueId {  get; set; }
 
     public string? MedicalHistoryId {  get; set; }
     [InverseProperty(nameof(MedicalHistory.Appointments))]

@@ -6,5 +6,6 @@ public enum AppointmentState
     InProgress,
     Completed,
     Cancelled,
-    NotStarted
+    NotStarted,
+    Terminated
 } 

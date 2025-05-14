@@ -21,12 +21,10 @@ public class ClinicAppointment : Appointment, IAppointmentModel<ClinicQueue>
     public string? DiseaseId { get; set; }
     public virtual Disease Disease { get; set; }
     public string ClinicId { get; set; }
-    public string ClinicName { get; set; }
     public virtual Clinic Clinic { get; set; }
     public string? DoctorId { get; set; }
-    public string DoctorName { get; set; }
     public virtual Doctor Doctor { get; set; }
-    public string? QueueId { get; set; }
+    [ForeignKey(nameof(QueueId))]
     public ClinicQueue Queue { get; set; }
     public string? PrescriptionId { get; set; }
     [ForeignKey(nameof(PrescriptionId))]
@@ -46,11 +44,6 @@ public class ClinicAppointment : Appointment, IAppointmentModel<ClinicQueue>
     {
         return Queue;
     }
-
-    public string EmployeeName => DoctorName;
-
-
-    public string DepartmentName => ClinicName;
 
     public override Func<Appointment, object> GetIncludeDepartment()
     {

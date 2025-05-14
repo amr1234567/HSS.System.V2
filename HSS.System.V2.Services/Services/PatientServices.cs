@@ -251,9 +251,9 @@ namespace HSS.System.V2.Services.Services
                 var allTicketAppintments = appointments.Items.Select(a => new AppointmentView()
                 {
                     Id = a.Id,
-                    DepartmentName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
+                    DepartmentName = a.EmployeeName,
                     HospitalName = a.HospitalName,
-                    EmployeeName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
+                    EmployeeName = a.EmployeeName,
                     StartAt = a.ActualStartAt ?? a.SchaudleStartAt,
                 }).OrderBy(x => x.StartAt);
 
@@ -462,7 +462,7 @@ namespace HSS.System.V2.Services.Services
             return await _ticketRepository.CreateTicket(ticket);
         }
 
-        public async Task<Result> CreateClinicAppointment(CreateClinicAppointmentModel model)
+        public async Task<Result> CreateClinicAppointment(CreateClinicAppointmentModelForPatient model)
         {
             if (model.ExpectedTimeForStart < DateTime.UtcNow)
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
@@ -478,10 +478,11 @@ namespace HSS.System.V2.Services.Services
             var clinicAppointment = ticket.Value.FirstClinicAppointment;
             var entity = model.ToModel();
             entity.ClinicId = clinic.Value!.Id;
-            entity.ClinicName = clinic.Value.Name;
+            entity.DepartmentName = clinic.Value.Name;
             entity.HospitalName = clinic.Value.Hospital.Name;
             entity.HospitalId = clinic.Value.HospitalId;
             entity.PatientNationalId = patient.Value.NationalId;
+            entity.PatientName = patient.Value.Name;
             entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
 
             var check = await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId);
@@ -503,7 +504,7 @@ namespace HSS.System.V2.Services.Services
             return await _ticketRepository.UpdateTicket(ticket.Value);
         }
 
-        public async Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModel model)
+        public async Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModelForPatient model)
         {
             if (model.ExpectedTimeForStart < DateTime.UtcNow)
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
@@ -532,8 +533,9 @@ namespace HSS.System.V2.Services.Services
             entity.TicketId = ticket.Value.Id;
             entity.ClinicAppointmentId = null;
             entity.RadiologyCeneterId = radiologyCenter.Value!.Id;
-            entity.RadiologyCeneterName = radiologyCenter.Value!.Name;
+            entity.DepartmentName = radiologyCenter.Value!.Name;
             entity.HospitalName = radiologyCenter.Value.Hospital.Name;
+            entity.PatientName = patient.Value.Name;
             entity.HospitalId = radiologyCenter.Value.Hospital.Id;
             entity.PatientNationalId = patient.Value.NationalId;
             entity.ExpectedDuration = radiologyCenter.Value.PeriodPerAppointment;
@@ -542,7 +544,7 @@ namespace HSS.System.V2.Services.Services
                 .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
         }
 
-        public async Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModel model)
+        public async Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModelForPatient model)
         {
             if (model.ExpectedTimeForStart < DateTime.UtcNow)
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
@@ -571,8 +573,9 @@ namespace HSS.System.V2.Services.Services
             entity.TicketId = ticket.Value.Id;
             entity.ClinicAppointmentId = null;
             entity.MedicalLabId = medicalLab.Value!.Id;
-            entity.MedicalLabName = medicalLab.Value.Name;
+            entity.DepartmentName = medicalLab.Value.Name;
             entity.HospitalName = medicalLab.Value.Hospital.Name;
+            entity.PatientName = patient.Value.Name;
             entity.HospitalId = medicalLab.Value.HospitalId;
             entity.PatientNationalId = patient.Value.NationalId;
             entity.ExpectedDuration = medicalLab.Value.PeriodPerAppointment;
@@ -593,7 +596,7 @@ namespace HSS.System.V2.Services.Services
                 {
                     TestName = r.TestName,
                     ClinicName = r.ClinicAppointment.DepartmentName,
-                    DoctorName = r.ClinicAppointment.DoctorName,
+                    DoctorName = r.ClinicAppointment.EmployeeName,
                     HospitalName = r.ClinicAppointment.HospitalName,
                     Date = r.ClinicAppointment.SchaudleStartAt
                 }).ToList();
@@ -611,7 +614,7 @@ namespace HSS.System.V2.Services.Services
                 {
                     TestName = r.TestName,
                     ClinicName = r.ClinicAppointment.DepartmentName,
-                    DoctorName = r.ClinicAppointment.DoctorName,
+                    DoctorName = r.ClinicAppointment.EmployeeName,
                     HospitalName = r.ClinicAppointment.HospitalName,
                     Date = r.ClinicAppointment.SchaudleStartAt
                 }).ToList();
@@ -628,7 +631,7 @@ namespace HSS.System.V2.Services.Services
                  {
                      PrescriptionId = p.Id,
                      ClinicName = p.ClinicAppointment.DepartmentName,
-                     DoctorName = p.ClinicAppointment.DoctorName,
+                     DoctorName = p.ClinicAppointment.EmployeeName,
                      HospitalName = p.ClinicAppointment.Hospital.Name,
                      MedicineCount = p.Items.Count(),
                      Date = p.ClinicAppointment.ActualStartAt ?? p.ClinicAppointment.SchaudleStartAt
@@ -661,9 +664,9 @@ namespace HSS.System.V2.Services.Services
                     .Select(c => new AppointmentView
                     {
                         Id = c.Id,
-                        DepartmentName = ((IAppointmentModel<ClinicQueue>)c).DepartmentName,
+                        DepartmentName = c.DepartmentName,
                         HospitalName = c.Hospital.Name,
-                        EmployeeName = ((IAppointmentModel<ClinicQueue>)c).EmployeeName,
+                        EmployeeName = c.EmployeeName,
                         StartAt = c.ActualStartAt ?? c.SchaudleStartAt,
                     }).GetPaged(pagination);
             }
@@ -687,9 +690,9 @@ namespace HSS.System.V2.Services.Services
                     .Select(c => new AppointmentView
                     {
                         Id = c.Id,
-                        DepartmentName = ((IAppointmentModel<MedicalLabQueue>)c).DepartmentName,
+                        DepartmentName = c.DepartmentName,
                         HospitalName = c.Hospital.Name,
-                        EmployeeName = ((IAppointmentModel<MedicalLabQueue>)c).EmployeeName,
+                        EmployeeName = c.EmployeeName,
                         StartAt = c.ActualStartAt ?? c.SchaudleStartAt,
                     }).GetPaged(pagination);
             }
@@ -712,9 +715,9 @@ namespace HSS.System.V2.Services.Services
                     .Select(c => new AppointmentView
                     {
                         Id = c.Id,
-                        DepartmentName = ((IAppointmentModel<RadiologyCenterQueue>)c).DepartmentName,
+                        DepartmentName = c.DepartmentName,
                         HospitalName = c.Hospital.Name,
-                        EmployeeName = ((IAppointmentModel<RadiologyCenterQueue>)c).EmployeeName,
+                        EmployeeName = c.EmployeeName,
                         StartAt = c.ActualStartAt ?? c.SchaudleStartAt,
                     }).GetPaged(pagination);
             }
@@ -855,9 +858,9 @@ namespace HSS.System.V2.Services.Services
                     .Select(a => new AppointmentView()
                     {
                         Id = a.Id,
-                        DepartmentName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
+                        DepartmentName = a.EmployeeName,
                         HospitalName = a.HospitalName,
-                        EmployeeName = ((IAppointmentModel<SystemQueue>)a).EmployeeName,
+                        EmployeeName = a.EmployeeName,
                         StartAt = a.ActualStartAt ?? a.SchaudleStartAt,
                     }).OrderBy(x => x.StartAt).GetPaged(pagination);
             }
