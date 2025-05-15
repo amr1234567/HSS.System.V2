@@ -213,23 +213,7 @@ namespace HSS.System.V2.Services.Contracts
         /// <param name="appointmentId">The unique identifier of the appointment.</param>
         /// <param name="newDateTime">The new date and time for the appointment.</param>
         /// <returns>A <see cref="Result"/> indicating whether the rescheduling was successful.</returns>
-        Task<Result> RescheduleAppointment(string appointmentId, string departmentId, DateTime newDateTime);
-
-        /// <summary>
-        /// Confirms a patient's entry into a specified room.
-        /// </summary>
-        /// <param name="roomId">The unique identifier of the room.</param>
-        /// <param name="nationalId">The national identifier of the patient.</param>
-        /// <returns>A <see cref="Result"/> indicating whether the entry confirmation was successful.</returns>
-        Task<Result> ConfirmPatientEntryIntoRoom(string roomId, string nationalId);
-
-        /// <summary>
-        /// Confirms that a patient has left a specified room.
-        /// </summary>
-        /// <param name="roomId">The unique identifier of the room.</param>
-        /// <param name="nationalId">The national identifier of the patient.</param>
-        /// <returns>A <see cref="Result"/> indicating whether the exit confirmation was successful.</returns>
-        Task<Result> ConfirmPatientLeaveTheRoom(string roomId, string nationalId);
+        Task<Result> RescheduleClinicAppointment(string appointmentId, string departmentId, DateTime newDateTime);
 
         #endregion
 
@@ -244,7 +228,7 @@ namespace HSS.System.V2.Services.Contracts
         /// </summary>
         /// <param name="appointmentId">The unique identifier of the appointment to be removed.</param>
         /// <returns>A <see cref="Result"/> indicating whether the removal was successful.</returns>
-        Task<Result> RemoveAppointmentFromQueue(string appointmentId);
+        Task<Result> RemoveClinicAppointmentFromQueue(string appointmentId);
 
         /// <summary>
         /// Adds an appointment to the queue.
@@ -269,15 +253,17 @@ namespace HSS.System.V2.Services.Contracts
         /// <param name="model">A <see cref="CreateTicketModel"/> containing the ticket details.</param>
         /// <returns>A <see cref="Result"/> indicating whether the ticket creation was successful.</returns>
         Task<Result> CreateNewTicket(CreateTicketModel model);
-
-        Task<Result> CloseTicket(string ticketId);
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsForClinic(string clinicId, DateTime? date);
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsForMedicalLab(string medicalLabId, DateTime? date);
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsForRadiologyCenter(string radiologyCenterId, DateTime? date);
-        Task<Result> StartAppointment(string appointmentId);
+        Task<Result> StartClinicAppointment(string appointmentId);
         Task<Result> SwapClinicAppointments(string appointmentId1, string appointmentId2);
         Task<Result> SwapMedicalLabAppointments(string appointmentId1, string appointmentId2);
         Task<Result> SwapRadiologyCenterAppointments(string appointmentId1, string appointmentId2);
+        Task<Result> RescheduleMedicalLabAppointment(string appointmentId, string departmentId, DateTime newDateTime);
+        Task<Result> RescheduleRadiologyAppointment(string appointmentId, string departmentId, DateTime newDateTime);
+        Task<Result> RemoveMedicalLabAppointmentFromQueue(string appointmentId);
+        Task<Result> RemoveRadiologyCenterAppointmentFromQueue(string appointmentId);
 
         #endregion
     }

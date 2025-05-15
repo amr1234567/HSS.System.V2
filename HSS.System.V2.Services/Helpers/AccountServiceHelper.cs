@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 namespace HSS.System.V2.Services.Helpers
 {
-    public class AccountServiceHelper
+    public partial class AccountServiceHelper
     {
         public string HashPasswordWithSalt(string salt, string password)
         {
@@ -61,5 +61,6 @@ namespace HSS.System.V2.Services.Helpers
 
             return builder.ToString();
         }
+
     }
 }

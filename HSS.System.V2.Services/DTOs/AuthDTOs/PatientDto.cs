@@ -11,23 +11,23 @@ namespace HSS.System.V2.Services.DTOs.AuthDTOs
         public string Name { get; set; }
 
         [Required]
+        [MinLength(14)]
         [MaxLength(14)]
         public string NationalId { get; set; }
 
         [Required]
-        [Phone]
-        [MaxLength(20)]
-        public string PhoneNumber { get; set; }
-
-        [Required]
-        [MaxLength(200)]
-        public string Address { get; set; }
-
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime DateOfBirth { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
         [Required]
         public Gender Gender { get; set; }
+
+        [Required]
+        [MinLength(8)]
+        public string Passowrd {  get; set; }
+
+        [Required]
+        [Compare(nameof(Passowrd))]
+        public string ConfirmPassword { get; set; }
     }
 }

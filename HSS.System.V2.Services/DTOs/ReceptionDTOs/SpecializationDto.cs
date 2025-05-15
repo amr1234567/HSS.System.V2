@@ -1,9 +1,5 @@
-﻿using Domain.Models.SpecializationModels;
-
-using HSS.System.V2.Domain.Models.Common;
+﻿using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Medical;
-
-using SharedServices.Helpers;
 
 namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
 {

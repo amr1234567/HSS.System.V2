@@ -378,6 +378,34 @@ public static class ResultHelpers
     /// A task that produces the successful result from the primary operation, or, if that fails, from the alternate operation.
     /// If both operations fail, a failure result containing the union of errors is returned.
     /// </returns>
+    public static async Task<Result<T>> FallbackAsync<T>(
+         this Task<Result<T>> task, Func<Task<Result<T>>> anotherTask)
+    {
+        var result = await task.ConfigureAwait(false);
+        if (result.IsFailed)
+        {
+            var anotherTaskResult = await anotherTask().ConfigureAwait(false);
+            if (anotherTaskResult.IsFailed)
+            {
+                return Result.Fail<T>(result.Errors.Union(anotherTaskResult.Errors));
+            }
+            return anotherTaskResult;
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Provides a fallback mechanism for asynchronous operations that produce a <see cref="Result{T}"/>.
+    /// If the first task fails, the alternate task is executed.
+    /// If both fail, the errors from both tasks are combined.
+    /// </summary>
+    /// <typeparam name="T">The type contained in the result.</typeparam>
+    /// <param name="task">The primary asynchronous operation returning a <see cref="Result{T}"/>.</param>
+    /// <param name="anotherTask">The alternate asynchronous operation to execute if the primary operation fails.</param>
+    /// <returns>
+    /// A task that produces the successful result from the primary operation, or, if that fails, from the alternate operation.
+    /// If both operations fail, a failure result containing the union of errors is returned.
+    /// </returns>
     public static async Task<Result> FallbackAsync<T>(
          this Task<Result<T>> task, Task<Result> anotherTask)
     {

@@ -33,21 +33,23 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result> RegisterPatient(PatientDto dto)
         {
-            var check = await _context.Patients.FirstOrDefaultAsync(p => p.NationalId == dto.NationalId);
+            var check = await _context.Patients.FirstOrDefaultAsync(p => p.NationalId == dto.NationalId || p.Email == dto.Email);
             if (check is not null)
-                return new BadRequestError("this national id is already in the system");
+                return new BadRequestError("National Id OR Email are already in the system");
+            var salt = _accountServiceHelper.CreateSalt();
+            var hashPass = _accountServiceHelper.HashPasswordWithSalt(salt, dto.Passowrd);
             var patient = new Patient
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = dto.Name,
-                Address = dto.Address,
-                BirthOfDate = dto.DateOfBirth,
                 Gender = dto.Gender,
-                PhoneNumber = dto.PhoneNumber,
                 Role = UserRole.Patient,
                 NationalId = dto.NationalId,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
+                Email = dto.Email,
+                Salt = salt,
+                HashPassword = hashPass
             };
 
             await _context.Patients.AddAsync(patient);
@@ -85,7 +87,7 @@ namespace HSS.System.V2.Services.Services
             };
         }
 
-        public async Task<Result<TokenModel>> LoginPatient(LoginModelDto model)
+        public async Task<Result<UserDetails>> LoginPatient(LoginModelDto model)
         {
             var user = await _context.Patients.FirstOrDefaultAsync(x => x.NationalId == model.NationalId);
             if (user == null)
@@ -104,13 +106,17 @@ namespace HSS.System.V2.Services.Services
                 new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Name, user.Name),
                 new(CustomClaimTypes.Gender, user.Gender.ToString()),
-                new(ClaimTypes.MobilePhone, user.PhoneNumber),
                 new(CustomClaimTypes.CustomRole, user.Role.ToString()),
                 new(ClaimTypes.Role, user.Role.ToString()),
                 new(CustomClaimTypes.Name, user.Name)
             };
             var token = _tokenService.GenerateAccessToken(customClaims);
-            return token;
+            return new UserDetails
+            {
+                TokenModel = token,
+                UserId = user.Id,
+                UserName = user.Name,
+            };
         }
 
         public async Task<Result<TokenModel>> LoginEmployee(LoginModelDto model, List<Claim>? claims = null)
@@ -185,5 +191,12 @@ namespace HSS.System.V2.Services.Services
             return Result.Ok();
         }
 
+    }
+
+    public class UserDetails
+    {
+        public string UserName { get; set; }
+        public string UserId { get; set; }
+        public TokenModel TokenModel { get; set; }
     }
 }

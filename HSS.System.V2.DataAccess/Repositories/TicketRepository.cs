@@ -97,6 +97,14 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .GetPagedAsync(page, size);
         }
 
+        public async Task<Result<IEnumerable<Ticket>>> GetOpenTicketsForPatient(string patientId)
+        {
+            return await _context.Tickets
+                .AsNoTracking()
+                .Where(t => t.PatientId == patientId && t.State == TicketState.Active)
+                .ToListAsync();
+        }
+
         public async Task<Result<PagedResult<Ticket>>> GetOpenTicketsForPatientByNationalId(string nationalId, int size = 10, int page = 1)
         {
             return await _context.Tickets

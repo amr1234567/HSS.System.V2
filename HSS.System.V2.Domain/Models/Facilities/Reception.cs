@@ -16,4 +16,6 @@ public class Reception : BaseClass, IHospitalDepartmentItem
     public virtual Hospital Hospital { get; set; }
 
     public virtual ICollection<Receptionist> Receptionists { get; set; }
+
+    public TimeSpan PeriodPerAppointment => TimeSpan.Zero;
 } 

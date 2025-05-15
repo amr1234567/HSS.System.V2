@@ -161,7 +161,7 @@
             </remarks>
             <param name="hospitalId">The ID of the hospital</param>
         </member>
-        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateClinicAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateClinicAppointmentModel)">
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateClinicAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateClinicAppointmentModelForPatient)">
             <summary>
             Create a new clinic appointment.
             </summary>
@@ -173,7 +173,7 @@
             </remarks>
             <param name="model">The clinic appointment creation model</param>
         </member>
-        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateRadiologyAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateRadiologyAppointmentModel)">
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateRadiologyAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateRadiologyAppointmentModelForPatient)">
             <summary>
             Create a new radiology appointment.
             </summary>
@@ -185,7 +185,7 @@
             </remarks>
             <param name="model">The radiology appointment creation model</param>
         </member>
-        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateMedicalLabAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateMedicalLabAppointmentModel)">
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateMedicalLabAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateMedicalLabAppointmentModelForPatient)">
             <summary>
             Create a new medical lab appointment.
             </summary>

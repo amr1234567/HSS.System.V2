@@ -33,4 +33,5 @@ public class Clinic : BaseClass, IHospitalDepartmentItem
     [InverseProperty(nameof(Doctor.Clinic))]
     public virtual ICollection<Doctor> Doctors { get; set; }
     public virtual ICollection<ClinicAppointment> ClinicAppointments { get; set; }
+
 } 
