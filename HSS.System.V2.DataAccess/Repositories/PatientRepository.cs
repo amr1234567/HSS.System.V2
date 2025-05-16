@@ -34,6 +34,12 @@ namespace HSS.System.V2.DataAccess.Repositories
             return patient;
         }
 
+        public async Task<Result<Patient?>> GetPatientByNationalIdOrEmail(string nationalId, string email)
+        {
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.NationalId == nationalId || p.Email == email);
+            return patient;
+        }
+
         public Task<Result<Patient>> GetPatientWithMedicalHistoryById(string id)
         {
             throw new NotImplementedException();
@@ -70,6 +76,20 @@ namespace HSS.System.V2.DataAccess.Repositories
         public Task<Result> CreateMedicalHistoryRecordFromEndedTicket(string ticketId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Result> RegisterPatient(Patient patient)
+        {
+            await _context.Patients.AddAsync(patient);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+
+        public async Task<Result> UpdatePatient(Patient patient)
+        {
+            _context.Patients.Update(patient);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
         }
     }
 }

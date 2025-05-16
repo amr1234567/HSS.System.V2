@@ -14,9 +14,9 @@ public class MedicalHistory : BaseClass
     public virtual Patient Patient { get; set; }
     public string PatientNationalId { get; set; }
     public string PatientName { get; set; }
-    public TicketState State { get; set; }
+    //public TicketState State { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime? ClosedAt { get; set; }
+    public string TicketId { get; set; }
     public string? FirstClinicAppointmentId { get; set; }
     [ForeignKey(nameof(FirstClinicAppointmentId))]
     public virtual ClinicAppointment FirstClinicAppointment { get; set; }

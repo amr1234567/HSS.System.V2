@@ -1,4 +1,6 @@
-﻿namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
+﻿using HSS.System.V2.Domain.Helpers.Models;
+
+namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
 {
     public class PatientDetailsWithTicketsDto
     {

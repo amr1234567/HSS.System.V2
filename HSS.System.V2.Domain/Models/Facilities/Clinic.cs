@@ -13,7 +13,7 @@ public class Clinic : BaseClass, IHospitalDepartmentItem
     public int NumberOfShifts { get; set; }
     public TimeSpan StartAt { get; set; }
     public TimeSpan EndAt { get; set; }
-    public string QueueId { get; set; }
+    public string? QueueId { get; set; }
     [ForeignKey(nameof(QueueId))]
     public ClinicQueue Queue { get; set; }
     public TimeSpan PeriodPerAppointment { get; set; }
@@ -33,4 +33,5 @@ public class Clinic : BaseClass, IHospitalDepartmentItem
     [InverseProperty(nameof(Doctor.Clinic))]
     public virtual ICollection<Doctor> Doctors { get; set; }
     public virtual ICollection<ClinicAppointment> ClinicAppointments { get; set; }
+
 } 

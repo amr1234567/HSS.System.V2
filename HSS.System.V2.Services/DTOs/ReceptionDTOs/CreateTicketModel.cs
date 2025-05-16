@@ -1,6 +1,5 @@
-﻿using Domain.Models.Appointments;
-
-using SharedServices.Helpers;
+﻿using HSS.System.V2.Domain.Models.Common;
+using HSS.System.V2.Domain.Models.Prescriptions;
 
 namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
 {
@@ -16,7 +15,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
             {
                 CreatedAt = DateTime.UtcNow,
                 Id = Guid.NewGuid().ToString(),
-                HospitalId = HospitalId,
+                HospitalCreatedInId = HospitalId,
             };
         }
     }

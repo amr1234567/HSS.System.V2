@@ -196,34 +196,40 @@ namespace HSS.System.V2.DataAccess.Repositories
         /// Starting from the department's StartAt time (for today), each appointment is assigned a time slot at an interval equal to the queue's PeriodPerAppointment.
         /// If the calculated slot exceeds the department's EndAt time, the appointment’s StartAt is set to null.
         /// </summary>
-        /// <param name="q">The queue whose appointments will be rescheduled. The queue must have its HospitalDepartment set.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="q"/> is null.</exception>
+        /// <param name="queue">The queue whose appointments will be rescheduled. The queue must have its HospitalDepartment set.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="queue"/> is null.</exception>
         /// <exception cref="InvalidOperationException">Thrown if the queue's HospitalDepartment is not set.</exception>
-        public void RecalculateQueueAppointmentTimes<TQueue>(TQueue q) where TQueue: SystemQueue, IQueueModel
+        public void RecalculateQueueAppointmentTimes<TQueue>(TQueue queue) where TQueue: SystemQueue, IQueueModel
         {
-            if (q == null)
-                throw new ArgumentNullException(nameof(q));
+            if (queue == null)
+                return;
 
-            DateTime baseTime = DateTime.Today.Add(q.DepartmentStartAt);
+            DateTime baseTime = DateTime.Today.Add(queue.DepartmentStartAt);
 
-            DateTime departmentEndTime = DateTime.Today.Add(q.DepartmentEndAt);
+            DateTime departmentEndTime = DateTime.Today.Add(queue.DepartmentEndAt);
 
             DateTime GetEffectiveTime(Appointment a) =>
                 DateTime.UtcNow < a.SchaudleStartAt ? DateTime.UtcNow : a.SchaudleStartAt;
 
-            var orderedAppointments = (q.Appointments ?? new List<Appointment>())
+            var orderedAppointments = (queue.Appointments ?? new List<Appointment>())
                                         .OrderBy(a => GetEffectiveTime(a))
                                         .ToList();
 
             for (int i = 0; i < orderedAppointments.Count; i++)
             {
-                DateTime proposedTime = baseTime.Add(q.PeriodPerAppointment * i);
+                DateTime proposedTime = baseTime.Add(queue.PeriodPerAppointment * i);
                 if (proposedTime <= departmentEndTime)
                     orderedAppointments[i].ActualStartAt = proposedTime;
                 else
                     orderedAppointments[i].ActualStartAt = null;
             }
         }
+        public void RecalculateQueueAppointmentTimes<TQueue>(string queueId) where TQueue : SystemQueue, IQueueModel
+        {
+            var queue = _context.Set<TQueue>().FirstOrDefault(q => q.Id == queueId);
+            RecalculateQueueAppointmentTimes<TQueue>(queue);
+        }
+
 
         public Task<(DateTime StartAt, int Index)> GetAppointemntCustomDetails(Appointment appointment)
         {

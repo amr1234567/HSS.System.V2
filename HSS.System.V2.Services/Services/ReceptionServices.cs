@@ -1,20 +1,19 @@
 ﻿using FluentResults;
 
 using HSS.System.V2.DataAccess.Contracts;
-using HSS.System.V2.DataAccess.Repositories;
 using HSS.System.V2.Domain.DTOs;
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Facilities;
+using HSS.System.V2.Domain.Models.People;
+using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
-using HSS.System.V2.Services.DTOs.PatientDTOs;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using HSS.System.V2.Services.Helpers;
 
 namespace HSS.System.V2.Services.Services
 {
@@ -29,12 +28,15 @@ namespace HSS.System.V2.Services.Services
         private readonly ISpecializationReporitory _specializationReporitory;
         private readonly ITestsRepository _testsRepository;
         private readonly ITestRequiredRepository _testRequiredRepository;
+        private readonly IBackgroundTaskQueue _taskQueue;
+        private readonly INotificationRepository _notificationRepository;
 
         public ReceptionServices(IAppointmentRepository appointmentRepository, IQueueRepository queueRepository,
             IPatientRepository patientRepository, ITicketRepository ticketRepository,
             IMedicineRepository medicineRepository, IHospitalRepository hospitalRepository,
             ISpecializationReporitory specializationReporitory, ITestsRepository testsRepository,
-            ITestRequiredRepository testRequiredRepository)
+            ITestRequiredRepository testRequiredRepository, IBackgroundTaskQueue taskQueue,
+            INotificationRepository notificationRepository)
         {
             _appointmentRepository = appointmentRepository;
             _queueRepository = queueRepository;
@@ -45,6 +47,8 @@ namespace HSS.System.V2.Services.Services
             _specializationReporitory = specializationReporitory;
             _testsRepository = testsRepository;
             _testRequiredRepository = testRequiredRepository;
+            _taskQueue = taskQueue;
+            _notificationRepository = notificationRepository;
         }
 
         public async Task<Result<HospitalDepartments>> GetAllHospitalDepartmentsInHospital(string hospitalId)
@@ -145,16 +149,16 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result<PatientDetailsWithTicketsDto>> GetOpenTicketsForPatientByNationalId(string nationalId, int page, int pageSize)
         {
-            var patient =await _patientRepository.GetPatientByNationalId(nationalId);
+            var patient = await _patientRepository.GetPatientByNationalId(nationalId);
             if (patient.IsFailed || patient.Value == null)
                 return new BadRequestError("no patient found with this national id");
-            var tickets = await _ticketRepository.GetOpenTicketsForPatient(patient.Value.Id, page: page, size: pageSize);
+            var tickets = await _ticketRepository.GetOpenTicketsForPatient(patient.Value.Id);
             if (tickets.IsFailed)
                 return Result.Fail(tickets.Errors);
             return new PatientDetailsWithTicketsDto()
             {
                 PatientId = patient.Value.Id,
-                Tickets = tickets.Value,
+                Tickets = tickets.Value.Select(t => new TicketDto().MapFromModel(t)).GetPaged(page, pageSize),
                 PatientName = patient.Value.Name,
                 PatientNationalId = nationalId
             };
@@ -165,31 +169,29 @@ namespace HSS.System.V2.Services.Services
             var patient = await _patientRepository.GetPatientById(patientId);
             if (patient.IsFailed || patient.Value == null)
                 return new BadRequestError("no patient found with this national id");
-            var tickets = await _ticketRepository.GetOpenTicketsForPatient(patientId, page: page, size: pageSize);
+            var tickets = await _ticketRepository.GetOpenTicketsForPatient(patientId);
             if (tickets.IsFailed)
                 return Result.Fail(tickets.Errors);
-            return new PatientDetailsWithTicketsDto()
-            {
-                PatientId = patient.Value.Id,
-                Tickets = tickets.Value,
-                PatientName = patient.Value.Name,
-                PatientNationalId = patient.Value.NationalId
-            };
+            return tickets.Value.Select(t => new TicketDto().MapFromModel(t)).GetPaged(page, pageSize);
         }
 
         public async Task<Result> CreateAppointment(CreateClinicAppointmentModelForReception model)
         {
             if (model.ExpectedTimeForStart < DateTime.UtcNow)
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
-            var patient = await _patientRepository.GetPatientByNationalId(model.NationalId);
+            var patient = await _patientRepository.GetPatientByNationalId(model.NationalId)
+                .EnsureNoneAsync((p => p is null, new EntityNotExistsError("هذا المريض غير موجود ")));
             if (patient.IsFailed)
                 return Result.Fail(patient.Errors);
-            var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId);
+
+            var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId)
+                .EnsureNoneAsync((c => c is null, new EntityNotExistsError("هذه العيادة غير موجودة")));
             if (clinic.IsFailed)
                 return Result.Fail(clinic.Errors);
             var ticket = await _ticketRepository.GetTicketById(model.TicketId);
             if (ticket.IsFailed)
                 return Result.Fail(ticket.Errors);
+
             var clinicAppointment = ticket.Value.FirstClinicAppointment;
             var entity = model.ToModel();
             entity.ClinicId = clinic.Value!.Id;
@@ -199,9 +201,15 @@ namespace HSS.System.V2.Services.Services
             entity.PatientNationalId = patient.Value.NationalId;
             entity.PatientName = patient.Value.Name;
             entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
+            entity.EmployeeName = string.Empty;
 
             var check = await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId);
-            if (check.Value)
+            if (string.IsNullOrEmpty(ticket.Value.FirstClinicAppointmentId))
+            {
+                ticket.Value.FirstClinicAppointment = entity;
+                ticket.Value.Appointments.Add(entity);
+            }
+            else if (check.Value)
             {
                 while (clinicAppointment.ReExamiationClinicAppointemnt is not null)
                 {
@@ -209,10 +217,11 @@ namespace HSS.System.V2.Services.Services
                 }
                 clinicAppointment.ReExamiationClinicAppointemntId = entity.Id;
                 entity.PreExamiationClinicAppointemntId = clinicAppointment.Id;
+                ticket.Value.Appointments.Add(entity);
             }
             else
             {
-                ticket.Value.FirstClinicAppointment = entity;
+                return new BadRequestError("هذه التذكرة ممتلئة، من فضلك افتح تذكرة جديدة");
             }
 
 
@@ -311,6 +320,7 @@ namespace HSS.System.V2.Services.Services
                 .EnsureNoneAsync((a2) => a2.QueueId == queueId, new BadArgumentsError("Appointments must be in the same queue."))
                 .ThenAsync(a2 => _appointmentRepository.SwapAppointmentsAsync<ClinicAppointment>(appointmentId1, appointmentId2)));
         }
+        
         public async Task<Result> SwapMedicalLabAppointments(string appointmentId1, string appointmentId2)
         {
             var queueId = "";
@@ -320,6 +330,7 @@ namespace HSS.System.V2.Services.Services
                 .EnsureNoneAsync((a2) => a2.QueueId == queueId, new BadArgumentsError("Appointments must be in the same queue."))
                 .ThenAsync(a2 => _appointmentRepository.SwapAppointmentsAsync<MedicalLabAppointment>(appointmentId1, appointmentId2)));
         }
+        
         public async Task<Result> SwapRadiologyCenterAppointments(string appointmentId1, string appointmentId2)
         {
             var queueId = "";
@@ -330,69 +341,313 @@ namespace HSS.System.V2.Services.Services
                 .ThenAsync(a2 => _appointmentRepository.SwapAppointmentsAsync<RadiologyCeneterAppointment>(appointmentId1, appointmentId2)));
         }
 
-        public Task<Result> RescheduleAppointment(string appointmentId, string departmentId, DateTime newDateTime)
+        public async Task<Result> RescheduleClinicAppointment(string appointmentId, string departmentId, DateTime newDateTime)
         {
-            throw new NotImplementedException();
+            var app = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+            if (app.IsFailed)
+                return Result.Fail(app.Errors);
+
+            var inDateApp = await _appointmentRepository.GetAppointmentByDateTimeInDepartmentAsync<Clinic>(departmentId, newDateTime);
+            if (inDateApp.IsSuccess)
+                return new BadRequestError("Date is already resived");
+
+            app.Value.SchaudleStartAt = newDateTime;
+            var result = await _appointmentRepository.UpdateAppointmentAsync(app.Value);
+            _taskQueue.QueueBackgroundWorkItem(async token =>
+            {
+                _queueRepository.RecalculateQueueAppointmentTimes<ClinicQueue>(app.Value.QueueId);
+            });
+            return result;
+        }
+        
+        public async Task<Result> RescheduleMedicalLabAppointment(string appointmentId, string departmentId, DateTime newDateTime)
+        {
+            var app = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+            if (app.IsFailed)
+                return Result.Fail(app.Errors);
+
+            var inDateApp = await _appointmentRepository.GetAppointmentByDateTimeInDepartmentAsync<MedicalLab>(departmentId, newDateTime);
+            if (inDateApp.IsSuccess)
+                return new BadRequestError("Date is already resived");
+
+            app.Value.SchaudleStartAt = newDateTime;
+            var result = await _appointmentRepository.UpdateAppointmentAsync(app.Value);
+            _taskQueue.QueueBackgroundWorkItem(async token =>
+            {
+                _queueRepository.RecalculateQueueAppointmentTimes<MedicalLabQueue>(app.Value.QueueId);
+            });
+            return result;
+        }
+        
+        public async Task<Result> RescheduleRadiologyAppointment(string appointmentId, string departmentId, DateTime newDateTime)
+        {
+            var app = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+            if (app.IsFailed)
+                return Result.Fail(app.Errors);
+
+            var inDateApp = await _appointmentRepository.GetAppointmentByDateTimeInDepartmentAsync<RadiologyCenter>(departmentId, newDateTime);
+            if (inDateApp.IsSuccess)
+                return new BadRequestError("Date is already resived");
+
+            app.Value.SchaudleStartAt = newDateTime;
+            var result = await _appointmentRepository.UpdateAppointmentAsync(app.Value);
+            _taskQueue.QueueBackgroundWorkItem(async token =>
+            {
+                _queueRepository.RecalculateQueueAppointmentTimes<RadiologyCenterQueue>(app.Value.QueueId);
+            });
+            return result;
         }
 
-        public Task<Result> ConfirmPatientEntryIntoRoom(string roomId, string nationalId)
+        public async Task<Result> RemoveClinicAppointmentFromQueue(string appointmentId)
         {
-            throw new NotImplementedException();
+            var app = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+            if (app.IsFailed)
+                return Result.Fail(app.Errors);
+            if (string.IsNullOrEmpty(app.Value.QueueId))
+                return new BadRequestError("The appointment not in any queue");
+            return await _queueRepository.RemoveAppointmentFromQueue<ClinicAppointment, ClinicQueue>(appointmentId);
         }
 
-        public Task<Result> ConfirmPatientLeaveTheRoom(string roomId, string nationalId)
+        public async Task<Result> RemoveMedicalLabAppointmentFromQueue(string appointmentId)
         {
-            throw new NotImplementedException();
+            var app = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+            if (app.IsFailed)
+                return Result.Fail(app.Errors);
+            if (string.IsNullOrEmpty(app.Value.QueueId))
+                return new BadRequestError("The appointment not in any queue");
+            return await _queueRepository.RemoveAppointmentFromQueue<MedicalLabAppointment, MedicalLabQueue>(appointmentId);
         }
 
-        public Task<Result> RemoveAppointmentFromQueue(string appointmentId)
+        public async Task<Result> RemoveRadiologyCenterAppointmentFromQueue(string appointmentId)
         {
-            throw new NotImplementedException();
+            var app = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+            if (app.IsFailed)
+                return Result.Fail(app.Errors);
+            if (string.IsNullOrEmpty(app.Value.QueueId))
+                return new BadRequestError("The appointment not in any queue");
+            return await _queueRepository.RemoveAppointmentFromQueue<RadiologyCeneterAppointment, RadiologyCenterQueue>(appointmentId);
         }
 
-        public Task<Result> AddClinicAppointmentForQueue(string appointmentId, string departmentId)
+        public async Task<Result> AddClinicAppointmentForQueue(string appointmentId)
         {
-            throw new NotImplementedException();
+
+            var appResult = await _appointmentRepository.GetAppointmentByIdAsync<ClinicAppointment>(appointmentId)
+              .OnSuccessAsync(a => a.State = AppointmentState.InQueue)
+              .ThenWithFirstReturnAsync(_appointmentRepository.UpdateAppointmentAsync);
+
+            if (appResult.IsFailed)
+                return Result.Fail(appResult.Errors);
+
+          
+            var app = appResult.Value;
+
+            var now = DateTime.UtcNow;
+            var appointmentDate = app.SchaudleStartAt.Date;
+
+
+            var departmentResult = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(app.ClinicId);
+            if (departmentResult.IsFailed)
+                return Result.Fail(departmentResult.Errors);
+
+            // Get clinic's start datetime on the day of the appointment
+            var clinicStartDateTime = appointmentDate.Add(departmentResult.Value.StartAt);
+
+            var twelveHoursBeforeClinic = clinicStartDateTime.AddHours(-12);
+
+            var check = now < twelveHoursBeforeClinic || now >= app.SchaudleStartAt;
+
+            if (check)
+                return new BadRequestError("لا يمكنك الحضور الآن. الحضور متاح قبل الموعد بحد أقصى ١٢ ساعة، وحتى وقت الموعد فقط.");
+
+            var queueResult = await _queueRepository.GetQueueByDepartmentId<ClinicQueue>(app.ClinicId);
+            if (queueResult.IsFailed)
+            {
+                var addQueueResult = await _queueRepository.CreateQueue(new ClinicQueue
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DepartmentId = app.ClinicId,
+                });
+                if (addQueueResult.IsFailed)
+                    return Result.Fail(addQueueResult.Errors);
+                queueResult = await _queueRepository.GetQueueByDepartmentId<ClinicQueue>(app.ClinicId);
+                if (queueResult.IsFailed)
+                    return Result.Fail(queueResult.Errors);
+            }
+            var result = await _queueRepository.AddAppointmentToQueue<ClinicAppointment ,ClinicQueue>(appointmentId, queueResult.Value.Id);
+            _taskQueue.QueueBackgroundWorkItem(async token =>
+            {
+                var ticket = await _ticketRepository.GetTicketById(appResult.Value.TicketId);
+                if (ticket.IsFailed)
+                    return;
+
+                await _notificationRepository.CreateNotification(new()
+                {
+                    CreatedAt = DateTime.UtcNow,
+                    Id = Guid.NewGuid().ToString(),
+                    PatientId = ticket.Value.PatientId,
+                    Seen = false,
+                    UpdatedAt = DateTime.UtcNow,
+                    ///TO Implement
+                    MessageData = null,
+                    Data = null,
+                });
+            });
+
+            return result;
         }
 
-        public Task<Result> AddMedicalLabAppointmentForQueue(string appointmentId, string departmentId)
+        public async Task<Result> AddMedicalLabAppointmentForQueue(string appointmentId)
         {
-            throw new NotImplementedException();
+           
+            var appResult = await _appointmentRepository.GetAppointmentByIdAsync<MedicalLabAppointment>(appointmentId)
+              .OnSuccessAsync(a => a.State = AppointmentState.InQueue)
+              .ThenWithFirstReturnAsync(_appointmentRepository.UpdateAppointmentAsync);
+            if (appResult.IsFailed)
+                return Result.Fail(appResult.Errors);
+
+
+            var app = appResult.Value;
+            var now = DateTime.UtcNow;
+            var appointmentDate = app.SchaudleStartAt.Date;
+
+
+            var departmentResult = await _hospitalRepository.GetHospitalDepartmentItem<MedicalLab>(app.MedicalLabId);
+            if (departmentResult.IsFailed)
+                return Result.Fail(departmentResult.Errors);
+
+            // Get clinic's start datetime on the day of the appointment
+            var clinicStartDateTime = appointmentDate.Add(departmentResult.Value.StartAt);
+
+            var twelveHoursBeforeClinic = clinicStartDateTime.AddHours(-12);
+
+            var check = now < twelveHoursBeforeClinic || now >= app.SchaudleStartAt;
+
+            if (check)
+                return new BadRequestError("لا يمكنك الحضور الآن. الحضور متاح قبل الموعد بحد أقصى ١٢ ساعة، وحتى وقت الموعد فقط.");
+
+            var queueResult = await _queueRepository.GetQueueByDepartmentId<MedicalLabQueue>(app.MedicalLabId);
+            if (queueResult.IsFailed)
+            {
+                var addQueueResult = await _queueRepository.CreateQueue(new MedicalLabQueue
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DepartmentId = app.MedicalLabId,
+                });
+                if (addQueueResult.IsFailed)
+                    return Result.Fail(addQueueResult.Errors);
+                queueResult = await _queueRepository.GetQueueByDepartmentId<MedicalLabQueue>(app.MedicalLabId);
+                if (queueResult.IsFailed)
+                    return Result.Fail(queueResult.Errors);
+            }
+            return await _queueRepository.AddAppointmentToQueue<MedicalLabAppointment, MedicalLabQueue>(appointmentId, queueResult.Value.Id);
         }
 
-        public Task<Result> AddRadiologyCenterAppointmentForQueue(string appointmentId, string departmentId)
+        public async Task<Result> AddRadiologyCenterAppointmentForQueue(string appointmentId)
         {
-            throw new NotImplementedException();
+            var appResult = await _appointmentRepository.GetAppointmentByIdAsync<RadiologyCeneterAppointment>(appointmentId)
+              .OnSuccessAsync(a => a.State = AppointmentState.InQueue)
+              .ThenWithFirstReturnAsync(_appointmentRepository.UpdateAppointmentAsync);
+
+            if (appResult.IsFailed)
+                return Result.Fail(appResult.Errors);
+
+            var app = appResult.Value;
+            var now = DateTime.UtcNow;
+            var appointmentDate = app.SchaudleStartAt.Date;
+
+
+            var departmentResult = await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(app.RadiologyCeneterId);
+            if (departmentResult.IsFailed)
+                return Result.Fail(departmentResult.Errors);
+
+            // Get clinic's start datetime on the day of the appointment
+            var clinicStartDateTime = appointmentDate.Add(departmentResult.Value.StartAt);
+
+            var twelveHoursBeforeClinic = clinicStartDateTime.AddHours(-12);
+
+            var check = now < twelveHoursBeforeClinic || now >= app.SchaudleStartAt;
+            if (check)
+                return new BadRequestError("لا يمكنك الحضور الآن. الحضور متاح قبل الموعد بحد أقصى ١٢ ساعة، وحتى وقت الموعد فقط.");
+            var queueResult = await _queueRepository.GetQueueByDepartmentId<RadiologyCenterQueue>(app.RadiologyCeneterId);
+            if (queueResult.IsFailed)
+            {
+                var addQueueResult = await _queueRepository.CreateQueue(new RadiologyCenterQueue
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    DepartmentId = app.RadiologyCeneterId,
+                });
+                if (addQueueResult.IsFailed)
+                    return Result.Fail(addQueueResult.Errors);
+                queueResult = await _queueRepository.GetQueueByDepartmentId<RadiologyCenterQueue>(app.RadiologyCeneterId);
+                if (queueResult.IsFailed)
+                    return Result.Fail(queueResult.Errors);
+            }
+            return await _queueRepository.AddAppointmentToQueue<RadiologyCeneterAppointment, RadiologyCenterQueue>(appointmentId, queueResult.Value.Id);
         }
 
-        public Task<Result> CreateNewTicket(CreateTicketModel model)
+        public async Task<Result> CreateNewTicket(string patientIdentifier, PatientIdentifierType identifierType, string hospitalId)
         {
-            throw new NotImplementedException();
+            var patient = new Patient();
+            if (identifierType == PatientIdentifierType.NationalId)
+            {
+                var patientResult = await _patientRepository.GetPatientByNationalId(patientIdentifier);
+                if (patientResult.IsFailed || patientResult.Value is null)
+                    return new BadRequestError("لا يوجد مريض بهذا الرقم القومي");
+                patient = patientResult.Value;
+            }
+            else
+            {
+                var patientResult = await _patientRepository.GetPatientById(patientIdentifier);
+                if (patientResult.IsFailed || patientResult.Value is null)
+                    return new BadRequestError("لا يوجد مريض بهذا الرقم القومي");
+                patient = patientResult.Value;
+            }
+
+            var ticket = new Ticket
+            {
+                Id = Guid.NewGuid().ToString(),
+                PatientId = patient.Id,
+                HospitalCreatedInId = hospitalId,
+                State = TicketState.Active,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                PatientName = patient.Name,
+                PatientNationalId = patient.NationalId,
+            };
+
+            await _ticketRepository.CreateTicket(ticket);
+            return Result.Ok();
         }
 
-        public Task<Result> CloseTicket(string ticketId)
+        public async Task<Result<List<DateTime>>> GetAvailableTimeSlotsForClinic(string clinicId, DateTime? date)
         {
-            throw new NotImplementedException();
+            return await _hospitalRepository.GetAvailableTimeSlotsAsync<Clinic>(clinicId, date ?? DateTime.UtcNow);
         }
 
-        public Task<Result<List<DateTime>>> GetAvailableTimeSlotsForClinic(string clinicId, DateTime? date)
+        public async Task<Result<List<DateTime>>> GetAvailableTimeSlotsForMedicalLab(string medicalLabId, DateTime? date)
         {
-            throw new NotImplementedException();
+            return await _hospitalRepository.GetAvailableTimeSlotsAsync<MedicalLab>(medicalLabId, date ?? DateTime.UtcNow);
         }
 
-        public Task<Result<List<DateTime>>> GetAvailableTimeSlotsForMedicalLab(string medicalLabId, DateTime? date)
+        public async Task<Result<List<DateTime>>> GetAvailableTimeSlotsForRadiologyCenter(string radiologyCenterId, DateTime? date)
         {
-            throw new NotImplementedException();
+            return await _hospitalRepository.GetAvailableTimeSlotsAsync<RadiologyCenter>(radiologyCenterId, date ?? DateTime.UtcNow);
         }
 
-        public Task<Result<List<DateTime>>> GetAvailableTimeSlotsForRadiologyCenter(string radiologyCenterId, DateTime? date)
+        public async Task<Result> StartClinicAppointment(string appointmentId)
         {
-            throw new NotImplementedException();
-        }
+            var appResult = await _appointmentRepository.GetAppointmentByIdAsync<ClinicAppointment>(appointmentId);
+            if (appResult.IsFailed)
+                return Result.Fail(appResult.Errors);
+            var a = appResult.Value;
+            if (a.State == AppointmentState.InProgress)
+                return new BadRequestError("الحجز قد بدأ بالفعل");
+            if (a.State == AppointmentState.Completed)
+                return new BadRequestError("الحجز قد انتهي، لا يمكن بدأه من جديد");
+            if (a.State == AppointmentState.Terminated)
+                return new BadRequestError("الحجز قد ألغي، من فضلك أحجز موعد جديد");
 
-        public Task<Result> StartAppointment(string appointmentId)
-        {
-            throw new NotImplementedException();
+            return await ChangeAppointmentState(appointmentId, AppointmentState.InProgress);
         }
 
         private async Task<Result> ChangeAppointmentState(string appointmentId, AppointmentState newState)

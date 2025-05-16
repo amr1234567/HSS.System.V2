@@ -462,13 +462,6 @@ namespace HSS.System.V2.Services.Seeding
                                 HospitalId = hospital.Id,
                                 PeriodPerAppointment = new TimeSpan(0, 30, 0),
                                 SpecializationId = specializations[random.Next(specializations.Count)].Id,
-                                Queue = new ClinicQueue
-                                {
-                                    Id = Guid.NewGuid().ToString(),
-                                    CreatedAt = DateTime.UtcNow,
-                                    UpdatedAt = DateTime.UtcNow,
-                                    PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                                },
                                 Doctors = new List<Doctor>()
                                 {
                                      GenerateDoctor(clinicID, "عيادة " + specialization.Name, specialization.Id, specialization.Name, hospital.Id, new TimeSpan(0,0,0), new TimeSpan(5,59,59)),
@@ -502,13 +495,6 @@ namespace HSS.System.V2.Services.Seeding
                             HospitalId = hospital.Id,
                             NumberOfShifts = 4,
                             PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            Queue = new RadiologyCenterQueue
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                CreatedAt = DateTime.UtcNow,
-                                UpdatedAt = DateTime.UtcNow,
-                                PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            },
                             RadiologyTesters = [
                                     CreateRadiologyTester(radiologyCenterId1, "مركز الأشعة 1", hospital.Id, new TimeSpan(0,0,0), new TimeSpan(5,59,59)),
                                     CreateRadiologyTester(radiologyCenterId1, "مركز الأشعة 1", hospital.Id, new TimeSpan(6,0,0), new TimeSpan(11,59,59)),
@@ -528,13 +514,6 @@ namespace HSS.System.V2.Services.Seeding
                             HospitalId = hospital.Id,
                             NumberOfShifts = 4,
                             PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            Queue = new RadiologyCenterQueue
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                CreatedAt = DateTime.UtcNow,
-                                UpdatedAt = DateTime.UtcNow,
-                                PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            },
                             RadiologyTesters = [
                                     CreateRadiologyTester(radiologyCenterId2, "مركز الأشعة 1", hospital.Id, new TimeSpan(0,0,0), new TimeSpan(5,59,59)),
                                     CreateRadiologyTester(radiologyCenterId2, "مركز الأشعة 1", hospital.Id, new TimeSpan(6,0,0), new TimeSpan(11,59,59)),
@@ -564,13 +543,6 @@ namespace HSS.System.V2.Services.Seeding
                             HospitalId = hospital.Id,
                             NumberOfShifts = 4,
                             PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            Queue = new MedicalLabQueue
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                CreatedAt = DateTime.UtcNow,
-                                UpdatedAt = DateTime.UtcNow,
-                                PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            },
                             MedicalLabTesters = [
                                     CreateMedicalLabTester(medicalLabId1,"معمل التحاليل 1", hospital.Id, new TimeSpan(0,0,0), new TimeSpan(5,59,59)),
                                     CreateMedicalLabTester(medicalLabId1,"معمل التحاليل 1", hospital.Id, new TimeSpan(6,0,0), new TimeSpan(11,59,59)),
@@ -591,13 +563,6 @@ namespace HSS.System.V2.Services.Seeding
                             HospitalId = hospital.Id,
                             NumberOfShifts = 4,
                             PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            Queue = new MedicalLabQueue
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                CreatedAt = DateTime.UtcNow,
-                                UpdatedAt = DateTime.UtcNow,
-                                PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                            },
                             MedicalLabTesters = [
                                     CreateMedicalLabTester(medicalLabId2,"معمل التحاليل 2", hospital.Id, new TimeSpan(0,0,0), new TimeSpan(5,59,59)),
                                     CreateMedicalLabTester(medicalLabId2,"معمل التحاليل 2", hospital.Id, new TimeSpan(6,0,0), new TimeSpan(11,59,59)),
@@ -627,6 +592,44 @@ namespace HSS.System.V2.Services.Seeding
                             ]
                     };
                     await context.Receptions.AddAsync(reception);
+                }
+                foreach(var clinic in context.Clinics.ToList())
+                {
+                    var queue = new ClinicQueue
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        PeriodPerAppointment = new TimeSpan(0, 30, 0),
+                        DepartmentId = clinic.Id
+                    };
+                    clinic.Queue = queue;
+                }
+
+                foreach (var medicalLab in context.MedicalLabs.ToList())
+                {
+                    var queue = new MedicalLabQueue
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        PeriodPerAppointment = new TimeSpan(0, 30, 0),
+                        DepartmentId = medicalLab.Id
+                    };
+                    medicalLab.Queue = queue;
+                }
+
+                foreach (var radiologyCenter in context.RadiologyCenters.ToList())
+                {
+                    var queue = new RadiologyCenterQueue
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        PeriodPerAppointment = new TimeSpan(0, 30, 0),
+                        DepartmentId = radiologyCenter.Id
+                    };
+                    radiologyCenter.Queue = queue;
                 }
                 await context.SaveChangesAsync();
             }
@@ -843,7 +846,7 @@ namespace HSS.System.V2.Services.Seeding
                 HashPassword = password,
                 Salt = salt,
                 Salary = random.Next(15000, 30000),
-                Role = UserRole.Doctor,
+                Role = UserRole.Receptionist,
                 EndAt = EndAt,
                 StartAt = startAt,
                 HospitalId = hospitalId,

@@ -20,4 +20,6 @@ public class Pharmacy : BaseClass, IHospitalDepartmentItem
     public virtual ICollection<MedicinePharmacy> MedicinesPharmacy { get; set; }
 
     public virtual ICollection<Pharmacist> Pharmacists { get; set; }
+
+    public TimeSpan PeriodPerAppointment => TimeSpan.Zero;
 } 

@@ -40,13 +40,9 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                var ticketResult = await GetTicketById(model.Id);
-                if (ticketResult.IsFailed)
-                    return Result.Fail(ticketResult.Errors);
+                model.UpdatedAt = DateTime.UtcNow;
 
-                ticketResult.Value.State = model.State;
-                ticketResult.Value.UpdatedAt = DateTime.UtcNow;
-                _context.Tickets.Update(ticketResult.Value);
+                _context.Tickets.Update(model);
                 await _context.SaveChangesAsync();
                 return Result.Ok();
             }
@@ -75,7 +71,6 @@ namespace HSS.System.V2.DataAccess.Repositories
             try
             {
                 var ticket = await _context.Tickets
-                    .AsNoTracking()
                     .Where(t => t.Id == ticketId)
                     .Include(t => t.FirstClinicAppointment)
                         .ThenInclude(t => t.ReExamiationClinicAppointemnt)
@@ -95,6 +90,14 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .AsNoTracking()
                 .Where(t => t.PatientId == patientId && t.State == TicketState.Active)
                 .GetPagedAsync(page, size);
+        }
+
+        public async Task<Result<IEnumerable<Ticket>>> GetOpenTicketsForPatient(string patientId)
+        {
+            return await _context.Tickets
+                .AsNoTracking()
+                .Where(t => t.PatientId == patientId && t.State == TicketState.Active)
+                .ToListAsync();
         }
 
         public async Task<Result<PagedResult<Ticket>>> GetOpenTicketsForPatientByNationalId(string nationalId, int size = 10, int page = 1)

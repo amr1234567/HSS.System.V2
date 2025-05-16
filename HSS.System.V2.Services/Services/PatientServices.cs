@@ -6,12 +6,9 @@ using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.Appointments;
-using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Medical;
-using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.Models.Prescriptions;
-using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.DTOs.PatientDTOs;
 
@@ -384,9 +381,9 @@ namespace HSS.System.V2.Services.Services
                 }).GetPaged(pagination);
         }
 
-        public async Task<Result<PagedResult<TicketViewDto>>> GetActiveTicketInHospital(string hospitalId, PaginationRequest pagination)
+        public async Task<Result<PagedResult<TicketViewDto>>> GetActiveTicketForPatient(PaginationRequest pagination)
         {
-            var ticketsResult = await _ticketRepository.GetAllOpenedTicketInHospitalForPatient(hospitalId, _userContext.ApiUserId, page: pagination.Page, size: pagination.Size);
+            var ticketsResult = await _ticketRepository.GetOpenTicketsForPatient(_userContext.ApiUserId, page: pagination.Page, size: pagination.Size);
 
             if (ticketsResult.IsFailed)
                 return Result.Fail(ticketsResult.Errors);
@@ -987,5 +984,6 @@ namespace HSS.System.V2.Services.Services
             appointment.Value.UpdatedAt = DateTime.UtcNow;
             return await _appointmentRepository.UpdateAppointmentAsync(appointment.Value);
         }
+
     }
 }

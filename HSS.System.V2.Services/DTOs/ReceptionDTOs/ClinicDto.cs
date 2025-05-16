@@ -1,9 +1,5 @@
-﻿using Domain.Models.HospitalModels;
-
-using HSS.System.V2.Domain.Models.Common;
+﻿using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Facilities;
-
-using SharedServices.Helpers;
 
 namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
 {
@@ -30,7 +26,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
             PeriodPerAppointment = model.PeriodPerAppointment;
             SpecializationId = model.SpecializationId;
             SpecializationName = model.Specialization?.Name ?? "غير معروف";
-            CurrentDoctor = model.CurrentWorkingDoctor.Name ?? "لا يوجد حاليا";
+            CurrentDoctor = model.CurrentWorkingDoctor?.Name ?? "لا يوجد حاليا";
 
             return this;
         }

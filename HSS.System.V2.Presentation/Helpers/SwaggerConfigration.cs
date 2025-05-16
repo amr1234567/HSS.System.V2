@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -13,6 +14,7 @@ namespace HSS.System.V2.Presentation.Helpers
             c.SwaggerDoc("PatientAPI", new OpenApiInfo { Title = "Patient API", Version = "v1" });
             c.SwaggerDoc("RecpetionAPI", new OpenApiInfo { Title = "Recpetion API", Version = "v1" });
             c.SwaggerDoc("EmployeeAuthAPI", new OpenApiInfo { Title = "Employee Auth API", Version = "v1" });
+            c.SwaggerDoc("ClinicAPI", new OpenApiInfo { Title = "Clinic API", Version = "v1" });
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
@@ -55,6 +57,7 @@ namespace HSS.System.V2.Presentation.Helpers
             options.SwaggerEndpoint("/swagger/PatientAPI/swagger.json", "Patient API V1");
             options.SwaggerEndpoint("/swagger/RecpetionAPI/swagger.json", "Reception API V1");
             options.SwaggerEndpoint("/swagger/EmployeeAuthAPI/swagger.json", "Employee Auth API V1");
+            options.SwaggerEndpoint("/swagger/ClinicAPI/swagger.json", "Clinic API V1");
         }
     }
 
@@ -79,4 +82,5 @@ namespace HSS.System.V2.Presentation.Helpers
             });
         }
     }
+
 }

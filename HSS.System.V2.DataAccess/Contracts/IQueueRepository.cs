@@ -18,6 +18,7 @@ namespace HSS.System.V2.DataAccess.Contracts
             where TApp : Appointment, IAppointmentModel<TQueue>
             where TQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<TQueue>;
         void RecalculateQueueAppointmentTimes<TQueue>(TQueue q) where TQueue : SystemQueue, IQueueModel;
+        void RecalculateQueueAppointmentTimes<TQueue>(string queueId) where TQueue : SystemQueue, IQueueModel;
 
         Task<(DateTime StartAt, int Index)> GetAppointemntCustomDetails(Appointment appointment);
     }

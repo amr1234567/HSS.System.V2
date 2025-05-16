@@ -28,7 +28,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
             PeriodPerAppointment = model.ExpectedDuration;
             StartAt = model.ActualStartAt ?? model.SchaudleStartAt;
             PatientName = model.PatientName;
-            HospitalName = model.Hospital.Name;
+            HospitalName = model.HospitalName;
             TicketId = model.TicketId;
             QueueId = model.QueueId;
             State = model.State.ToString();

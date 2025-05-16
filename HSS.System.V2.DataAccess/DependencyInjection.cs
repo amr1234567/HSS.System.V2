@@ -1,12 +1,10 @@
-﻿
-using HSS.System.V2.DataAccess.Contexts;
+﻿using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.DataAccess.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 
 namespace HSS.System.V2.DataAccess;
 
@@ -31,7 +29,8 @@ public static class DependencyInjection
         services.AddScoped<ITicketRepository, TicketRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<ISpecializationReporitory, SpecializationReporitory>();
-        services.AddScoped<IMedicalHistoryServices, MedicalHistoryServices>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IMedicalHistoryRepository, MedicalHistoryRepository>();
 
         return services;
     }

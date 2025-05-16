@@ -14,5 +14,8 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<Patient?>> GetPatientByNationalId(string nationalId, params Expression<Func<Patient, object>>[] includes);
         Task<Result> UpdatePatientPicture(string userId, string imagePath);
         Task<Result> CreateMedicalHistoryRecordFromEndedTicket(string ticketId);
+        Task<Result<Patient?>> GetPatientByNationalIdOrEmail(string nationalId, string email);
+        Task<Result> RegisterPatient(Patient patient);
+        Task<Result> UpdatePatient(Patient patient);
     }
 }

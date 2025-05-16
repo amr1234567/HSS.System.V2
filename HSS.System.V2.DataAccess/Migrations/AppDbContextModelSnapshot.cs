@@ -36,10 +36,18 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(34)
                         .HasColumnType("nvarchar(34)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan>("ExpectedDuration")
                         .HasColumnType("time");
@@ -55,9 +63,16 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("MedicalHistoryId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("PatientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PatientNationalId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QueueId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("SchaudleStartAt")
                         .HasColumnType("datetime2");
@@ -150,7 +165,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SpecializationId")
@@ -243,7 +257,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("StartAt")
@@ -332,7 +345,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("StartAt")
@@ -418,9 +430,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("ClosedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -439,8 +448,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("State")
-                        .HasColumnType("int");
+                    b.Property<string>("TicketId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -660,7 +670,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("BirthOfDate")
@@ -742,7 +751,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("BirthOfDate")
@@ -924,6 +932,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DepartmentId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(21)
@@ -982,10 +993,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ClinicName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Diagnosis")
                         .HasColumnType("nvarchar(max)");
 
@@ -995,17 +1002,10 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("DoctorId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("DoctorName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PreExamiationClinicAppointemntId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PrescriptionId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("QueueId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ReExamiationClinicAppointemntId")
@@ -1049,13 +1049,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("MedicalLabName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("QueueId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("ReceiveResultDate")
                         .HasColumnType("datetime2");
 
@@ -1071,10 +1064,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("TesterName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasIndex("ClinicAppointmentId");
 
                     b.HasIndex("MedicalLabId");
@@ -1082,12 +1071,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasIndex("QueueId");
 
                     b.HasIndex("TesterId");
-
-                    b.ToTable("Appointments", t =>
-                        {
-                            t.Property("QueueId")
-                                .HasColumnName("MedicalLabAppointment_QueueId");
-                        });
 
                     b.HasDiscriminator().HasValue("MedicalLabAppointment");
                 });
@@ -1099,16 +1082,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("ClinicAppointmentId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("QueueId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("RadiologyCeneterId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RadiologyCeneterName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Result")
                         .IsRequired()
@@ -1121,10 +1097,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("TesterId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TesterName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("ClinicAppointmentId");
 
@@ -1141,9 +1113,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                             t.Property("ClinicAppointmentId")
                                 .HasColumnName("RadiologyCeneterAppointment_ClinicAppointmentId");
 
-                            t.Property("QueueId")
-                                .HasColumnName("RadiologyCeneterAppointment_QueueId");
-
                             t.Property("Result")
                                 .HasColumnName("RadiologyCeneterAppointment_Result");
 
@@ -1152,9 +1121,6 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                             t.Property("TesterId")
                                 .HasColumnName("RadiologyCeneterAppointment_TesterId");
-
-                            t.Property("TesterName")
-                                .HasColumnName("RadiologyCeneterAppointment_TesterName");
                         });
 
                     b.HasDiscriminator().HasValue("RadiologyCeneterAppointment");
@@ -1277,11 +1243,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.Property<string>("ClinicId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("ClinicId");
+                    b.HasIndex("DepartmentId");
 
                     b.HasDiscriminator().HasValue("ClinicQueue");
                 });
@@ -1290,11 +1252,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.Property<string>("MedicalLabId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("MedicalLabId");
+                    b.HasIndex("DepartmentId");
 
                     b.HasDiscriminator().HasValue("MedicalLabQueue");
                 });
@@ -1303,11 +1261,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.Property<string>("RadiologyCenterId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("RadiologyCenterId");
+                    b.HasIndex("DepartmentId");
 
                     b.HasDiscriminator().HasValue("RadiologyCenterQueue");
                 });
@@ -1366,9 +1320,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Queues.ClinicQueue", "Queue")
                         .WithMany()
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.Medical.Specialization", "Specialization")
                         .WithMany("Clinics")
@@ -1399,9 +1351,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Queues.MedicalLabQueue", "Queue")
                         .WithMany()
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.Navigation("CurrentWorkingTester");
 
@@ -1435,9 +1385,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Queues.RadiologyCenterQueue", "Queue")
                         .WithMany()
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.Navigation("CurrentWorkingTester");
 
@@ -1811,9 +1759,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Clinic", "Clinic")
                         .WithMany()
-                        .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Clinic");
                 });
@@ -1822,9 +1768,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "MedicalLab")
                         .WithMany()
-                        .HasForeignKey("MedicalLabId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("MedicalLab");
                 });
@@ -1833,9 +1777,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "RadiologyCenter")
                         .WithMany()
-                        .HasForeignKey("RadiologyCenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("RadiologyCenter");
                 });

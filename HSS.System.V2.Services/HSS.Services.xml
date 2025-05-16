@@ -4,6 +4,218 @@
         <name>HSS.System.V2.Services</name>
     </assembly>
     <members>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllHospitalDepartmentsInHospital(System.String)">
+            <summary>
+            Retrieves all hospital departments in the specified hospital.
+            </summary>
+            <param name="hospitalId">The unique identifier of the hospital.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing an enumerable collection of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.HospitalDepartmentDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllSpecializationsInHospital(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all specializations in the specified hospital.
+            </summary>
+            <param name="hospitalId">The unique identifier of the hospital.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.SpecializationDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllClinics(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all clinics for a given specialization in the specified hospital.
+            </summary>
+            <param name="specializationId">The unique identifier of the specialization.</param>
+            <param name="hospitalId">The unique identifier of the hospital.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.ClinicDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllRadiologyCenters(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all radiology centers in the specified hospital.
+            </summary>
+            <param name="hospitalId">The unique identifier of the hospital.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.RadiologyCenterDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllRadiologyCentersDoTest(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all radiology centers that perform a specific test in the specified hospital.
+            </summary>
+            <param name="hospitalId">The unique identifier of the hospital.</param>
+            <param name="radiologyTestId">The unique identifier of the radiology test.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.RadiologyCenterDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllMedicalLabs(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all medical labs in the specified hospital.
+            </summary>
+            <param name="hospitalId">The unique identifier of the hospital.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.MedicalLabDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllMedicalLabsDoTest(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all medical labs that perform a specific test in the specified hospital.
+            </summary>
+            <param name="hospitalId">The unique identifier of the hospital.</param>
+            <param name="medicalTestId">The unique identifier of the medical test.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.MedicalLabDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllAppointmentsForClinic(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>
+            Retrieves all appointments for the specified clinic.
+            </summary>
+            <param name="clinicId">The unique identifier of the clinic.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetQueueForClinic(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves the queue of appointments for the specified clinic.
+            </summary>
+            <param name="clinicId">The unique identifier of the clinic.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>
+            A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto"/> objects representing the queue.
+            </returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllAppointmentsForRadiologyCenter(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>
+            Retrieves all appointments for the specified radiology center.
+            </summary>
+            <param name="radiologyCenterId">The unique identifier of the radiology center.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetQueueForRadiologyCenter(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves the queue of appointments for the specified radiology center.
+            </summary>
+            <param name="radiologyCenterId">The unique identifier of the radiology center.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>
+            A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto"/> objects representing the queue.
+            </returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetAllAppointmentsForMedicalLab(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>
+            Retrieves all appointments for the specified medical lab.
+            </summary>
+            <param name="medicalLabId">The unique identifier of the medical lab.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetQueueForMedicalLab(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves the queue of appointments for the specified medical lab.
+            </summary>
+            <param name="medicalLabId">The unique identifier of the medical lab.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>
+            A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto"/> objects representing the queue.
+            </returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetOpenTicketsForPatientByNationalId(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all open tickets for a patient using their national ID.
+            </summary>
+            <param name="nationalId">The national identifier of the patient.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.TicketDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.GetOpenTicketsForPatientById(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves all open tickets for a patient using their unique identifier.
+            </summary>
+            <param name="patientId">The unique identifier of the patient.</param>
+            <param name="page">The page number for pagination.</param>
+            <param name="pageSize">The number of items per page.</param>
+            <returns>A <see cref="T:FluentResults.Result`1"/> containing a paged result of <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.TicketDto"/> objects.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.CreateAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateClinicAppointmentModelForReception)">
+            <summary>
+            Creates a new clinic appointment.
+            </summary>
+            <param name="model">A <see cref="T:HSS.System.V2.Services.DTOs.PatientDTOs.CreateClinicAppointmentModelForPatient"/> containing the appointment details.</param>
+            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the appointment creation was successful.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.CreateAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateRadiologyAppointmentModelForReception)">
+            <summary>
+            Creates a new radiology appointment.
+            </summary>
+            <param name="model">A <see cref="T:HSS.System.V2.Services.DTOs.PatientDTOs.CreateRadiologyAppointmentModelForPatient"/> containing the appointment details.</param>
+            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the appointment creation was successful.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.CreateAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateMedicalLabAppointmentModelForReception)">
+            <summary>
+            Creates a new medical lab appointment.
+            </summary>
+            <param name="model">A <see cref="T:HSS.System.V2.Services.DTOs.PatientDTOs.CreateMedicalLabAppointmentModelForPatient"/> containing the appointment details.</param>
+            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the appointment creation was successful.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.TerminateAppointment(System.String)">
+            <summary>
+            Terminates an existing appointment.
+            </summary>
+            <param name="appointmentId">The unique identifier of the appointment to be terminated.</param>
+            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the termination was successful.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.RescheduleClinicAppointment(System.String,System.String,System.DateTime)">
+            <summary>
+            Reschedules an appointment to a new date and time.
+            </summary>
+            <param name="appointmentId">The unique identifier of the appointment.</param>
+            <param name="newDateTime">The new date and time for the appointment.</param>
+            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the rescheduling was successful.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.RemoveClinicAppointmentFromQueue(System.String)">
+            <summary>
+            Removes an appointment from the queue.
+            </summary>
+            <param name="appointmentId">The unique identifier of the appointment to be removed.</param>
+            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the removal was successful.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.AddClinicAppointmentForQueue(System.String)">
+            <summary>
+            Adds an appointment to the queue.
+            </summary>
+            <param name="appointmentId">The unique identifier of the appointment to be added.</param>
+            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the addition was successful.</returns>
+        </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto">
+            <summary>
+            Data transfer object representing an appointment.
+            </summary>
+        </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.ClinicDto">
+            <summary>
+            Data transfer object representing a clinic.
+            </summary>
+        </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.RadiologyCenterDto">
+            <summary>
+            Data transfer object representing a radiology center.
+            </summary>
+        </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.TicketDto">
+            <summary>
+            Data transfer object representing a ticket.
+            </summary>
+        </member>
         <member name="M:HSS.System.V2.Services.Services.PatientServices.GetCurrentMedicalLabAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
             <inheritdoc/>
         </member>

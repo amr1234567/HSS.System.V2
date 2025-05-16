@@ -6,6 +6,7 @@ namespace HSS.System.V2.Services.DTOs.AuthDTOs
     {
         [Required]
         [MinLength(14)]
+        [MaxLength(14)]
         public string NationalId { get; set; }
 
         [Required]
