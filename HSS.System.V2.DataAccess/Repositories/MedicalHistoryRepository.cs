@@ -45,13 +45,13 @@ public class MedicalHistoryRepository : IMedicalHistoryRepository
         {
             Appointments = ticket.Appointments,
             CreatedAt = ticket.CreatedAt,
-            FirstClinicAppointment = ticket.FirstClinicAppointment,
             FirstClinicAppointmentId = ticket.FirstClinicAppointmentId,
             Id = ticket.Id,
             PatientId = ticket.PatientId,
             PatientName = ticket.PatientName,
             PatientNationalId = ticket.PatientNationalId,
-            UpdatedAt = DateTime.UtcNow
+            UpdatedAt = DateTime.UtcNow,
+            TicketId = ticket.Id
         };
         await _context.MedicalHistories.AddAsync(model);
         await _context.SaveChangesAsync();

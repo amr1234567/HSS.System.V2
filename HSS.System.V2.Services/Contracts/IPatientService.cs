@@ -38,7 +38,6 @@ namespace HSS.System.V2.Services.Contracts
         Task<Result<PagedResult<HospitalDto>>> GetHospitalsBySpecificationId( string specializationId, PaginationRequest pagination);
         Task<Result<PagedResult<HospitalDto>>> GetHospitalsByRadiologyTestId( string radiologyTestId, PaginationRequest pagination);
         Task<Result<PagedResult<HospitalDto>>> GetHospitalsByMedicalLabTestId( string medicalLabTestId, PaginationRequest pagination);
-        Task<Result<PagedResult<TicketViewDto>>> GetActiveTicketForPatient(PaginationRequest pagination);
         Task<Result<List<DebartmentDto>>> GetClinics(string hospitalId, string SpecificationId);
         Task<Result<List<DebartmentDto>>> GetRadiologyCenter(string hospitalId, string TestId);
         Task<Result<List<DebartmentDto>>> GetMedicalLabs(string hospitalId, string TestId);
@@ -70,6 +69,8 @@ namespace HSS.System.V2.Services.Contracts
         Task<Result<object>> GetAppointmentContent(string appointmentId);
         Task<Result> CancelAppointment(string appointmentId);
         Task<Result<List<SpecialzationDto>>> GetAllSpecialzations();
+        Task<Result<IEnumerable<TicketViewDto>>> GetActiveTicketInHospital(string hospitalId);
+        Task<Result<PagedResult<TicketViewDto>>> GetActiveTicketForPatient(PaginationRequest pagination);
         #endregion
     }
 } 

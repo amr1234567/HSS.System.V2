@@ -984,5 +984,6 @@ namespace HSS.System.V2.Services.Services
             appointment.Value.UpdatedAt = DateTime.UtcNow;
             return await _appointmentRepository.UpdateAppointmentAsync(appointment.Value);
         }
+
     }
 }
