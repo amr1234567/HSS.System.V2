@@ -24,10 +24,10 @@ namespace HSS.System.V2.Services.DTOs.AuthDTOs
 
         [Required]
         [MinLength(8)]
-        public string Passowrd {  get; set; }
+        public string Password {  get; set; }
 
         [Required]
-        [Compare(nameof(Passowrd))]
+        [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; }
     }
 }

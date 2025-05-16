@@ -43,7 +43,7 @@ namespace HSS.System.V2.Services.Services
             if (check.IsSuccess && check.Value is not null)
                 return new BadRequestError("National Id OR Email are already in the system");
             var salt = _accountServiceHelper.CreateSalt();
-            var hashPass = _accountServiceHelper.HashPasswordWithSalt(salt, dto.Passowrd);
+            var hashPass = _accountServiceHelper.HashPasswordWithSalt(salt, dto.Password);
             var patient = new Patient
             {
                 Id = Guid.NewGuid().ToString(),
