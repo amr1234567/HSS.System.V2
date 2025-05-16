@@ -30,5 +30,9 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<IEnumerable<Appointment>>> GetAllAppointmentsForUser(string apiUserId);
         Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination);
         Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination, AppointmentState state);
+        Task<IEnumerable<object>> GetTodayAppointmentsAsync();
+        Task EndAppointmentAsync(int appointmentId);
+        Task UpdateAppointmentStatusAsync(int appointmentId, object completed);
+      
     }
 }

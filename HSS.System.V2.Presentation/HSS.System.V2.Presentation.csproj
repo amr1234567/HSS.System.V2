@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="HSS\System\V2\Services\Contracts\" />
     <Folder Include="wwwroot\ProfilePicturesPictures\" />
   </ItemGroup>
 
