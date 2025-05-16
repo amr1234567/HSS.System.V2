@@ -9,8 +9,12 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using HSS.System.V2.Presentation.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using HSS.System.V2.Services.Seeding;
+using HSS.System.V2.DataAccess.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add builder.Services to the container.
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -94,14 +98,14 @@ app.UseSwaggerUI(options =>
 
 app.UseHttpsRedirection();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
-//    {
-//        await dbContext.Database.MigrateAsync();
-//        await SeedingData.SeedAsync(dbContext);
-//    }
-//}
+using (var scope = app.Services.CreateScope())
+{
+    using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+    {
+        await dbContext.Database.MigrateAsync();
+        await SeedingData.SeedAsync(dbContext);
+    }
+}
 
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();

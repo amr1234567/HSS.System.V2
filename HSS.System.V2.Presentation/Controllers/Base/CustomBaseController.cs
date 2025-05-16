@@ -84,7 +84,11 @@ namespace HSS.System.V2.Presentation.Controllers.Base
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
 
-        protected string GetHospitalId() => User.FindFirst(CustomClaimTypes.HospitalId)?.Value ?? string.Empty;
+
+        protected string GetHospitalIdFromClaims()
+        {
+            return User.FindFirst(CustomClaimTypes.HospitalId)?.Value ?? string.Empty;
+        }
 
         protected string GetDepartmentId() => User.FindFirst(CustomClaimTypes.DepartmentItemId)?.Value ?? string.Empty;
     }

@@ -86,13 +86,13 @@
             public const string Base = "api/reception";
 
             // Hospital Departments
-            public const string GetAllHospitalDepartments = "/hospital-departments/{hospitalId}";
-            public const string GetAllSpecializations = "/specializations/{hospitalId}";
-            public const string GetAllClinics = "/clinics";
-            public const string GetAllRadiologyCenters = "/radiology-centers/{hospitalId}";
-            public const string GetAllRadiologyCentersDoTest = "/radiology-centers/{hospitalId}/test/{radiologyTestId}";
-            public const string GetAllMedicalLabs = "/medical-labs/{hospitalId}";
-            public const string GetAllMedicalLabsDoTest = "/medical-labs/{hospitalId}/test/{medicalTestId}";
+            public const string GetAllHospitalDepartments = "/hospital-departments";
+            public const string GetAllSpecializations = "/specializations";
+            public const string GetAllClinics = "/clinics/{specializationId}";
+            public const string GetAllRadiologyCenters = "/radiology-centers";
+            public const string GetAllRadiologyCentersDoTest = "/radiology-centers/test/{radiologyTestId}";
+            public const string GetAllMedicalLabs = "/medical-labs";
+            public const string GetAllMedicalLabsDoTest = "/medical-labs/test/{medicalTestId}";
 
             // Appointments
             public const string GetAllAppointmentsForClinic = "/appointments/clinic/{clinicId}";

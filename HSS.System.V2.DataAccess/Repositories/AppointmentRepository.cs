@@ -163,7 +163,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                     .Include(c => c.Doctor)
                     .Include(c => c.Ticket)
                         .ThenInclude(t => t.Patient)
-                    .FilterByDate(dateFilters.DateFrom, dateFilters.DateTo)
+                    //.FilterByDate(dateFilters.DateFrom, dateFilters.DateTo)
                     .OrderByDescending(a => a.SchaudleStartAt)
                     .ToListAsync();
             return Result.Ok(appointments);

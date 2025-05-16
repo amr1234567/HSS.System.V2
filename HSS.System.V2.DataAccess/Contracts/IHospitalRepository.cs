@@ -12,7 +12,7 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result> CreateHospitalItem(Hospital hospital);
         Task<Result> DeleteHospitalItem(Hospital hospital);
         Task<Result> DeleteHospitalItem(string hospitalId);
-        Task<Result> UpdateHospitalItem(Hospital hospital);
+        Task<Result> UpdateHospitalDepartmentItem<TDept>(TDept hospital) where TDept : BaseClass, IHospitalDepartmentItem;
         Task<Result<PagedResult<Hospital>>> GetAllHospitalItems(int size = 10, int page = 1);
         Task<Result<PagedResult<Hospital>>> GetAllHospitalItemsInCity(int cityId, int size = 10, int page = 1);
         Task<Result<Hospital>> GetHospitalById(string hospitalId);

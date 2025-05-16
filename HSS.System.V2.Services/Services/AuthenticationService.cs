@@ -1,17 +1,15 @@
 ﻿using FluentResults;
 
-using HSS.System.V2.DataAccess.Contexts;
+using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Constants;
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.AuthDTOs;
 using HSS.System.V2.Services.Helpers;
-
-using Microsoft.EntityFrameworkCore;
+using HSS.System.V2.Domain.Models.Facilities;
 
 using System.Security.Claims;
 
@@ -22,19 +20,27 @@ namespace HSS.System.V2.Services.Services
         private readonly TokenService _tokenService;
         private readonly IUserContext _userContext;
         private readonly AccountServiceHelper _accountServiceHelper;
-        private readonly AppDbContext _context;
-        public AuthService(TokenService tokenService, IUserContext userContext, AccountServiceHelper accountServiceHelper, AppDbContext context)
+        private readonly IPatientRepository _patientRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IHospitalRepository _hospitalRepository;
+
+        public AuthService(TokenService tokenService, IUserContext userContext,
+            AccountServiceHelper accountServiceHelper,
+            IPatientRepository patientRepository, IEmployeeRepository employeeRepository,
+            IHospitalRepository hospitalRepository)
         {
             _tokenService = tokenService;
             _userContext = userContext;
             _accountServiceHelper = accountServiceHelper;
-            _context = context;
+            _patientRepository = patientRepository;
+            _employeeRepository = employeeRepository;
+            _hospitalRepository = hospitalRepository;
         }
 
         public async Task<Result> RegisterPatient(PatientDto dto)
         {
-            var check = await _context.Patients.FirstOrDefaultAsync(p => p.NationalId == dto.NationalId || p.Email == dto.Email);
-            if (check is not null)
+            var check = await _patientRepository.GetPatientByNationalIdOrEmail(dto.NationalId, dto.Email);
+            if (check.IsSuccess && check.Value is not null)
                 return new BadRequestError("National Id OR Email are already in the system");
             var salt = _accountServiceHelper.CreateSalt();
             var hashPass = _accountServiceHelper.HashPasswordWithSalt(salt, dto.Passowrd);
@@ -51,9 +57,7 @@ namespace HSS.System.V2.Services.Services
                 Salt = salt,
                 HashPassword = hashPass
             };
-
-            await _context.Patients.AddAsync(patient);
-            await _context.SaveChangesAsync();
+            await _patientRepository.RegisterPatient(patient);
             return Result.Ok();
         }
 
@@ -61,12 +65,14 @@ namespace HSS.System.V2.Services.Services
         {
             var salt = _accountServiceHelper.CreateSalt();
             var pass = _accountServiceHelper.HashPasswordWithSalt(salt, "@Aa123456789");
-            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.NationalId == patientNationalId);
-            if (patient is null)
+            var patientResult = await _patientRepository.GetPatientByNationalId(patientNationalId);
+            if (patientResult.IsFailed || patientResult.Value is null)
                 return new BadRequestError("no patient with this national id");
+            var patient = patientResult.Value;
             patient.Salt = salt;
             patient.HashPassword = pass;
-            await _context.SaveChangesAsync();
+            await _patientRepository.UpdatePatient(patient);
+
             var customClaims = new List<Claim>
             {
                 new(CustomClaimTypes.NationalId, patient.NationalId),
@@ -89,9 +95,10 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result<UserDetails>> LoginPatient(LoginModelDto model)
         {
-            var user = await _context.Patients.FirstOrDefaultAsync(x => x.NationalId == model.NationalId);
-            if (user == null)
-                return EntityNotExistsError.Happen<Patient>(model.NationalId);
+            var patientResult = await _patientRepository.GetPatientByNationalId(model.NationalId);
+            if (patientResult.IsFailed || patientResult.Value is null)
+                return new BadRequestError("no patient with this national id");
+            var user = patientResult.Value;
 
             if (string.IsNullOrEmpty(user.HashPassword))
                 return new BadRequestError("patient must confirm his account first");
@@ -108,7 +115,7 @@ namespace HSS.System.V2.Services.Services
                 new(CustomClaimTypes.Gender, user.Gender.ToString()),
                 new(CustomClaimTypes.CustomRole, user.Role.ToString()),
                 new(ClaimTypes.Role, user.Role.ToString()),
-                new(CustomClaimTypes.Name, user.Name)
+                new(CustomClaimTypes.Name, user.Name),
             };
             var token = _tokenService.GenerateAccessToken(customClaims);
             return new UserDetails
@@ -121,13 +128,42 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result<TokenModel>> LoginEmployee(LoginModelDto model, List<Claim>? claims = null)
         {
-            var user = await _context.Employees.FirstOrDefaultAsync(x => x.NationalId == model.NationalId);
-            if (user == null)
+            var userResult = await _employeeRepository.GetEmployeeByNationalId(model.NationalId);
+            if (userResult.IsFailed || userResult.Value is null)
                 return EntityNotExistsError.Happen<Employee>(model.NationalId);
+            var user = userResult.Value;
 
             var hashed = _accountServiceHelper.HashPasswordWithSalt(user.Salt, model.Password);
             if (hashed != user.HashPassword)
                 return new BadRequestError("National Id or Password Is Not Valid");
+
+            if (user is Doctor doctor)
+            {
+                var clinicResult = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(doctor.ClinicId);
+                if (clinicResult.IsSuccess && clinicResult.Value != null)
+                {
+                    clinicResult.Value.CurrentWorkingDoctorId = doctor.Id;
+                    await _hospitalRepository.UpdateHospitalDepartmentItem(clinicResult.Value);
+                }
+            }
+            else if (user is RadiologyTester radiologyTester)
+            {
+                var radiologyCenterResult = await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(radiologyTester.RadiologyCenterId);
+                if (radiologyCenterResult.IsSuccess && radiologyCenterResult.Value != null)
+                {
+                    radiologyCenterResult.Value.CurrentWorkingTesterId = radiologyTester.Id;
+                    await _hospitalRepository.UpdateHospitalDepartmentItem(radiologyCenterResult.Value);
+                }
+            }
+            else if (user is MedicalLabTester medicalLabTester)
+            {
+                var medicalLabResult = await _hospitalRepository.GetHospitalDepartmentItem<MedicalLab>(medicalLabTester.MedicalLabId);
+                if (medicalLabResult.IsSuccess && medicalLabResult.Value != null)
+                {
+                    medicalLabResult.Value.CurrentWorkingTesterId = medicalLabTester.Id;
+                    await _hospitalRepository.UpdateHospitalDepartmentItem(medicalLabResult.Value);
+                }
+            }
 
             var customClaims = new List<Claim>
             {
@@ -139,7 +175,7 @@ namespace HSS.System.V2.Services.Services
                 new(ClaimTypes.Role, user.Role.ToString()),
                 new(CustomClaimTypes.HospitalId, user.HospitalId),
                 new(CustomClaimTypes.CustomRole, user.Role.ToString()),
-                new(CustomClaimTypes.Name, user.Name)
+                new(CustomClaimTypes.Name, user.Name),
             };
 
             if (claims != null)
@@ -158,36 +194,50 @@ namespace HSS.System.V2.Services.Services
 
             var token = _tokenService.GenerateAccessToken(customClaims);
 
-            await _context.LoginActivities.AddAsync(new()
-            {
-                ActivityType = ActivityType.Login,
-                CreatedAt = DateTime.Now,
-                EmployeeId = user.Id,
-                Id = Guid.NewGuid().ToString(),
-                UpdatedAt = DateTime.Now,
-            });
+            await _employeeRepository.CreateLoginActivity(user, ActivityType.Login);
 
-            await _context.SaveChangesAsync();
             return token;
         }
 
         public async Task<Result> LogoutEmployee()
         {
             // Find the employee by refreshToken.
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == _userContext.ApiUserId);
-            if (employee == null)
-                return EntityNotExistsError.Happen<Employee>();
+            var userResult = await _employeeRepository.GetEmployeeById(_userContext.ApiUserId);
+            if (userResult.IsFailed || userResult.Value is null)
+                return EntityNotExistsError.Happen<Employee>(_userContext.ApiUserId);
+            var user = userResult.Value;
 
-            await _context.LoginActivities.AddAsync(new LoginActivity
+            // إزالة الموظف من CurrentWorkingEmployee
+            if (user is Doctor doctor)
             {
-                ActivityType = ActivityType.Logout,
-                CreatedAt = DateTime.Now,
-                EmployeeId = _userContext.ApiUserId,
-                Id = Guid.NewGuid().ToString(),
-                UpdatedAt = DateTime.Now,
-            });
+                var clinicResult = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(doctor.ClinicId);
+                if (clinicResult.IsSuccess && clinicResult.Value != null)
+                {
+                    clinicResult.Value.CurrentWorkingDoctorId = null;
+                    await _hospitalRepository.UpdateHospitalDepartmentItem(clinicResult.Value);
+                }
+            }
+            else if (user is RadiologyTester radiologyTester)
+            {
+                var radiologyCenterResult = await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(radiologyTester.RadiologyCenterId);
+                if (radiologyCenterResult.IsSuccess && radiologyCenterResult.Value != null)
+                {
+                    radiologyCenterResult.Value.CurrentWorkingTesterId = null;
+                    await _hospitalRepository.UpdateHospitalDepartmentItem(radiologyCenterResult.Value);
+                }
+            }
+            else if (user is MedicalLabTester medicalLabTester)
+            {
+                var medicalLabResult = await _hospitalRepository.GetHospitalDepartmentItem<MedicalLab>(medicalLabTester.MedicalLabId);
+                if (medicalLabResult.IsSuccess && medicalLabResult.Value != null)
+                {
+                    medicalLabResult.Value.CurrentWorkingTesterId = null;
+                    await _hospitalRepository.UpdateHospitalDepartmentItem(medicalLabResult.Value);
+                }
+            }
 
-            await _context.SaveChangesAsync();
+            await _employeeRepository.CreateLoginActivity(user, ActivityType.Logout);
+
             return Result.Ok();
         }
 

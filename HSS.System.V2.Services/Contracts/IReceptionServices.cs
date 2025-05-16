@@ -235,9 +235,9 @@ namespace HSS.System.V2.Services.Contracts
         /// </summary>
         /// <param name="appointmentId">The unique identifier of the appointment to be added.</param>
         /// <returns>A <see cref="Result"/> indicating whether the addition was successful.</returns>
-        Task<Result> AddClinicAppointmentForQueue(string appointmentId, string departmentId);
-        Task<Result> AddMedicalLabAppointmentForQueue(string appointmentId, string departmentId);
-        Task<Result> AddRadiologyCenterAppointmentForQueue(string appointmentId, string departmentId);
+        Task<Result> AddClinicAppointmentForQueue(string appointmentId);
+        Task<Result> AddMedicalLabAppointmentForQueue(string appointmentId);
+        Task<Result> AddRadiologyCenterAppointmentForQueue(string appointmentId);
 
 
         #endregion
@@ -247,12 +247,6 @@ namespace HSS.System.V2.Services.Contracts
         // Methods for ticket management including creating new tickets and processing payments.
         // --------------------------------------------------------------------
 
-        /// <summary>
-        /// Creates a new ticket based on the provided details.
-        /// </summary>
-        /// <param name="model">A <see cref="CreateTicketModel"/> containing the ticket details.</param>
-        /// <returns>A <see cref="Result"/> indicating whether the ticket creation was successful.</returns>
-        Task<Result> CreateNewTicket(CreateTicketModel model);
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsForClinic(string clinicId, DateTime? date);
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsForMedicalLab(string medicalLabId, DateTime? date);
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsForRadiologyCenter(string radiologyCenterId, DateTime? date);
@@ -266,6 +260,8 @@ namespace HSS.System.V2.Services.Contracts
         Task<Result> RemoveRadiologyCenterAppointmentFromQueue(string appointmentId);
 
         #endregion
+
+        Task<Result> CreateNewTicket(string patientIdentifier, PatientIdentifierType identifierType, string hospitalId);
     }
 
 }

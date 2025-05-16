@@ -1,4 +1,6 @@
-﻿using HSS.System.V2.Domain.Helpers.Models;
+﻿using HSS.System.V2.Domain.Attributes;
+using HSS.System.V2.Domain.Enums;
+using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Presentation.Controllers.Base;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.AuthDTOs;
@@ -31,7 +33,7 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<TokenModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<TokenModel>), StatusCodes.Status400BadRequest)]
         [HttpPost("logout")]
-        [Authorize]
+        [AuthorizeByEnum(UserRole.MedicalLabTester, UserRole.Receptionist, UserRole.RadiologyTester, UserRole.Pharmacist, UserRole.Doctor)]
         public async Task<IActionResult> Logout()
         {
             var result = await _authServiceRepo.LogoutEmployee();

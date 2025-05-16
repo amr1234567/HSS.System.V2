@@ -38,9 +38,18 @@ public class HospitalRepository : IHospitalRepository
         throw new NotImplementedException();
     }
 
-    public Task<Result> UpdateHospitalItem(Hospital hospital)
+    public async Task<Result> UpdateHospitalItem<TDept>(TDept item) where TDept : class, IHospitalDepartmentItem
     {
-        throw new NotImplementedException();
+        try
+        {
+            _context.Update(item);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return new RetrievingDataFromDbContextError(ex);
+        }
     }
 
     public async Task<Result<PagedResult<Hospital>>> GetAllHospitalItems(int size = 10, int page = 1)
@@ -486,6 +495,12 @@ public class HospitalRepository : IHospitalRepository
         return (department, existingAppointments);
     }
 
+    public async Task<Result> UpdateHospitalDepartmentItem<TDept>(TDept dept) where TDept : BaseClass, IHospitalDepartmentItem
+    {
+        _context.Set<TDept>().Update(dept);
+        await _context.SaveChangesAsync();
+        return Result.Ok();
+    }
 }
 public class AppointmentInfo
 {

@@ -6,7 +6,6 @@ namespace HSS.System.V2.Domain.Models.Common;
 
 public interface IQueueModel
 {
-    string DepartmentId { get; }
     TimeSpan DepartmentStartAt { get; }
     TimeSpan DepartmentEndAt { get; }
 

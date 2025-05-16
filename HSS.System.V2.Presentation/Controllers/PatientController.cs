@@ -1,19 +1,15 @@
-﻿using FluentResults;
-
-using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Domain.ResultHelpers.Errors;
+﻿using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Presentation.Controllers.Base;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.PatientDTOs;
-using HSS.System.V2.Domain.Helpers.Methods;
-
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using HSS.System.V2.Domain.Attributes;
+using HSS.System.V2.Domain.Enums;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
-    [Authorize]
     [ApiExplorerSettings(GroupName = "PatientAPI")]
+    [AuthorizeByEnum(UserRole.Patient)]
     public class PatientController : CustomBaseController
     {
         private readonly IPatientService _patientService;

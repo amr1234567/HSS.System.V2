@@ -2,11 +2,13 @@
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
 using HSS.System.V2.Domain.Models.Requests;
+using HSS.System.V2.Domain.Constants;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using HSS.System.V2.Domain.Attributes;
 using HSS.System.V2.Domain.Enums;
+using System.Security.Claims;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
@@ -22,56 +24,63 @@ namespace HSS.System.V2.Presentation.Controllers
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllHospitalDepartments)]
-        public async Task<IActionResult> GetAllHospitalDepartmentsInHospital([FromRoute] string hospitalId)
+        public async Task<IActionResult> GetAllHospitalDepartmentsInHospital()
         {
+            var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllHospitalDepartmentsInHospital(hospitalId);
             return GetResponse(result);
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllSpecializations)]
-        public async Task<IActionResult> GetAllSpecializationsInHospital([FromRoute] string hospitalId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllSpecializationsInHospital([FromQuery] PaginationRequest pagination)
         {
+            var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllSpecializationsInHospital(hospitalId, pagination.Page, pagination.PageSize);
             return GetResponse(result);
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllClinics)]
-        public async Task<IActionResult> GetAllClinics([FromRoute] string specializationId, [FromRoute] string hospitalId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllClinics([FromRoute] string specializationId, [FromQuery] PaginationRequest pagination)
         {
+            var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllClinics(specializationId, hospitalId, pagination.Page, pagination.PageSize);
             return GetResponse(result);
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllRadiologyCenters)]
-        public async Task<IActionResult> GetAllRadiologyCenters([FromRoute] string hospitalId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllRadiologyCenters([FromQuery] PaginationRequest pagination)
         {
+            var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllRadiologyCenters(hospitalId, pagination.Page, pagination.PageSize);
             return GetResponse(result);
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllRadiologyCentersDoTest)]
-        public async Task<IActionResult> GetAllRadiologyCentersDoTest([FromRoute] string hospitalId, [FromRoute] string radiologyTestId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllRadiologyCentersDoTest([FromRoute] string radiologyTestId, [FromQuery] PaginationRequest pagination)
         {
+            var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllRadiologyCentersDoTest(hospitalId, radiologyTestId, pagination.Page, pagination.PageSize);
             return GetResponse(result);
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllMedicalLabs)]
-        public async Task<IActionResult> GetAllMedicalLabs([FromRoute] string hospitalId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllMedicalLabs([FromQuery] PaginationRequest pagination)
         {
+            var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllMedicalLabs(hospitalId, pagination.Page, pagination.PageSize);
             return GetResponse(result);
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllMedicalLabsDoTest)]
-        public async Task<IActionResult> GetAllMedicalLabsDoTest([FromRoute] string hospitalId, [FromRoute] string medicalTestId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllMedicalLabsDoTest([FromRoute] string medicalTestId, [FromQuery] PaginationRequest pagination)
         {
+            var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllMedicalLabsDoTest(hospitalId, medicalTestId, pagination.Page, pagination.PageSize);
             return GetResponse(result);
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllAppointmentsForClinic)]
-        public async Task<IActionResult> GetAllAppointmentsForClinic([FromRoute] string clinicId, [FromQuery] AppointmentFilterRequest filter, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllAppointmentsForClinic([FromRoute] string clinicId, [FromQuery] DateFilteration filter, [FromQuery] PaginationRequest pagination)
         {
             var result = await _receptionServices.GetAllAppointmentsForClinic(clinicId, filter.DateFrom, filter.DateTo, pagination.Page, pagination.PageSize);
             return GetResponse(result);
@@ -85,7 +94,7 @@ namespace HSS.System.V2.Presentation.Controllers
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllAppointmentsForRadiologyCenter)]
-        public async Task<IActionResult> GetAllAppointmentsForRadiologyCenter([FromRoute] string radiologyCenterId, [FromQuery] AppointmentFilterRequest filter, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllAppointmentsForRadiologyCenter([FromRoute] string radiologyCenterId, [FromQuery] DateFilteration filter, [FromQuery] PaginationRequest pagination)
         {
             var result = await _receptionServices.GetAllAppointmentsForRadiologyCenter(radiologyCenterId, filter.DateFrom, filter.DateTo, pagination.Page, pagination.PageSize);
             return GetResponse(result);
@@ -99,7 +108,7 @@ namespace HSS.System.V2.Presentation.Controllers
         }
 
         [HttpGet(ApiRoutes.Reception.GetAllAppointmentsForMedicalLab)]
-        public async Task<IActionResult> GetAllAppointmentsForMedicalLab([FromRoute] string medicalLabId, [FromQuery] AppointmentFilterRequest filter, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllAppointmentsForMedicalLab([FromRoute] string medicalLabId, [FromQuery] DateFilteration filter, [FromQuery] PaginationRequest pagination)
         {
             var result = await _receptionServices.GetAllAppointmentsForMedicalLab(medicalLabId, filter.DateFrom, filter.DateTo, pagination.Page, pagination.PageSize);
             return GetResponse(result);
@@ -218,30 +227,31 @@ namespace HSS.System.V2.Presentation.Controllers
         }
 
         [HttpPost(ApiRoutes.Reception.AddClinicAppointmentForQueue)]
-        public async Task<IActionResult> AddClinicAppointmentForQueue([FromRoute] string appointmentId, [FromRoute] string departmentId)
+        public async Task<IActionResult> AddClinicAppointmentForQueue([FromRoute] string appointmentId)
         {
-            var result = await _receptionServices.AddClinicAppointmentForQueue(appointmentId, departmentId);
+            var result = await _receptionServices.AddClinicAppointmentForQueue(appointmentId);
             return GetResponseWithoutType(result);
         }
 
         [HttpPost(ApiRoutes.Reception.AddMedicalLabAppointmentForQueue)]
-        public async Task<IActionResult> AddMedicalLabAppointmentForQueue([FromRoute] string appointmentId, [FromRoute] string departmentId)
+        public async Task<IActionResult> AddMedicalLabAppointmentForQueue([FromRoute] string appointmentId)
         {
-            var result = await _receptionServices.AddMedicalLabAppointmentForQueue(appointmentId, departmentId);
+            var result = await _receptionServices.AddMedicalLabAppointmentForQueue(appointmentId);
             return GetResponseWithoutType(result);
         }
 
         [HttpPost(ApiRoutes.Reception.AddRadiologyCenterAppointmentForQueue)]
-        public async Task<IActionResult> AddRadiologyCenterAppointmentForQueue([FromRoute] string appointmentId, [FromRoute] string departmentId)
+        public async Task<IActionResult> AddRadiologyCenterAppointmentForQueue([FromRoute] string appointmentId)
         {
-            var result = await _receptionServices.AddRadiologyCenterAppointmentForQueue(appointmentId, departmentId);
+            var result = await _receptionServices.AddRadiologyCenterAppointmentForQueue(appointmentId);
             return GetResponseWithoutType(result);
         }
 
         [HttpPost(ApiRoutes.Reception.CreateNewTicket)]
-        public async Task<IActionResult> CreateNewTicket([FromBody] CreateTicketModel model)
+        public async Task<IActionResult> CreateNewTicket([FromBody] CreateTicketModelForReception model)
         {
-            var result = await _receptionServices.CreateNewTicket(model);
+            var hospitalId = GetHospitalIdFromClaims();
+            var result = await _receptionServices.CreateNewTicket(model.PatientIdentifier, model.IdentifierType, hospitalId);
             return GetResponseWithoutType(result);
         }
 

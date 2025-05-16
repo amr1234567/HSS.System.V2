@@ -1,13 +1,10 @@
 ﻿namespace HSS.System.V2.Services.Helpers
 {
-    public partial class AccountServiceHelper
+    public interface IBackgroundTaskQueue
     {
-        public interface IBackgroundTaskQueue
-        {
-            void QueueBackgroundWorkItem(Func<CancellationToken, Task> workItem);
-            Task<Func<CancellationToken, Task>> DequeueAsync(CancellationToken cancellationToken);
-        }
-
-
+        void QueueBackgroundWorkItem(Func<CancellationToken, Task> workItem);
+        Task<Func<CancellationToken, Task>> DequeueAsync(CancellationToken cancellationToken);
     }
+
+
 }

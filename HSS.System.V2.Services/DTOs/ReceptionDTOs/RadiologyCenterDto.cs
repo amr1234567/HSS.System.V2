@@ -23,7 +23,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
             EndAt = model.EndAt;
             NumberOfShifts = model.NumberOfShifts;
             PeriodPerAppointment = model.PeriodPerAppointment;
-            CurrentTesterName = model.CurrentWorkingTester.Name;
+            CurrentTesterName = model.CurrentWorkingTester?.Name;
 
             return this;
         }

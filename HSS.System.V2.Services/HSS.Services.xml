@@ -189,19 +189,12 @@
             <param name="appointmentId">The unique identifier of the appointment to be removed.</param>
             <returns>A <see cref="T:FluentResults.Result"/> indicating whether the removal was successful.</returns>
         </member>
-        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.AddClinicAppointmentForQueue(System.String,System.String)">
+        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.AddClinicAppointmentForQueue(System.String)">
             <summary>
             Adds an appointment to the queue.
             </summary>
             <param name="appointmentId">The unique identifier of the appointment to be added.</param>
             <returns>A <see cref="T:FluentResults.Result"/> indicating whether the addition was successful.</returns>
-        </member>
-        <member name="M:HSS.System.V2.Services.Contracts.IReceptionServices.CreateNewTicket(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateTicketModel)">
-            <summary>
-            Creates a new ticket based on the provided details.
-            </summary>
-            <param name="model">A <see cref="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateTicketModel"/> containing the ticket details.</param>
-            <returns>A <see cref="T:FluentResults.Result"/> indicating whether the ticket creation was successful.</returns>
         </member>
         <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.AppointmentDto">
             <summary>

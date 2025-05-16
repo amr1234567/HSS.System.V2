@@ -1,5 +1,4 @@
-﻿
-using HSS.System.V2.DataAccess.Contexts;
+﻿using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.DataAccess.Repositories;
 
@@ -32,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<ISpecializationReporitory, SpecializationReporitory>();
         services.AddScoped<IMedicalHistoryServices, MedicalHistoryServices>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
         return services;
     }

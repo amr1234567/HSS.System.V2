@@ -13,7 +13,7 @@ public class Clinic : BaseClass, IHospitalDepartmentItem
     public int NumberOfShifts { get; set; }
     public TimeSpan StartAt { get; set; }
     public TimeSpan EndAt { get; set; }
-    public string QueueId { get; set; }
+    public string? QueueId { get; set; }
     [ForeignKey(nameof(QueueId))]
     public ClinicQueue Queue { get; set; }
     public TimeSpan PeriodPerAppointment { get; set; }

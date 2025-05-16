@@ -165,7 +165,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SpecializationId")
@@ -258,7 +257,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("StartAt")
@@ -347,7 +345,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("QueueId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("StartAt")
@@ -937,6 +934,9 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DepartmentId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(21)
@@ -1245,11 +1245,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.Property<string>("ClinicId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("ClinicId");
+                    b.HasIndex("DepartmentId");
 
                     b.HasDiscriminator().HasValue("ClinicQueue");
                 });
@@ -1258,11 +1254,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.Property<string>("MedicalLabId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("MedicalLabId");
+                    b.HasIndex("DepartmentId");
 
                     b.HasDiscriminator().HasValue("MedicalLabQueue");
                 });
@@ -1271,11 +1263,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.Property<string>("RadiologyCenterId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("RadiologyCenterId");
+                    b.HasIndex("DepartmentId");
 
                     b.HasDiscriminator().HasValue("RadiologyCenterQueue");
                 });
@@ -1334,9 +1322,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Queues.ClinicQueue", "Queue")
                         .WithMany()
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.Medical.Specialization", "Specialization")
                         .WithMany("Clinics")
@@ -1367,9 +1353,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Queues.MedicalLabQueue", "Queue")
                         .WithMany()
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.Navigation("CurrentWorkingTester");
 
@@ -1403,9 +1387,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Queues.RadiologyCenterQueue", "Queue")
                         .WithMany()
-                        .HasForeignKey("QueueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QueueId");
 
                     b.Navigation("CurrentWorkingTester");
 
@@ -1779,9 +1761,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Clinic", "Clinic")
                         .WithMany()
-                        .HasForeignKey("ClinicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Clinic");
                 });
@@ -1790,9 +1770,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "MedicalLab")
                         .WithMany()
-                        .HasForeignKey("MedicalLabId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("MedicalLab");
                 });
@@ -1801,9 +1779,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "RadiologyCenter")
                         .WithMany()
-                        .HasForeignKey("RadiologyCenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("RadiologyCenter");
                 });

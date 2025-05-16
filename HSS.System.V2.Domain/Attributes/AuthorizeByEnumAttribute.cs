@@ -19,5 +19,23 @@ namespace HSS.System.V2.Domain.Attributes
             // تمرير قيمة التعداد كسلسلة نصية إلى السمة Authorize
             Roles = enumValue.ToString();
         }
+
+        public AuthorizeByEnumAttribute(params object[] enumValues)
+        {
+            if (enumValues == null)
+                throw new ArgumentNullException(nameof(enumValues));
+
+            var roles = new List<string>();
+            foreach ( var enumValue in enumValues )
+            {
+                if (!enumValue.GetType().IsEnum)
+                    throw new ArgumentException("القيمة المقدمة يجب أن تكون من نوع تعداد (Enum)");
+                roles.Add(enumValue.ToString());
+            }
+
+            Roles = string.Join(",", roles);
+        }
     }
+
+
 } 
