@@ -381,9 +381,9 @@ namespace HSS.System.V2.Services.Services
                 }).GetPaged(pagination);
         }
 
-        public async Task<Result<PagedResult<TicketViewDto>>> GetActiveTicketInHospital(string hospitalId, PaginationRequest pagination)
+        public async Task<Result<PagedResult<TicketViewDto>>> GetActiveTicketForPatient(PaginationRequest pagination)
         {
-            var ticketsResult = await _ticketRepository.GetAllOpenedTicketInHospitalForPatient(hospitalId, _userContext.ApiUserId, page: pagination.Page, size: pagination.Size);
+            var ticketsResult = await _ticketRepository.GetOpenTicketsForPatient(_userContext.ApiUserId, page: pagination.Page, size: pagination.Size);
 
             if (ticketsResult.IsFailed)
                 return Result.Fail(ticketsResult.Errors);

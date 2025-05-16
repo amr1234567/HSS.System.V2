@@ -284,9 +284,9 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TicketViewDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TicketViewDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet(ApiRoutes.Patient.GetActiveTicketsInHospital)]
-        public async Task<IActionResult> GetActiveTicketsInHospital([FromRoute] string hospitalId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetActiveTicketsInHospital([FromQuery] PaginationRequest pagination)
         {
-            var result = await _patientService.GetActiveTicketInHospital(hospitalId, pagination);
+            var result = await _patientService.GetActiveTicketForPatient(pagination);
             return GetResponse(result);
         }
 
@@ -304,9 +304,9 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TicketViewDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TicketViewDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet(ApiRoutes.Patient.GetAllActiveTicketsInHospital)]
-        public async Task<IActionResult> GetAllActiveTicketsInHospital([FromRoute] string hospitalId, [FromQuery] PaginationRequest pagination)
+        public async Task<IActionResult> GetAllActiveTickets([FromQuery] PaginationRequest pagination)
         {
-            var result = await _patientService.GetActiveTicketInHospital(hospitalId, pagination);
+            var result = await _patientService.GetActiveTicketForPatient(pagination);
             return GetResponse(result);
         }
 

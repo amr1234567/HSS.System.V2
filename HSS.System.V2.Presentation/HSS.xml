@@ -108,8 +108,8 @@
         <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsBySpecificationId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
         <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByRadiologyTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
         <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByMedicalLabTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetActiveTicketsInHospital(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTicketsInHospital(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetActiveTicketsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTickets(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetClinics(System.String,System.String)">
             <summary>
             Get clinics in a hospital for a specific specialization.
