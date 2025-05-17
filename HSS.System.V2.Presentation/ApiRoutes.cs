@@ -138,6 +138,8 @@
 
             // Appointment Start
             public const string StartClinicAppointment = "/appointments/clinic/{appointmentId}/start";
+            public const string StartRadiologyAppointment = "/appointments/radiology/{appointmentId}/start";
+            public const string StartMedicalLabAppointment = "/appointments/medical-lab/{appointmentId}/start";
         }
     }
 }

@@ -10,7 +10,7 @@ namespace HSS.System.V2.Services.DTOs.AuthDTOs
         public string NationalId { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
+        [MinLength(8)]
         public string Password { get; set; }
     }
 }

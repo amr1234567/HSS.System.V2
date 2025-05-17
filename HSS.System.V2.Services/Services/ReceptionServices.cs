@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 
+using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.DTOs;
 using HSS.System.V2.Domain.Enums;
@@ -14,6 +15,8 @@ using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
 using HSS.System.V2.Services.Helpers;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.Services.Services
 {
@@ -30,13 +33,14 @@ namespace HSS.System.V2.Services.Services
         private readonly ITestRequiredRepository _testRequiredRepository;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly INotificationRepository _notificationRepository;
+        private readonly AppDbContext _context;
 
         public ReceptionServices(IAppointmentRepository appointmentRepository, IQueueRepository queueRepository,
             IPatientRepository patientRepository, ITicketRepository ticketRepository,
             IMedicineRepository medicineRepository, IHospitalRepository hospitalRepository,
             ISpecializationReporitory specializationReporitory, ITestsRepository testsRepository,
             ITestRequiredRepository testRequiredRepository, IBackgroundTaskQueue taskQueue,
-            INotificationRepository notificationRepository)
+            INotificationRepository notificationRepository, AppDbContext context)
         {
             _appointmentRepository = appointmentRepository;
             _queueRepository = queueRepository;
@@ -49,6 +53,7 @@ namespace HSS.System.V2.Services.Services
             _testRequiredRepository = testRequiredRepository;
             _taskQueue = taskQueue;
             _notificationRepository = notificationRepository;
+            _context = context;
         }
 
         public async Task<Result<HospitalDepartments>> GetAllHospitalDepartmentsInHospital(string hospitalId)
@@ -152,13 +157,15 @@ namespace HSS.System.V2.Services.Services
             var patient = await _patientRepository.GetPatientByNationalId(nationalId);
             if (patient.IsFailed || patient.Value == null)
                 return new BadRequestError("no patient found with this national id");
-            var tickets = await _ticketRepository.GetOpenTicketsForPatient(patient.Value.Id);
-            if (tickets.IsFailed)
-                return Result.Fail(tickets.Errors);
+            var tickets = await _context.Tickets
+                    .AsNoTracking()
+                    .Where(t => t.PatientNationalId == nationalId && t.State == TicketState.Active)
+                    .Select(t => new TicketDto().MapFromModel(t))
+                    .ToListAsync();
             return new PatientDetailsWithTicketsDto()
             {
                 PatientId = patient.Value.Id,
-                Tickets = tickets.Value.Select(t => new TicketDto().MapFromModel(t)).GetPaged(page, pageSize),
+                Tickets = tickets.GetPaged(page, pageSize),
                 PatientName = patient.Value.Name,
                 PatientNationalId = nationalId
             };
@@ -637,6 +644,38 @@ namespace HSS.System.V2.Services.Services
         public async Task<Result> StartClinicAppointment(string appointmentId)
         {
             var appResult = await _appointmentRepository.GetAppointmentByIdAsync<ClinicAppointment>(appointmentId);
+            if (appResult.IsFailed)
+                return Result.Fail(appResult.Errors);
+            var a = appResult.Value;
+            if (a.State == AppointmentState.InProgress)
+                return new BadRequestError("الحجز قد بدأ بالفعل");
+            if (a.State == AppointmentState.Completed)
+                return new BadRequestError("الحجز قد انتهي، لا يمكن بدأه من جديد");
+            if (a.State == AppointmentState.Terminated)
+                return new BadRequestError("الحجز قد ألغي، من فضلك أحجز موعد جديد");
+
+            return await ChangeAppointmentState(appointmentId, AppointmentState.InProgress);
+        }
+
+        public async Task<Result> StartMedicalLabAppointment(string appointmentId)
+        {
+            var appResult = await _appointmentRepository.GetAppointmentByIdAsync<MedicalLabAppointment>(appointmentId);
+            if (appResult.IsFailed)
+                return Result.Fail(appResult.Errors);
+            var a = appResult.Value;
+            if (a.State == AppointmentState.InProgress)
+                return new BadRequestError("الحجز قد بدأ بالفعل");
+            if (a.State == AppointmentState.Completed)
+                return new BadRequestError("الحجز قد انتهي، لا يمكن بدأه من جديد");
+            if (a.State == AppointmentState.Terminated)
+                return new BadRequestError("الحجز قد ألغي، من فضلك أحجز موعد جديد");
+
+            return await ChangeAppointmentState(appointmentId, AppointmentState.InProgress);
+        }
+
+        public async Task<Result> StartRadiologyAppointment(string appointmentId)
+        {
+            var appResult = await _appointmentRepository.GetAppointmentByIdAsync<RadiologyCeneterAppointment>(appointmentId);
             if (appResult.IsFailed)
                 return Result.Fail(appResult.Errors);
             var a = appResult.Value;

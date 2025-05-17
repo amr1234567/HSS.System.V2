@@ -97,6 +97,10 @@ namespace HSS.System.V2.DataAccess.Repositories
             return await _context.Tickets
                 .AsNoTracking()
                 .Where(t => t.PatientId == patientId && t.State == TicketState.Active)
+                .Include(t => t.Appointments)
+                .Include(t => t.FirstClinicAppointment)
+                    .ThenInclude(t => t.ReExamiationClinicAppointemnt)
+                .Include(t => t.FirstClinicAppointment)
                 .ToListAsync();
         }
 
