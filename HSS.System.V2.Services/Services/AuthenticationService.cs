@@ -123,10 +123,12 @@ namespace HSS.System.V2.Services.Services
                 TokenModel = token,
                 UserId = user.Id,
                 UserName = user.Name,
+                UserNationalId = user.NationalId,
+                UserRole = user.Role.ToString(),
             };
         }
 
-        public async Task<Result<TokenModel>> LoginEmployee(LoginModelDto model, List<Claim>? claims = null)
+        public async Task<Result<UserDetails>> LoginEmployee(LoginModelDto model, List<Claim>? claims = null)
         {
             var userResult = await _employeeRepository.GetEmployeeByNationalId(model.NationalId);
             if (userResult.IsFailed || userResult.Value is null)
@@ -196,7 +198,14 @@ namespace HSS.System.V2.Services.Services
 
             await _employeeRepository.CreateLoginActivity(user, ActivityType.Login);
 
-            return token;
+            return new UserDetails
+            {
+                TokenModel = token,
+                UserId = user.Id,
+                UserName = user.Name,
+                UserNationalId = user.NationalId,
+                UserRole = user.Role.ToString(),
+            };
         }
 
         public async Task<Result> LogoutEmployee()
@@ -246,7 +255,9 @@ namespace HSS.System.V2.Services.Services
     public class UserDetails
     {
         public string UserName { get; set; }
+        public string UserNationalId { get; set; }
         public string UserId { get; set; }
+        public string UserRole { get; set; }
         public TokenModel TokenModel { get; set; }
     }
 }

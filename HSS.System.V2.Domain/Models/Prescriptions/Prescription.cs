@@ -8,8 +8,6 @@ namespace HSS.System.V2.Domain.Models.Prescriptions;
 public class Prescription : BaseClass
 {
     public string? Notes { get; set; }
-    public string AppointmentId { get; set; }
-
     public string ClinicAppointmentId { get; set; }
     [ForeignKey(nameof(ClinicAppointmentId))]
     public virtual ClinicAppointment ClinicAppointment { get; set; }

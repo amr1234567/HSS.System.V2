@@ -262,6 +262,8 @@ namespace HSS.System.V2.Services.Contracts
         #endregion
 
         Task<Result> CreateNewTicket(string patientIdentifier, PatientIdentifierType identifierType, string hospitalId);
+        Task<Result> StartRadiologyAppointment(string appointmentId);
+        Task<Result> StartMedicalLabAppointment(string appointmentId);
     }
 
 }

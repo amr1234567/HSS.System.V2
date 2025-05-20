@@ -21,6 +21,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
         public string QueueId { get; set; }
         public string State { get; set; }
         public string DepartmentName { get; set; }
+        public string? ClinicAppointmentRelatedTo { get; set; }
 
         public AppointmentDto MapFromModel(Appointment model)
         {
@@ -35,6 +36,12 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
             DepartmentName = model.DepartmentName;
             PatientNationalId = model.PatientNationalId;
             PatientAge = model.Ticket.Patient.GetAge();
+            if(model is ClinicAppointment c)
+                ClinicAppointmentRelatedTo = c.PreExamiationClinicAppointemntId;
+            if (model is MedicalLabAppointment m)
+                ClinicAppointmentRelatedTo = m.ClinicAppointmentId;
+            if (model is RadiologyCeneterAppointment r)
+                ClinicAppointmentRelatedTo = r.ClinicAppointmentId;
 
             return this;
         }

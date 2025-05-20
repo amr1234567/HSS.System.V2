@@ -4,6 +4,120 @@
         <name>HSS.System.V2.Presentation</name>
     </assembly>
     <members>
+        <member name="T:HSS.System.V2.Presentation.Controllers.AuthEmployeeController">
+            <summary>
+            Controller for managing employee authentication operations.
+            Handles employee login and logout functionality.
+            </summary>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.AuthEmployeeController.#ctor(HSS.System.V2.Services.Contracts.IAuthService)">
+            <summary>
+            Initializes a new instance of the AuthEmployeeController.
+            </summary>
+            <param name="authServiceRepo">The authentication service for handling business logic.</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.AuthEmployeeController.LoginEmployee(HSS.System.V2.Services.DTOs.AuthDTOs.LoginModelDto)">
+            <summary>
+            Authenticates an employee and generates an access token.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /login-employee
+            {
+                "username": "string",
+                "password": "string"
+            }
+            </code>
+            </remarks>
+            <param name="model">The login credentials</param>
+            <returns>Authentication token and user details</returns>
+            <response code="200">Successfully authenticated</response>
+            <response code="400">Invalid credentials or account is locked/disabled</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.AuthEmployeeController.Logout">
+            <summary>
+            Logs out the currently authenticated employee.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /logout
+            </code>
+            </remarks>
+            <returns>Success status of the logout operation</returns>
+            <response code="200">Successfully logged out</response>
+            <response code="400">Error during logout process</response>
+        </member>
+        <member name="T:HSS.System.V2.Presentation.Controllers.AuthPatientController">
+            <summary>
+            Controller for managing patient authentication operations.
+            Handles patient registration, login, and account confirmation.
+            </summary>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.AuthPatientController.#ctor(HSS.System.V2.Services.Contracts.IAuthService)">
+            <summary>
+            Initializes a new instance of the AuthPatientController.
+            </summary>
+            <param name="authServiceRepo">The authentication service for handling business logic.</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.AuthPatientController.RegisterPatient(HSS.System.V2.Services.DTOs.AuthDTOs.PatientDto)">
+            <summary>
+            Registers a new patient in the system.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /register
+            {
+                "name": "string",
+                "email": "user@example.com",
+                "nationalId": "string",
+                "password": "string",
+                "confirmPassword": "string",
+                "gender": 0
+            }
+            </code>
+            </remarks>
+            <param name="dto">The patient registration details</param>
+            <returns>Success status of the registration</returns>
+            <response code="200">Successfully registered</response>
+            <response code="400">Invalid registration data or account already exists</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.AuthPatientController.LoginPatient(HSS.System.V2.Services.DTOs.AuthDTOs.LoginModelDto)">
+            <summary>
+            Authenticates a patient and generates an access token.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /login
+            {
+                "nationalId": "string",
+                "password": "string"
+            }
+            </code>
+            </remarks>
+            <param name="model">The login credentials</param>
+            <returns>Authentication token and user details</returns>
+            <response code="200">Successfully authenticated</response>
+            <response code="400">Invalid credentials or account is locked/disabled</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.AuthPatientController.ConfirmPatientAccount(System.String)">
+            <summary>
+            Confirms a patient's account using their national ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /confirm-account/{nationalId}
+            </code>
+            </remarks>
+            <param name="nationalId">The national ID of the patient</param>
+            <returns>Account confirmation details</returns>
+            <response code="200">Account successfully confirmed</response>
+            <response code="400">Invalid national ID or account already confirmed</response>
+        </member>
         <member name="T:HSS.System.V2.Presentation.Controllers.Base.CustomBaseController">
             <summary>
             Base controller providing common response handling.
@@ -30,6 +144,25 @@
             </summary>
             <param name="result">The result object.</param>
             <returns>An IActionResult representing the result.</returns>
+        </member>
+        <member name="T:HSS.System.V2.Presentation.Controllers.PatientController">
+            <summary>
+            Controller for managing patient-related operations in the healthcare system.
+            Provides endpoints for managing appointments, notifications, medical tests, and patient profile.
+            </summary>
+            <remarks>
+            This controller handles:
+            - Patient notifications and profile management
+            - Appointment scheduling and management for clinics, radiology, and medical labs
+            - Medical test results and prescriptions
+            - Patient tickets and hospital interactions
+            </remarks>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.#ctor(HSS.System.V2.Services.Contracts.IPatientService)">
+            <summary>
+            Initializes a new instance of the PatientController.
+            </summary>
+            <param name="patientService">The patient service for handling business logic.</param>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.NotificationCount">
             <summary>
@@ -89,27 +222,141 @@
             </remarks>
             <param name="model">The diabetes test model containing test results</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAppointmentDetails(System.String)">
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
             <summary>
-            Get details of a specific appointment.
+            Retrieves current appointments for the authenticated patient with pagination.
             </summary>
             <remarks>
             Sample request:
             <code>
-            GET /appointments/{appointmentId}
+            GET /api/patient/appointments/current?page=1&amp;pageSize=10
             </code>
             </remarks>
-            <param name="appointmentId">The ID of the appointment to retrieve</param>
+            <param name="pagination">Pagination parameters including page number and page size</param>
+            <returns>A paged list of current appointments</returns>
+            <response code="200">Returns the list of current appointments</response>
+            <response code="400">If there was an error retrieving the appointments</response>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllSpecifications(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllRadiologyTests(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllMedicalLabTests(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsBySpecificationId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByRadiologyTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByMedicalLabTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetActiveTicketsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTickets(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAppointmentDetails(System.String)">
+            <summary>
+            Retrieves detailed information about a specific appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/patient/appointments/{appointmentId}
+            </code>
+            </remarks>
+            <param name="appointmentId">The unique identifier of the appointment</param>
+            <returns>Detailed appointment information</returns>
+            <response code="200">Returns the appointment details</response>
+            <response code="400">If the appointment was not found or there was an error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllSpecifications(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all medical specifications with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /specifications?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllMedicalLabTests(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Retrieves all medical lab tests with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/patient/medical-lab-tests?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters including page number and page size</param>
+            <returns>A paged list of medical lab tests</returns>
+            <response code="200">Returns the list of medical lab tests</response>
+            <response code="400">If there was an error retrieving the tests</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllRadiologyTests(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Retrieves all radiology tests with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/patient/radiology-tests?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters including page number and page size</param>
+            <returns>A paged list of radiology tests</returns>
+            <response code="200">Returns the list of radiology tests</response>
+            <response code="400">If there was an error retrieving the tests</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsBySpecificationId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get hospitals by specialization ID with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/specialization/{specializationId}?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="specializationId">The ID of the specialization</param>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByRadiologyTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get hospitals by radiology test ID with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/radiology/{radiologyTestId}?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="radiologyTestId">The ID of the radiology test</param>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetHospitalsByMedicalLabTestId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get hospitals by medical lab test ID with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/medical-lab/{medicalLabTestId}?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="medicalLabTestId">The ID of the medical lab test</param>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetActiveTicketsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get active tickets in a specific hospital with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/{hospitalId}/tickets/active?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTickets(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all active tickets in a specific hospital with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /hospitals/{hospitalId}/tickets/all-active?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetClinics(System.String,System.String)">
             <summary>
             Get clinics in a hospital for a specific specialization.
@@ -163,63 +410,104 @@
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateClinicAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateClinicAppointmentModelForPatient)">
             <summary>
-            Create a new clinic appointment.
+            Creates a new clinic appointment for the authenticated patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            POST /appointments/clinic
+            POST /api/patient/appointments/clinic
+            {
+                "clinicId": "string",
+                "ticketId": "string",
+                "expectedTimeForStart": "2024-03-20T10:00:00Z"
+            }
             </code>
             </remarks>
             <param name="model">The clinic appointment creation model</param>
+            <returns>Success status of the appointment creation</returns>
+            <response code="200">The appointment was successfully created</response>
+            <response code="400">If the appointment data was invalid or there was an error</response>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateRadiologyAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateRadiologyAppointmentModelForPatient)">
             <summary>
-            Create a new radiology appointment.
+            Creates a new radiology appointment for the authenticated patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            POST /appointments/radiology
+            POST /api/patient/appointments/radiology
+            {
+                "radiologyCenterId": "string",
+                "ticketId": "string",
+                "expectedTimeForStart": "2024-03-20T10:00:00Z"
+            }
             </code>
             </remarks>
             <param name="model">The radiology appointment creation model</param>
+            <returns>Success status of the appointment creation</returns>
+            <response code="200">The appointment was successfully created</response>
+            <response code="400">If the appointment data was invalid or there was an error</response>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CreateMedicalLabAppointment(HSS.System.V2.Services.DTOs.PatientDTOs.CreateMedicalLabAppointmentModelForPatient)">
             <summary>
-            Create a new medical lab appointment.
+            Creates a new medical lab appointment for the authenticated patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            POST /appointments/medical-lab
+            POST /api/patient/appointments/medical-lab
+            {
+                "medicalLabId": "string",
+                "ticketId": "string",
+                "expectedTimeForStart": "2024-03-20T10:00:00Z"
+            }
             </code>
             </remarks>
             <param name="model">The medical lab appointment creation model</param>
+            <returns>Success status of the appointment creation</returns>
+            <response code="200">The appointment was successfully created</response>
+            <response code="400">If the appointment data was invalid or there was an error</response>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetMedicalLabTestsRequired">
             <summary>
-            Get required medical lab tests.
+            Retrieves a list of required medical lab tests for the patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            GET /medical-lab-tests/required
+            GET /api/patient/medical-lab-tests/required
             </code>
             </remarks>
+            <returns>List of required medical lab tests</returns>
+            <response code="200">Returns the list of required medical lab tests</response>
+            <response code="400">If there was an error retrieving the tests</response>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetRadiologyTestsRequired">
             <summary>
-            Get required radiology tests.
+            Retrieves a list of required radiology tests for the patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            GET /radiology-tests/required
+            GET /api/patient/radiology-tests/required
             </code>
             </remarks>
+            <returns>List of required radiology tests</returns>
+            <response code="200">Returns the list of required radiology tests</response>
+            <response code="400">If there was an error retrieving the tests</response>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllPrescriptionsRequired(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllPrescriptionsRequired(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all required prescriptions with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /prescriptions/required?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetMedicineByPrescriptionId(System.String)">
             <summary>
             Get medicines by prescription ID.
@@ -232,79 +520,751 @@
             </remarks>
             <param name="prescriptionId">The ID of the prescription</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentClinicAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentMedicalLabAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentRadiologyCenterAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
-        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.UploadProfilePicture(HSS.System.V2.Presentation.Controllers.UploadProfilePictureParam)">
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentClinicAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
             <summary>
-            Upload a profile picture.
+            Get current clinic appointments with pagination.
             </summary>
             <remarks>
             Sample request:
             <code>
-            POST /profile/picture
+            GET /appointments/clinic/current?page=1&amp;pageSize=10
             </code>
             </remarks>
-            <param name="param">The profile picture upload parameters</param>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentMedicalLabAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get current medical lab appointments with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /appointments/medical-lab/current?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetCurrentRadiologyCenterAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get current radiology center appointments with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /appointments/radiology/current?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.UploadProfilePicture(HSS.System.V2.Presentation.Controllers.UploadProfilePictureParam)">
+            <summary>
+            Uploads a profile picture for the authenticated patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/patient/profile/picture
+            Content-Type: multipart/form-data
+            
+            file=[binary data]
+            </code>
+            </remarks>
+            <param name="param">The form parameters containing the profile picture file</param>
+            <returns>Success status of the upload operation</returns>
+            <response code="200">The profile picture was successfully uploaded</response>
+            <response code="400">If the file was invalid or there was an error uploading</response>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetPatientProfileInformation">
             <summary>
-            Get patient profile information.
+            Retrieves the profile information of the authenticated patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            GET /profile
+            GET /api/patient/profile
             </code>
             </remarks>
+            <returns>The patient's profile information</returns>
+            <response code="200">Returns the patient's profile information</response>
+            <response code="400">If there was an error retrieving the profile</response>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTicketsOfPatient">
             <summary>
-            Get all active tickets of the patient.
+            Retrieves all active tickets for the authenticated patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            GET /tickets/active
+            GET /api/patient/tickets/active
             </code>
             </remarks>
+            <returns>List of active tickets</returns>
+            <response code="200">Returns the list of active tickets</response>
+            <response code="400">If there was an error retrieving the tickets</response>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllInactiveTicketsOfPatient">
             <summary>
-            Get all inactive tickets of the patient.
+            Retrieves all inactive (completed or expired) tickets for the authenticated patient.
             </summary>
             <remarks>
             Sample request:
             <code>
-            GET /tickets/inactive
+            GET /api/patient/tickets/inactive
             </code>
             </remarks>
+            <returns>List of inactive tickets</returns>
+            <response code="200">Returns the list of inactive tickets</response>
+            <response code="400">If there was an error retrieving the tickets</response>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetTicketContent(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetTicketContent(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Retrieves the content (appointments, tests, etc.) of a specific ticket with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/patient/tickets/{ticketId}/content?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="ticketId">The unique identifier of the ticket</param>
+            <param name="pagination">Pagination parameters including page number and page size</param>
+            <returns>A paged list of ticket content items</returns>
+            <response code="200">Returns the ticket content</response>
+            <response code="400">If the ticket was not found or there was an error</response>
+        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAppointmentContent(System.String)">
             <summary>
-            Get appointment content.
+            Retrieves the content of a specific appointment.
             </summary>
             <remarks>
             Sample request:
             <code>
-            GET /appointments/{appointmentId}/content
+            GET /api/patient/appointments/{appointmentId}/content
             </code>
             </remarks>
-            <param name="appointmentId">The ID of the appointment</param>
+            <param name="appointmentId">The unique identifier of the appointment</param>
+            <returns>The appointment content details</returns>
+            <response code="200">Returns the appointment content</response>
+            <response code="400">If the appointment was not found or there was an error</response>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllSpecificationsPaged(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)" -->
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllSpecificationsPaged(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Retrieves all medical specializations with pagination.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/patient/specifications/paged?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters including page number and page size</param>
+            <returns>A paged list of medical specializations</returns>
+            <response code="200">Returns the list of specializations</response>
+            <response code="400">If there was an error retrieving the specializations</response>
+        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.CancelAppointment(System.String)">
             <summary>
-            Cancel an appointment.
+            Cancels a specific appointment.
             </summary>
             <remarks>
             Sample request:
             <code>
-            DELETE /appointments/{appointmentId}
+            DELETE /api/patient/appointments/{appointmentId}
             </code>
             </remarks>
-            <param name="appointmentId">The ID of the appointment to cancel</param>
+            <param name="appointmentId">The unique identifier of the appointment to cancel</param>
+            <returns>Success status of the cancellation</returns>
+            <response code="200">The appointment was successfully cancelled</response>
+            <response code="400">If the appointment was not found or there was an error</response>
+        </member>
+        <member name="T:HSS.System.V2.Presentation.Controllers.UploadProfilePictureParam">
+            <summary>
+            Parameters for uploading a patient's profile picture.
+            </summary>
+        </member>
+        <member name="P:HSS.System.V2.Presentation.Controllers.UploadProfilePictureParam.File">
+            <summary>
+            The profile picture file to upload.
+            </summary>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllHospitalDepartmentsInHospital">
+            <summary>
+            Get Hospital departments details
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/hospital-departments
+            </code>
+            </remarks>
+            <response code="200">Successfully retrieved departments</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllSpecializationsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all specializations in the hospital
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/specializations?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved specializations</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllClinics(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all clinics for a specific specialization
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/clinics/{specializationId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="specializationId">The specialization ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved clinics</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllRadiologyCenters(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all radiology centers
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/radiology-centers?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved radiology centers</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllRadiologyCentersDoTest(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all radiology centers that perform a specific test
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/radiology-centers/test/{radiologyTestId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="radiologyTestId">The radiology test ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved radiology centers</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllMedicalLabs(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all medical labs
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/medical-labs?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved medical labs</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllMedicalLabsDoTest(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all medical labs that perform a specific test
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/medical-labs/test/{medicalTestId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="medicalTestId">The medical test ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved medical labs</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllAppointmentsForClinic(System.String,HSS.System.V2.Domain.Models.Requests.DateFilteration,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all appointments for a specific clinic
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/appointments/clinic/{clinicId}?dateFrom=2024-03-20&amp;dateTo=2024-03-21&amp;page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="clinicId">The clinic ID</param>
+            <param name="filter">Date filter parameters</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved appointments</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetQueueForClinic(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get queue for a specific clinic
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/queue/clinic/{clinicId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="clinicId">The clinic ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllAppointmentsForRadiologyCenter(System.String,HSS.System.V2.Domain.Models.Requests.DateFilteration,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all appointments for a specific radiology center
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/appointments/radiology/{radiologyCenterId}?dateFrom=2024-03-20&amp;dateTo=2024-03-21&amp;page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="radiologyCenterId">The radiology center ID</param>
+            <param name="filter">Date filter parameters</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved appointments</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetQueueForRadiologyCenter(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get queue for a specific radiology center
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/queue/radiology/{radiologyCenterId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="radiologyCenterId">The radiology center ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllAppointmentsForMedicalLab(System.String,HSS.System.V2.Domain.Models.Requests.DateFilteration,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all appointments for a specific medical lab
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/appointments/medical-lab/{medicalLabId}?dateFrom=2024-03-20&amp;dateTo=2024-03-21&amp;page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="medicalLabId">The medical lab ID</param>
+            <param name="filter">Date filter parameters</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved appointments</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetQueueForMedicalLab(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get queue for a specific medical lab
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/queue/medical-lab/{medicalLabId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="medicalLabId">The medical lab ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetOpenTicketsForPatientByNationalId(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get open tickets for a patient by national ID
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/tickets/national-id/{nationalId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="nationalId">The patient's national ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved tickets</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetOpenTicketsForPatientById(System.String,HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get open tickets for a patient by patient ID
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/tickets/patient/{patientId}?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="patientId">The patient ID</param>
+            <param name="pagination">Pagination parameters</param>
+            <response code="200">Successfully retrieved tickets</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.CreateClinicAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateClinicAppointmentModelForReception)">
+            <summary>
+            Create a new clinic appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/clinic
+            {
+                "clinicId": "string",
+                "ticketId": "string",
+                "expectedTimeForStart": "2024-03-20T10:00:00Z",
+                "nationalId": "string"
+            }
+            </code>
+            </remarks>
+            <param name="model">The appointment creation model</param>
+            <response code="200">Successfully created appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.CreateRadiologyAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateRadiologyAppointmentModelForReception)">
+            <summary>
+            Create a new radiology appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/radiology
+            {
+                "radiologyCenterId": "string",
+                "ticketId": "string",
+                "expectedTimeForStart": "2024-03-20T10:00:00Z",
+                "nationalId": "string"
+            }
+            </code>
+            </remarks>
+            <param name="model">The appointment creation model</param>
+            <response code="200">Successfully created appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.CreateMedicalLabAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateMedicalLabAppointmentModelForReception)">
+            <summary>
+            Create a new medical lab appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/medical-lab
+            {
+                "medicalLabId": "string",
+                "ticketId": "string",
+                "expectedTimeForStart": "2024-03-20T10:00:00Z",
+                "nationalId": "string"
+            }
+            </code>
+            </remarks>
+            <param name="model">The appointment creation model</param>
+            <response code="200">Successfully created appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.TerminateAppointment(System.String)">
+            <summary>
+            Terminate an appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/{appointmentId}/terminate
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully terminated appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.SwapClinicAppointments(System.String,System.String)">
+            <summary>
+            Swap two clinic appointments
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/clinic/swap/{appointmentId1}/{appointmentId2}
+            </code>
+            </remarks>
+            <param name="appointmentId1">First appointment ID</param>
+            <param name="appointmentId2">Second appointment ID</param>
+            <response code="200">Successfully swapped appointments</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.SwapMedicalLabAppointments(System.String,System.String)">
+            <summary>
+            Swap two medical lab appointments
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/medical-lab/swap/{appointmentId1}/{appointmentId2}
+            </code>
+            </remarks>
+            <param name="appointmentId1">First appointment ID</param>
+            <param name="appointmentId2">Second appointment ID</param>
+            <response code="200">Successfully swapped appointments</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.SwapRadiologyCenterAppointments(System.String,System.String)">
+            <summary>
+            Swap two radiology center appointments
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/radiology/swap/{appointmentId1}/{appointmentId2}
+            </code>
+            </remarks>
+            <param name="appointmentId1">First appointment ID</param>
+            <param name="appointmentId2">Second appointment ID</param>
+            <response code="200">Successfully swapped appointments</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.RescheduleClinicAppointment(System.String,System.String,System.DateTime)">
+            <summary>
+            Reschedule a clinic appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/clinic/{appointmentId}/reschedule/{departmentId}?newDateTime=2024-03-20T10:00:00Z
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <param name="departmentId">The department ID</param>
+            <param name="newDateTime">The new appointment date and time</param>
+            <response code="200">Successfully rescheduled appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.RescheduleMedicalLabAppointment(System.String,System.String,System.DateTime)">
+            <summary>
+            Reschedule a medical lab appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/medical-lab/{appointmentId}/reschedule/{departmentId}?newDateTime=2024-03-20T10:00:00Z
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <param name="departmentId">The department ID</param>
+            <param name="newDateTime">The new appointment date and time</param>
+            <response code="200">Successfully rescheduled appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.RescheduleRadiologyAppointment(System.String,System.String,System.DateTime)">
+            <summary>
+            Reschedule a radiology appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/appointments/radiology/{appointmentId}/reschedule/{departmentId}?newDateTime=2024-03-20T10:00:00Z
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <param name="departmentId">The department ID</param>
+            <param name="newDateTime">The new appointment date and time</param>
+            <response code="200">Successfully rescheduled appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.RemoveClinicAppointmentFromQueue(System.String)">
+            <summary>
+            Remove a clinic appointment from queue
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/queue/clinic/{appointmentId}/remove
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully removed appointment from queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.RemoveMedicalLabAppointmentFromQueue(System.String)">
+            <summary>
+            Remove a medical lab appointment from queue
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/queue/medical-lab/{appointmentId}/remove
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully removed appointment from queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.RemoveRadiologyCenterAppointmentFromQueue(System.String)">
+            <summary>
+            Remove a radiology center appointment from queue
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/queue/radiology/{appointmentId}/remove
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully removed appointment from queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.AddClinicAppointmentForQueue(System.String)">
+            <summary>
+            Add a clinic appointment to queue
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/queue/clinic/{appointmentId}/add
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully added appointment to queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.AddMedicalLabAppointmentForQueue(System.String)">
+            <summary>
+            Add a medical lab appointment to queue
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/queue/medical-lab/{appointmentId}/add
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully added appointment to queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.AddRadiologyCenterAppointmentForQueue(System.String)">
+            <summary>
+            Add a radiology center appointment to queue
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/queue/radiology/{appointmentId}/add
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully added appointment to queue</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.CreateNewTicket(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateTicketModelForReception)">
+            <summary>
+            Create a new ticket
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/reception/tickets
+            {
+                "patientIdentifier": "string",
+                "identifierType": "NationalId"
+            }
+            </code>
+            </remarks>
+            <param name="model">The ticket creation model</param>
+            <response code="200">Successfully created ticket</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAvailableTimeSlotsForClinic(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Get available time slots for a clinic
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/available-slots/clinic/{clinicId}?date=2024-03-20
+            </code>
+            </remarks>
+            <param name="clinicId">The clinic ID</param>
+            <param name="date">Optional date filter</param>
+            <response code="200">Successfully retrieved time slots</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAvailableTimeSlotsForMedicalLab(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Get available time slots for a medical lab
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/available-slots/medical-lab/{medicalLabId}?date=2024-03-20
+            </code>
+            </remarks>
+            <param name="medicalLabId">The medical lab ID</param>
+            <param name="date">Optional date filter</param>
+            <response code="200">Successfully retrieved time slots</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAvailableTimeSlotsForRadiologyCenter(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Get available time slots for a radiology center
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/available-slots/radiology/{radiologyCenterId}?date=2024-03-20
+            </code>
+            </remarks>
+            <param name="radiologyCenterId">The radiology center ID</param>
+            <param name="date">Optional date filter</param>
+            <response code="200">Successfully retrieved time slots</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.StartClinicAppointment(System.String)">
+            <summary>
+            Start a clinic appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/appointments/clinic/{appointmentId}/start
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully started appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.StartMedicalLabAppointment(System.String)">
+            <summary>
+            Start a clinic appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/appointments/medical-lab/{appointmentId}/start
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully started appointment</response>
+            <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.StartRadiologyAppointment(System.String)">
+            <summary>
+            Start a clinic appointment
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/appointments/radiology/{appointmentId}/start
+            </code>
+            </remarks>
+            <param name="appointmentId">The appointment ID</param>
+            <response code="200">Successfully started appointment</response>
+            <response code="400">Bad request error</response>
         </member>
     </members>
 </doc>
