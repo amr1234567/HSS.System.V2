@@ -235,28 +235,26 @@ namespace HSS.System.V2.Services.Services
         {
             try
             {
-                var appointmentsResult = await _appointmentRepository.GetAllAppointmentsForUser(_userContext.ApiUserId, pagination, AppointmentState.NotStarted);
+                var appointmentsResult = await _appointmentRepository.GetAllAppointmentsForUser(_userContext.ApiUserId, AppointmentState.NotStarted);
 
                 if (appointmentsResult.IsFailed)
                     return Result.Fail(appointmentsResult.Errors);
 
                 var appointments = appointmentsResult.Value;
 
-                if (appointments.TotalCount == 0)
+                if (!appointments.Any())
                     return Result.Fail("there are not appointments yet!");
 
-                var allTicketAppintments = appointments.Items.Select(a => new AppointmentView()
+                var allTicketAppintments = appointments.Select(a => new AppointmentView()
                 {
                     Id = a.Id,
-                    DepartmentName = a.EmployeeName,
+                    DepartmentName = a.DepartmentName,
                     HospitalName = a.HospitalName,
                     EmployeeName = a.EmployeeName,
                     StartAt = a.ActualStartAt ?? a.SchaudleStartAt,
-                }).OrderBy(x => x.StartAt);
+                }).OrderBy(x => x.StartAt).GetPaged(pagination);
 
-                var result = new PagedResult<AppointmentView>(allTicketAppintments, appointments.TotalPages, appointments.CurrentPage, appointments.PageSize);
-
-                return result;
+                return allTicketAppintments;
             }
             catch (Exception ex)
             {
