@@ -11,3 +11,4 @@
         public DateTime ClosingTime { get; set; }
     }
 }
+

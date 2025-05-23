@@ -23,4 +23,5 @@ public class MedicalHistory : BaseClass
 
     [InverseProperty(nameof(Appointment.MedicalHistory))]
     public virtual ICollection<Appointment> Appointments { get; set; }
+    public string FinalDiagnosis { get; set; }
 }

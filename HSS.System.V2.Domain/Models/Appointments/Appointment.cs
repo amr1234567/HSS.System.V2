@@ -5,6 +5,7 @@ using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.Models.Prescriptions;
 
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,8 @@ namespace HSS.System.V2.Domain.Models.Appointments;
 
 public class Appointment : BaseClass
 {
+    public string PatientId {  get; set; }
+    public virtual Patient Patient { get; set; }
     public string PatientNationalId { get; set; }
     public string PatientName { get; set; }
     public AppointmentState State { get; set; }

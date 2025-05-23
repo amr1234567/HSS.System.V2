@@ -16,6 +16,7 @@ public static class DependencyInjection
         {
             var connectionString = configuration.GetConnectionString("default");
             optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseLazyLoadingProxies();
         });
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
         services.AddScoped<IHospitalRepository, HospitalRepository>();

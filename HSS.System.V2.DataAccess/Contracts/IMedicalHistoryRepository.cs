@@ -11,5 +11,5 @@ public interface IMedicalHistoryRepository
     Task<Result<IEnumerable<MedicalHistory>>> GetAllMedicalHistoryByNationalId(string patientNationlId);
     Task<Result> CreateMedicalHistory(Ticket ticket);
     Task<Result> CreateMedicalHistory(MedicalHistory model);
-    Task GetByClinicAsync(int clinicId);
+    Task<Result<IEnumerable<MedicalHistory>>> GetAllMedicalHistoryByIdInDetails(string patientId);
 }
