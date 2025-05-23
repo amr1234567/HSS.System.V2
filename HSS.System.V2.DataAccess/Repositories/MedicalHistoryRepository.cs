@@ -2,6 +2,7 @@
 
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
+using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
@@ -21,12 +22,24 @@ public class MedicalHistoryRepository : IMedicalHistoryRepository
 
     public async Task<Result<IEnumerable<MedicalHistory>>> GetAllMedicalHistoryById(string patientId)
     {
-        var patient = await _context.Patients
-            .Include(p => p.MedicalHistories)
-            .FirstOrDefaultAsync(p => p.Id == patientId);
-        if (patient == null)
-            return new EntityNotExistsError("patient not found");
-        return patient.MedicalHistories.ToList();
+        var list = await _context.MedicalHistories
+            .Where(p => p.PatientId == patientId)
+            .Include(m => m.Patient)
+            .ToListAsync();
+        return list;
+    }
+
+    public async Task<Result<IEnumerable<MedicalHistory>>> GetAllMedicalHistoryByIdInDetails(string patientId)
+    {
+        var list = await _context.MedicalHistories
+            .Where(p => p.PatientId == patientId)
+            .Include(m => m.Patient)
+            .Include(p => p.Appointments)
+                .ThenInclude(a => ((ClinicAppointment)a).MedicalLabAppointments)
+            .Include(p => p.Appointments)
+                .ThenInclude(a => ((ClinicAppointment)a).RadiologyCeneterAppointments)
+            .ToListAsync();
+        return list;
     }
 
     public async Task<Result<IEnumerable<MedicalHistory>>> GetAllMedicalHistoryByNationalId(string patientNationlId)

@@ -24,6 +24,7 @@ using Microsoft.Extensions.Options;
 
 namespace HSS.System.V2.Services.Services
 {
+    /// <inheritdoc/>
     public class PatientServices : IPatientService
     {
         private readonly IUserContext _userContext;
@@ -245,7 +246,7 @@ namespace HSS.System.V2.Services.Services
 
                 var appointments = appointmentsResult.Value;
 
-                if (!appointments.Any())
+                if (appointments.TotalCount == 0)
                     return PagedResult<AppointmentView>.Empty;
 
                 var allTicketAppintments = appointments.Select(a => new AppointmentView()

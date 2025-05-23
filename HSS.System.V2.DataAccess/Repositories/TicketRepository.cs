@@ -5,6 +5,7 @@ using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
@@ -75,6 +76,25 @@ namespace HSS.System.V2.DataAccess.Repositories
                     .Include(t => t.FirstClinicAppointment)
                         .ThenInclude(t => t.ReExamiationClinicAppointemnt)
                     .Include(t => t.Appointments)
+                    .FirstOrDefaultAsync();
+                return ticket is null ? EntityNotExistsError.Happen<Ticket>(ticketId) : ticket;
+            }
+            catch (Exception ex)
+            {
+                return new RetrievingDataFromDbContextError(ex);
+            }
+        }
+
+        public async Task<Result<Ticket>> GetTicketByIdInDetails(string ticketId)
+        {
+            try
+            {
+                var ticket = await _context.Tickets
+                    .Where(t => t.Id == ticketId)
+                    .Include(t => t.Appointments)
+                        .ThenInclude(a => ((ClinicAppointment)a).MedicalLabAppointments)
+                    .Include(t => t.Appointments)
+                        .ThenInclude(a => ((ClinicAppointment)a).RadiologyCeneterAppointments)
                     .FirstOrDefaultAsync();
                 return ticket is null ? EntityNotExistsError.Happen<Ticket>(ticketId) : ticket;
             }

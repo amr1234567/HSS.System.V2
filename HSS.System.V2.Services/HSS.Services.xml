@@ -216,6 +216,9 @@
             Data transfer object representing a ticket.
             </summary>
         </member>
+        <member name="T:HSS.System.V2.Services.Services.PatientServices">
+            <inheritdoc/>
+        </member>
         <member name="M:HSS.System.V2.Services.Services.PatientServices.GetCurrentMedicalLabAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
             <inheritdoc/>
         </member>

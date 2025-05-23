@@ -1,21 +1,18 @@
-﻿
-using HSS.System.V2.Application.DTOs;
+﻿using FluentResults;
+
 using HSS.System.V2.Application.DTOs.Clinic;
-using HSS.System.V2.Services.DTOs.ReceptionDTOs;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Services.DTOs.ClinicDTOs;
 
-namespace HSS.System.V2.Application.Interfaces
+namespace HSS.System.V2.Services.Contracts;
+
+public interface IClinicServices
 {
-    public interface IClinicServices
-    {
-        Task<ClinicDto> GetClinicDetailsAsync(int clinicId);
-        Task<CurrentClinicDetailsDto> GetCurrentClinicDetailsAsync(int clinicId);
-        Task<List<MedicalHistoryDto>> GetMedicalHistoriesAsync(int clinicId);
-        Task<MedicalHistoryDto> GetMedicalHistoryByIdAsync(int clinicId, int medicalHistoryId);
-        Task SubmitClinicResultAsync(int clinicId, ClinicResultRequestDto request);
-        Task EndAppointmentAsync(int clinicId, int appointmentId);
-        Task GetByIdAsync(int clinicId);
-    }
+    Task<Result<ClinicAppointmentDto>> GetAppointmentDetailsById(string appointmentId);
+    Task<Result<AppointmentTicketDetailsDto>> GetCurrentTicketDetails(string appoitmentId);
+    Task<Result<PagedResult<MinMedicalHistoryDto>>> GetMedicalHistoriesForPatient(string patientId, PaginationRequest pagination);
+    Task<Result<IEnumerable<MinMedicalHistoryDto>>> GetMedicalHistoriesForPatient(string patientId);
+    Task<Result<MinMedicalHistoryDto>> GetMedicalHistoryDetails(string medicalHistoryId);
+    Task<Result> SubmitClinicResultAsync( ClinicResultRequestDto request);
+    Task<Result> EndAppointmentAsync(int appointmentId);
 }
-
