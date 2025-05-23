@@ -12,7 +12,6 @@ using System.Linq.Expressions;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Enums;
-using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.Queues;
 
 namespace HSS.System.V2.DataAccess.Repositories

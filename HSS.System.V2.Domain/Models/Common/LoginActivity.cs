@@ -7,6 +7,6 @@ public class LoginActivity : BaseClass
 {
     public string EmployeeId { get; set; }
     public string EmployeeName { get; set; }
-    public Employee Employee { get; set; }
+    public virtual Employee Employee { get; set; }
     public ActivityType ActivityType { get; set; }
 }

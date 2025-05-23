@@ -6,7 +6,7 @@ namespace HSS.System.V2.Domain.Models.Medical;
 public class TestRequired : BaseClass
 {
     public string TestId { get; set; }
-    public Test Test { get; set; }
+    public virtual Test Test { get; set; }
     public string TestName { get; set; }
     public string ClinicAppointmentId { get; set; }
     public virtual ClinicAppointment ClinicAppointment { get; set; }

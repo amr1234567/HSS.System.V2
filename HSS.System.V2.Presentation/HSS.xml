@@ -145,6 +145,118 @@
             <param name="result">The result object.</param>
             <returns>An IActionResult representing the result.</returns>
         </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetAppointmentDetails(System.String)">
+            <summary>
+            Retrieves the details of a specific appointment by its ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/appointments/{appointmentId}
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment to retrieve.</param>
+            <returns>The appointment details.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetCurrentTicketDetails(System.String)">
+            <summary>
+            Retrieves the details of a specific ticket by its ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/tickets/{ticketId}
+            </code>
+            </remarks>
+            <param name="ticketId">The ID of the ticket to retrieve.</param>
+            <returns>The ticket details with associated appointments.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetMedicalHistoriesForPatient(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves paginated medical histories for a specific patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/patients/{patientId}/medical-histories?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="patientId">The ID of the patient.</param>
+            <param name="page">The page number (default: 1).</param>
+            <param name="size">The number of items per page (default: 10).</param>
+            <returns>Paginated list of medical histories.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetAllMedicalHistoriesForPatient(System.String)">
+            <summary>
+            Retrieves all medical histories for a specific patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/patients/{patientId}/medical-histories/all
+            </code>
+            </remarks>
+            <param name="patientId">The ID of the patient.</param>
+            <returns>List of all medical histories.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetMedicalHistoryDetails(System.String)">
+            <summary>
+            Retrieves the details of a specific medical history by its ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/medical-histories/{medicalHistoryId}
+            </code>
+            </remarks>
+            <param name="medicalHistoryId">The ID of the medical history.</param>
+            <returns>The medical history details.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.SubmitClinicResult(HSS.System.V2.Services.DTOs.ClinicDTOs.ClinicResultRequestDto)">
+            <summary>
+            Submits a clinic result for an appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/Clinic/results
+            {
+              "appointmentId": "123",
+              "diseaseId": "456",
+              "diagnosis": "Flu",
+              "reExaminationNeeded": true,
+              "testsRequired": [
+                {
+                  "testId": "789"
+                }
+              ],
+              "prescription": {
+                "items": [
+                  {
+                    "medicineId": "101",
+                    "dosage": "1 tablet daily"
+                  }
+                ]
+              }
+            }
+            </code>
+            </remarks>
+            <param name="request">The clinic result details.</param>
+            <returns>Confirmation of submission.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.EndAppointment(System.String)">
+            <summary>
+            Ends an appointment by updating its status to completed.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            PUT /api/Clinic/appointments/{appointmentId}/end
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment to end.</param>
+            <returns>Confirmation of appointment completion.</returns>
+        </member>
         <member name="T:HSS.System.V2.Presentation.Controllers.PatientController">
             <summary>
             Controller for managing patient-related operations in the healthcare system.

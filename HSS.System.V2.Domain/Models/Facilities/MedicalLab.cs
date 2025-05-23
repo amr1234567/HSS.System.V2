@@ -16,7 +16,7 @@ public class MedicalLab : BaseClass, IHospitalDepartmentItem, ITestableDepartmen
     public TimeSpan EndAt { get; set; }
     public string? QueueId { get; set; }
     [ForeignKey(nameof(QueueId))]
-    public MedicalLabQueue Queue { get; set; }
+    public virtual MedicalLabQueue Queue { get; set; }
     public TimeSpan PeriodPerAppointment { get; set; }
     public string CurrentWorkingTesterId { get; set; }
     [ForeignKey(nameof(CurrentWorkingTesterId))]

@@ -4,6 +4,7 @@ using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 
@@ -76,5 +77,25 @@ public class MedicalHistoryRepository : IMedicalHistoryRepository
         await _context.MedicalHistories.AddAsync(model);
         await _context.SaveChangesAsync();
         return Result.Ok();
+    }
+
+    public async Task<Result<MedicalHistory>> GetMedicalHistoryById(string medicalHistoryId)
+    {
+        return await _context.MedicalHistories
+          .Where(p => p.Id == medicalHistoryId)
+          .Include(m => m.Patient)
+          .FirstOrDefaultAsync();
+    }
+
+    public async Task<Result<MedicalHistory>> GetMedicalHistoryByIdInDetails(string medicalHistoryId)
+    {
+        return await _context.MedicalHistories
+          .Where(p => p.Id == medicalHistoryId)
+          .Include(m => m.Patient)
+          .Include(p => p.Appointments)
+              .ThenInclude(a => ((ClinicAppointment)a).MedicalLabAppointments)
+          .Include(p => p.Appointments)
+              .ThenInclude(a => ((ClinicAppointment)a).RadiologyCeneterAppointments)
+          .FirstOrDefaultAsync();
     }
 }

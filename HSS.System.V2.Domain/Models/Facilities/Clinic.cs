@@ -15,7 +15,7 @@ public class Clinic : BaseClass, IHospitalDepartmentItem
     public TimeSpan EndAt { get; set; }
     public string? QueueId { get; set; }
     [ForeignKey(nameof(QueueId))]
-    public ClinicQueue Queue { get; set; }
+    public virtual ClinicQueue Queue { get; set; }
     public TimeSpan PeriodPerAppointment { get; set; }
 
     public string SpecializationId { get; set; }

@@ -35,7 +35,10 @@ builder.Services.AddTransient<IConfigureOptions<SwaggerUIOptions>, SwaggerUIConf
 
 builder.Services.AddContextDI(builder.Configuration);
 builder.Services.AddServiceLayerDI(builder.Configuration);
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(type => type.FullName); // Use full name including namespace
+});
 
 #region Auth Services
 
