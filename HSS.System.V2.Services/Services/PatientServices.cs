@@ -246,7 +246,7 @@ namespace HSS.System.V2.Services.Services
 
                 var appointments = appointmentsResult.Value;
 
-                if (appointments.TotalCount == 0)
+                if (!appointments.Any())
                     return PagedResult<AppointmentView>.Empty;
 
                 var allTicketAppintments = appointments.Select(a => new AppointmentView()
