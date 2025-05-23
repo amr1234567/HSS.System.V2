@@ -1,4 +1,6 @@
-﻿using HSS.System.V2.Domain.Helpers.Models;
+﻿using HSS.System.V2.Domain.Attributes;
+using HSS.System.V2.Domain.Enums;
+using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Presentation.Controllers.Base;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.ClinicDTOs;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
+    [AuthorizeByEnum(UserRole.Doctor)]
     [ApiExplorerSettings(GroupName = "ClinicAPI")]
     public class ClinicController : CustomBaseController
     {

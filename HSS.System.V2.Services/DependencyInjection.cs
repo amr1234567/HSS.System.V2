@@ -23,6 +23,7 @@ namespace HSS.System.V2.Services
             services.AddScoped<IPatientService, PatientServices>();
             services.AddScoped<IClinicServices, ClinicServices>();
             services.AddScoped<IReceptionServices, ReceptionServices>();
+            services.AddScoped<IGeneralServices, GeneralServices>();
 
             return services;
         }

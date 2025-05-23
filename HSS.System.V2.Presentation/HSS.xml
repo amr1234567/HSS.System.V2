@@ -257,6 +257,8 @@
             <param name="appointmentId">The ID of the appointment to end.</param>
             <returns>Confirmation of appointment completion.</returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.GeneralController.GetRadiologyTests(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:HSS.System.V2.Presentation.Controllers.GeneralController.GetMedicalLabTests(System.Int32,System.Int32)" -->
         <member name="T:HSS.System.V2.Presentation.Controllers.PatientController">
             <summary>
             Controller for managing patient-related operations in the healthcare system.

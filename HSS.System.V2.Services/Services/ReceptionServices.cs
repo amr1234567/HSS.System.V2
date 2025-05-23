@@ -254,6 +254,7 @@ namespace HSS.System.V2.Services.Services
                 {
                     entity.ClinicAppointmentId = testRequired.Value.ClinicAppointmentId;
                     testRequired.Value.Used = true;
+                    entity.TicketId = testRequired.Value.ClinicAppointment.TicketId;
                     await _testRequiredRepository.UpdateTestRequiredAsync(testRequired.Value);
                 }
                 else
@@ -261,7 +262,17 @@ namespace HSS.System.V2.Services.Services
                     return new BadRequestError("you must provide ticket id or test required id");
                 }
             }
-            entity.TicketId = ticket.Value.Id;
+            else
+            {
+                if (string.IsNullOrEmpty(ticket.Value.FirstClinicAppointmentId))
+                {
+                    entity.TicketId = ticket.Value.Id;
+                }
+                else
+                {
+                    return new BadRequestError("this ticket already has clinic appointment");
+                }
+            }
             entity.ClinicAppointmentId = null;
             entity.RadiologyCeneterId = radiologyCenter.Value!.Id;
             entity.DepartmentName = radiologyCenter.Value!.Name;
@@ -271,7 +282,7 @@ namespace HSS.System.V2.Services.Services
             entity.PatientNationalId = patient.Value.NationalId;
             entity.ExpectedDuration = radiologyCenter.Value.PeriodPerAppointment;
 
-            return await  _ticketRepository.UpdateTicket(ticket.Value);
+            return await _ticketRepository.UpdateTicket(ticket.Value);
         }
 
         public async Task<Result> CreateAppointment(CreateMedicalLabAppointmentModelForReception model)
@@ -300,7 +311,17 @@ namespace HSS.System.V2.Services.Services
                     return new BadRequestError("you must provide ticket id or test required id");
                 }
             }
-            entity.TicketId = ticket.Value.Id;
+            else
+            {
+                if (string.IsNullOrEmpty(ticket.Value.FirstClinicAppointmentId))
+                {
+                    entity.TicketId = ticket.Value.Id;
+                }
+                else
+                {
+                    return new BadRequestError("this ticket already has clinic appointment");
+                }
+            }
             entity.ClinicAppointmentId = null;
             entity.MedicalLabId = medicalLab.Value!.Id;
             entity.DepartmentName = medicalLab.Value.Name;

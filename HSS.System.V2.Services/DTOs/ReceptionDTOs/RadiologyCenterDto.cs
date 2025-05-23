@@ -10,6 +10,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
     /// </summary>
     public class RadiologyCenterDto : IOutputDto<RadiologyCenterDto, RadiologyCenter>
     {
+        public string Id { set; get; }
         public TimeSpan StartAt { get; set; }
         public TimeSpan? EndAt { get; set; }
         public int NumberOfShifts { get; set; }
@@ -19,6 +20,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
 
         public RadiologyCenterDto MapFromModel(RadiologyCenter model)
         {
+            Id = model.Id;
             StartAt = model.StartAt;
             EndAt = model.EndAt;
             NumberOfShifts = model.NumberOfShifts;
