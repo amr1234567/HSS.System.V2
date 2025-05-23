@@ -317,25 +317,6 @@ namespace HSS.System.V2.Presentation.Controllers
         }
 
         /// <summary>
-        /// Get all active tickets in a specific hospital with pagination.
-        /// </summary>
-        /// <remarks>
-        /// Sample request:
-        /// <code>
-        /// GET /hospitals/{hospitalId}/tickets/all-active?page=1&amp;pageSize=10
-        /// </code>
-        /// </remarks>
-        /// <param name="pagination">Pagination parameters</param>
-        [ProducesResponseType(typeof(ApiResponse<PagedResult<TicketViewDto>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<PagedResult<TicketViewDto>>), StatusCodes.Status400BadRequest)]
-        [HttpGet(ApiRoutes.Patient.GetAllActiveTicketsInHospital)]
-        public async Task<IActionResult> GetAllActiveTickets([FromQuery] PaginationRequest pagination)
-        {
-            var result = await _patientService.GetActiveTicketForPatient(pagination);
-            return GetResponse(result);
-        }
-
-        /// <summary>
         /// Get clinics in a hospital for a specific specialization.
         /// </summary>
         /// <remarks>

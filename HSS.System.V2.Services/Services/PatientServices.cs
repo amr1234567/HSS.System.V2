@@ -20,6 +20,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.Services.Contracts;
+using Microsoft.Extensions.Options;
 
 namespace HSS.System.V2.Services.Services
 {
@@ -39,6 +40,7 @@ namespace HSS.System.V2.Services.Services
         private readonly AppDbContext _context;
         private readonly IMedicalLabTestResultServices _medicalLabTestResultServices;
         private readonly ISpecializationReporitory _specializationReporitory;
+        public readonly BaseUrls _baseUrlsModel;
 
         public PatientServices(IUserContext userContext, INotificationRepository notificationRepository,
             IPatientRepository patientRepository, IAppointmentRepository appointmentRepository,
@@ -46,7 +48,7 @@ namespace HSS.System.V2.Services.Services
             IHospitalRepository hospitalRepository, ITicketRepository ticketRepository,
             ITestRequiredRepository testRequiredRepository, IPrescriptionRepository prescriptionRepository,
             IWebHostEnvironment env, AppDbContext context, IMedicalLabTestResultServices medicalLabTestResultServices,
-            ISpecializationReporitory specializationReporitory)
+            ISpecializationReporitory specializationReporitory, IOptions<BaseUrls> options)
         {
             _userContext = userContext;
             _notificationRepository = notificationRepository;
@@ -62,6 +64,7 @@ namespace HSS.System.V2.Services.Services
             _context = context;
             _medicalLabTestResultServices = medicalLabTestResultServices;
             _specializationReporitory = specializationReporitory;
+            _baseUrlsModel = options.Value;
         }
 
         public async Task<Result<int>> NotificationCount()
@@ -243,7 +246,7 @@ namespace HSS.System.V2.Services.Services
                 var appointments = appointmentsResult.Value;
 
                 if (appointments.TotalCount == 0)
-                    return Result.Fail("there are not appointments yet!");
+                    return PagedResult<AppointmentView>.Empty;
 
                 var allTicketAppintments = appointments.Items.Select(a => new AppointmentView()
                 {
@@ -474,13 +477,13 @@ namespace HSS.System.V2.Services.Services
                 return Result.Fail(ticket.Errors);
             var clinicAppointment = ticket.Value.FirstClinicAppointment;
             var entity = model.ToModel();
-            entity.ClinicId = clinic.Value!.Id;
             entity.DepartmentName = clinic.Value.Name;
             entity.HospitalName = clinic.Value.Hospital.Name;
             entity.HospitalId = clinic.Value.HospitalId;
             entity.PatientNationalId = patient.Value.NationalId;
             entity.PatientName = patient.Value.Name;
             entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
+            entity.EmployeeName = string.Empty;
 
             var check = await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId);
             if (check.Value)
@@ -740,7 +743,7 @@ namespace HSS.System.V2.Services.Services
                 if (!allowedTypes.Contains(contentType) || !allowedExtensions.Contains(fileExtension))
                     return Result.Fail("This file is NOT Image");
 
-                var imagePath = await UploadFiles.Upload(file, _env, "ProfilePictures");
+                var imagePath = await UploadFiles.Upload(file, _env.WebRootPath, "ProfilePictures");
 
                 if (imagePath.IsFailed || string.IsNullOrEmpty(imagePath.Value))
                     return Result.Fail("Upload Image is Fail");
@@ -777,7 +780,7 @@ namespace HSS.System.V2.Services.Services
                     Age = user.GetAge(),
                     PhoneNumber = user.PhoneNumber,
                     Address = user.Address,
-                    UrlOfProfilePicture = user.UrlOfProfilePicutre
+                    UrlOfProfilePicture = _baseUrlsModel.Default + user.UrlOfProfilePicutre
                 };
 
                 return Result.Ok(information);

@@ -171,22 +171,18 @@ namespace HSS.System.V2.DataAccess.Repositories
 
         public async Task<Result<IEnumerable<Ticket>>> GetAllTicketForPatient(string patientId)
         {
-            IEnumerable<Ticket> tickets = await _context.Tickets.AsNoTracking()
+            var tickets = await _context.Tickets.AsNoTracking()
                 .Where(x => x.PatientId == patientId)
                 .ToListAsync();
-            return tickets is null || !tickets.Any() 
-                ? Result.Fail("there are not ticket") 
-                : Result.Ok(tickets);
+            return tickets;
         }
 
         public async Task<Result<IEnumerable<Ticket>>> GetAllOpenedTicketInHospitalForPatient(string hospitalId, string patientId)
         {
-            IEnumerable<Ticket> tickets = await _context.Tickets.AsNoTracking()
+            var tickets = await _context.Tickets.AsNoTracking()
                 .Where(x => x.HospitalCreatedInId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
                 .ToListAsync();
-            return tickets is null || !tickets.Any() 
-                ? Result.Fail("there are not openen ticket in this hospital")
-                : Result.Ok(tickets);
+            return tickets;
         }
     }
 }

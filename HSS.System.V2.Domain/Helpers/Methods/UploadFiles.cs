@@ -7,15 +7,16 @@ namespace HSS.System.V2.Domain.Helpers.Methods
 {
     public class UploadFiles
     {
-        public static async Task<Result<string>> Upload(IFormFile file, IWebHostEnvironment environment, string folderName)
+        public static async Task<Result<string>> Upload(IFormFile file, string webRootPath, string folderName)
         {
             try
             {
                 if (file == null || file.Length == 0)
                     return Result.Fail("File is Empty or Null");
 
-                var folderPath = Path.Combine(environment.WebRootPath, folderName + "Pictures");
-                Directory.CreateDirectory(folderPath);
+                var folderPath = Path.Combine(webRootPath, folderName);
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
 
                 var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
                 var filePath = Path.Combine(folderPath, fileName);
@@ -25,7 +26,7 @@ namespace HSS.System.V2.Domain.Helpers.Methods
                     await file.CopyToAsync(stream);
                 }
 
-                return Result.Ok(filePath);
+                return Result.Ok(folderName + "/" + fileName);
             }
             catch (Exception ex)
             {

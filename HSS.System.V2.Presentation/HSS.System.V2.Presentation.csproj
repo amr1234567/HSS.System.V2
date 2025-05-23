@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\ProfilePicturesPictures\**" />
+    <Content Remove="wwwroot\ProfilePicturesPictures\**" />
+    <EmbeddedResource Remove="wwwroot\ProfilePicturesPictures\**" />
+    <None Remove="wwwroot\ProfilePicturesPictures\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.15">
       <PrivateAssets>all</PrivateAssets>
@@ -29,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\ProfilePicturesPictures\" />
+    <Folder Include="wwwroot\photos\" />
   </ItemGroup>
 
 </Project>

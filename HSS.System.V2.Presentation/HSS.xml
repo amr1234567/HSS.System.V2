@@ -345,18 +345,6 @@
             </remarks>
             <param name="pagination">Pagination parameters</param>
         </member>
-        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetAllActiveTickets(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
-            <summary>
-            Get all active tickets in a specific hospital with pagination.
-            </summary>
-            <remarks>
-            Sample request:
-            <code>
-            GET /hospitals/{hospitalId}/tickets/all-active?page=1&amp;pageSize=10
-            </code>
-            </remarks>
-            <param name="pagination">Pagination parameters</param>
-        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetClinics(System.String,System.String)">
             <summary>
             Get clinics in a hospital for a specific specialization.

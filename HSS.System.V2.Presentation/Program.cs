@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using HSS.System.V2.Services.Seeding;
 using HSS.System.V2.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Add builder.Services to the container.
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -28,6 +28,7 @@ builder.Services.AddControllers(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<BaseUrls>(builder.Configuration.GetSection(nameof(BaseUrls)));
 
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigration>();
 builder.Services.AddTransient<IConfigureOptions<SwaggerUIOptions>, SwaggerUIConfiguration>();
