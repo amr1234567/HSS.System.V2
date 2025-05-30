@@ -43,7 +43,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                _context.Appointments.Remove(model);
+                _context.Appointments.Update(model);
                 await _context.SaveChangesAsync();
                 return Result.Ok();
             }
@@ -92,15 +92,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             {
                 var appointment = await _context.Appointments
                     .Where(a => a.Id == id)
-                    .Include(c => c.Ticket)
-                    .Include(a => ((ClinicAppointment)a).Clinic)
-                        .ThenInclude(c => c.CurrentWorkingDoctor)
-                    .Include(a => ((MedicalLabAppointment)a).MedicalLab)
-                        .ThenInclude(c => c.CurrentWorkingTester)
-                    .Include(a => ((RadiologyCeneterAppointment)a).RadiologyCeneter)
-                        .ThenInclude(c => c.CurrentWorkingTester)
                     .OfType<T>()
-                    .AsNoTracking()
                     .FirstOrDefaultAsync();
                 return appointment is null ? EntityNotExistsError.Happen<Appointment>(id) : appointment;
             }

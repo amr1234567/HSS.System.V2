@@ -10,6 +10,7 @@ using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.Facilities;
 using static System.Net.Mime.MediaTypeNames;
+using System.Linq;
 
 
 namespace HSS.System.V2.DataAccess.Repositories
@@ -177,6 +178,25 @@ namespace HSS.System.V2.DataAccess.Repositories
         public Result<bool> IsMedicalLabDoTest(string labId, string testId)
         {
             return _context.MedicalLabTests.Where(t => t.MedicalLabs.Any(c => c.Id == labId)).Any();
+        }
+
+        public async Task<Result<PagedResult<T>>> GetAllTestsInHospital<T>(string hospitalId, int page, int size) where T : Test
+        {
+            if(typeof(T) == typeof(MedicalLabTest))
+            {
+                return await _context.MedicalLabTests.AsNoTracking()
+                    .Where(x => x.MedicalLabs.Any(m => m.HospitalId == hospitalId))
+                    .Cast<T>()
+                    .GetPagedAsync(page, size);
+            }
+            else if (typeof(T) == typeof(RadiologyTest))
+            {
+                return await _context.RadiologyTests.AsNoTracking()
+                    .Where(x => x.RadiologyCenters.Any(m => m.HospitalId == hospitalId))
+                    .Cast<T>()
+                    .GetPagedAsync(page, size);
+            }
+            return new BadRequestError();
         }
     }
 }

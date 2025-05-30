@@ -831,6 +831,30 @@
             <response code="200">Successfully retrieved clinics</response>
             <response code="400">Bad request error</response>
         </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllRadiologyTestsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all radiology tests available in the hospital
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/radiology/tests?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllMedicalLabTestsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all medical lab tests in the hospital
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/medical-lab/tests?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllRadiologyCenters(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
             <summary>
             Get all radiology centers

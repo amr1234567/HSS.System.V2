@@ -29,10 +29,10 @@ public static class DateHelper
         {
             if (dateTo.HasValue)
             {
-                return query.Where(a => a.SchaudleStartAt >= dateFrom.Value && a.SchaudleStartAt <= dateTo);
+                return query.Where(a => a.SchaudleStartAt.Date >= dateFrom.Value.Date && a.SchaudleStartAt.Date <= dateTo.Value.Date);
             }
             else
-                return query.Where(a => a.SchaudleStartAt >= dateFrom.Value);
+                return query.Where(a => a.SchaudleStartAt.Date >= dateFrom.Value.Date);
         }
         return query;
     }

@@ -9,7 +9,7 @@ namespace HSS.System.V2.Domain.Models.Queues;
 public class RadiologyCenterQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<RadiologyCenterQueue>
 {
     public virtual ICollection<RadiologyCeneterAppointment> RadiologyCeneterAppointments { get; set; }
-    [ForeignKey(nameof(DepartmentId))]
+    [ForeignKey(nameof(RadiologyCeneterId))]
     public virtual RadiologyCenter RadiologyCenter { get; set; }
     public IEnumerable<Appointment> Appointments => RadiologyCeneterAppointments;
 

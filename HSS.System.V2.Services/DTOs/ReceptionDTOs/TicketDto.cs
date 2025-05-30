@@ -14,8 +14,6 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
         public string PatientNationalId { get; set; }
         public string PatientId { get; set; }
         public List<AppointmentDto> Appointments { get; set; } = [];
-        public List<PrescriptionDto> Prescriptions { get; set; } = [];
-
         public List<TestRequiredDto> MedicalLabTestsRequired { get; set; } = [];
         public List<TestRequiredDto> RadiologyTestsRequired { get; set; } = [];
         public bool ReexaminationRequired { get; set; }
@@ -23,6 +21,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
         public string CurrentState { get; set; }
         public string HospitalName { get; set; }
         public string HospitalId { get; set; }
+        public bool AbleToBook { get; set; }
 
         public TicketDto MapFromModel(Ticket model)
         {
@@ -43,11 +42,9 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
             {
                 while (clinicAppointment is not null)
                 {
-                    Prescriptions.Add(new PrescriptionDto().MapFromModel(clinicAppointment.Prescription));
                     var tests = clinicAppointment.TestsRequired.Select(t => new TestRequiredDto().MapFromModel(t));
                     MedicalLabTestsRequired.AddRange(tests.Where(t => t.TestType == TestType.MedicalLabTest));
                     RadiologyTestsRequired.AddRange(tests.Where(t => t.TestType == TestType.RadiologyTest));
-                    clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
                     
                     if(clinicAppointment.ReExamiationClinicAppointemnt is null && clinicAppointment.ReExaminationNeeded.HasValue)
                     {
@@ -64,8 +61,12 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
                             };
                         }
                     }
+                    clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
                 }
             }
+
+            AbleToBook = (model.FirstClinicAppointment is null && (model.Appointments is null || !model.Appointments.Any())) ||
+                (model.FirstClinicAppointment is not null && ReexaminationRequired);
             return this;
         }
     }

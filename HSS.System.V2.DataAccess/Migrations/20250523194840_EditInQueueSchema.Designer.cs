@@ -4,6 +4,7 @@ using HSS.System.V2.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HSS.System.V2.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250523194840_EditInQueueSchema")]
+    partial class EditInQueueSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1324,8 +1327,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.People.Doctor", "CurrentWorkingDoctor")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.Clinic", "CurrentWorkingDoctorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.Clinic", "CurrentWorkingDoctorId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("Clinics")
@@ -1356,8 +1358,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.People.MedicalLabTester", "CurrentWorkingTester")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "CurrentWorkingTesterId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "CurrentWorkingTesterId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("MedicalLabs")
@@ -1391,8 +1392,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.People.RadiologyTester", "CurrentWorkingTester")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "CurrentWorkingTesterId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "CurrentWorkingTesterId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("RadiologyCenters")
@@ -1426,8 +1426,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "FirstClinicAppointment")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Medical.MedicalHistory", "FirstClinicAppointmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Medical.MedicalHistory", "FirstClinicAppointmentId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.People.Patient", "Patient")
                         .WithMany("MedicalHistories")
@@ -1534,8 +1533,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "FirstClinicAppointment")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Prescriptions.Ticket", "FirstClinicAppointmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Prescriptions.Ticket", "FirstClinicAppointmentId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "HospitalCreatedIn")
                         .WithMany("Tickets")
@@ -1604,8 +1602,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemnt")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemntId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemntId");
 
                     b.HasOne("HSS.System.V2.Domain.Models.Prescriptions.Prescription", "Prescription")
                         .WithMany()
@@ -1617,8 +1614,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemnt")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemntId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemntId");
 
                     b.Navigation("Clinic");
 

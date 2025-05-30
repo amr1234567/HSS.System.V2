@@ -18,6 +18,11 @@ namespace HSS.System.V2.Domain.Helpers.Models
             CurrentPage = result.CurrentPage;
             PageSize = result.PageSize;
         }
+
+        public PagedResult()
+        {
+            
+        }
         public IEnumerable<T> Items { get; set; }
         public int TotalCount { get; set; }
         public int PageSize { get; set; }

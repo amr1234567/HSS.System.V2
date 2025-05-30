@@ -72,42 +72,49 @@ namespace HSS.System.V2.DataAccess.Contexts
                 .HasOne(c => c.PreExamiationClinicAppointemnt)
                 .WithOne()
                 .HasForeignKey<ClinicAppointment>(c => c.PreExamiationClinicAppointemntId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
             modelBuilder.Entity<ClinicAppointment>()
                 .HasOne(c => c.ReExamiationClinicAppointemnt)
                 .WithOne()
                 .HasForeignKey<ClinicAppointment>(c => c.ReExamiationClinicAppointemntId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
             modelBuilder.Entity<Clinic>()
                 .HasOne(c => c.CurrentWorkingDoctor)
                 .WithOne()
                 .HasForeignKey<Clinic>(c => c.CurrentWorkingDoctorId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
             modelBuilder.Entity<RadiologyCenter>()
                 .HasOne(c => c.CurrentWorkingTester)
                 .WithOne()
                 .HasForeignKey<RadiologyCenter>(c => c.CurrentWorkingTesterId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
             modelBuilder.Entity<MedicalLab>()
                 .HasOne(c => c.CurrentWorkingTester)
                 .WithOne()
                 .HasForeignKey<MedicalLab>(c => c.CurrentWorkingTesterId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
             modelBuilder.Entity<Ticket>()
                 .HasOne(c => c.FirstClinicAppointment)
                 .WithOne()
                 .HasForeignKey<Ticket>(c => c.FirstClinicAppointmentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
             modelBuilder.Entity<MedicalHistory>()
                 .HasOne(c => c.FirstClinicAppointment)
                 .WithOne()
                 .HasForeignKey<MedicalHistory>(c => c.FirstClinicAppointmentId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
             //#region Global Includes 

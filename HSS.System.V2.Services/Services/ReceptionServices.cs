@@ -8,11 +8,13 @@ using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Facilities;
+using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
+using HSS.System.V2.Services.DTOs.GeeneralDTOs;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
 using HSS.System.V2.Services.Helpers;
 
@@ -73,7 +75,7 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result<PagedResult<ClinicDto>>> GetAllClinics(string specializationId, string hospitalId, int page, int pageSize)
         {
-            var clinics = await _hospitalRepository.GetHospitalDepartmentItems<Clinic>(hospitalId);
+            var clinics = await _hospitalRepository.GetAllClinicsBySpecilizationId(specializationId, hospitalId);
             if (clinics.IsFailed)
                 return Result.Fail(clinics.Errors);
             return clinics.Value.Select(c => new ClinicDto().MapFromModel(c)).GetPaged(page, pageSize);
@@ -207,6 +209,7 @@ namespace HSS.System.V2.Services.Services
             entity.HospitalId = clinic.Value.HospitalId;
             entity.PatientNationalId = patient.Value.NationalId;
             entity.PatientName = patient.Value.Name;
+            entity.PatientId = patient.Value.Id;
             entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
             entity.EmployeeName = string.Empty;
 
@@ -267,22 +270,23 @@ namespace HSS.System.V2.Services.Services
                 if (string.IsNullOrEmpty(ticket.Value.FirstClinicAppointmentId))
                 {
                     entity.TicketId = ticket.Value.Id;
+                    entity.ClinicAppointmentId = null;
                 }
                 else
                 {
                     return new BadRequestError("this ticket already has clinic appointment");
                 }
             }
-            entity.ClinicAppointmentId = null;
-            entity.RadiologyCeneterId = radiologyCenter.Value!.Id;
             entity.DepartmentName = radiologyCenter.Value!.Name;
             entity.HospitalName = radiologyCenter.Value.Hospital.Name;
             entity.PatientName = patient.Value.Name;
+            entity.PatientId = patient.Value.Id;
             entity.HospitalId = radiologyCenter.Value.Hospital.Id;
             entity.PatientNationalId = patient.Value.NationalId;
+            entity.EmployeeName = string.Empty;
             entity.ExpectedDuration = radiologyCenter.Value.PeriodPerAppointment;
 
-            return await _ticketRepository.UpdateTicket(ticket.Value);
+            return await _appointmentRepository.CreateAppointmentAsync(entity);
         }
 
         public async Task<Result> CreateAppointment(CreateMedicalLabAppointmentModelForReception model)
@@ -493,7 +497,7 @@ namespace HSS.System.V2.Services.Services
                 var addQueueResult = await _queueRepository.CreateQueue(new ClinicQueue
                 {
                     Id = Guid.NewGuid().ToString(),
-                    DepartmentId = app.ClinicId,
+                    ClinicId = app.ClinicId,
                 });
                 if (addQueueResult.IsFailed)
                     return Result.Fail(addQueueResult.Errors);
@@ -559,7 +563,7 @@ namespace HSS.System.V2.Services.Services
                 var addQueueResult = await _queueRepository.CreateQueue(new MedicalLabQueue
                 {
                     Id = Guid.NewGuid().ToString(),
-                    DepartmentId = app.MedicalLabId,
+                    MedicalLabId = app.MedicalLabId,
                 });
                 if (addQueueResult.IsFailed)
                     return Result.Fail(addQueueResult.Errors);
@@ -587,6 +591,8 @@ namespace HSS.System.V2.Services.Services
             var departmentResult = await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(app.RadiologyCeneterId);
             if (departmentResult.IsFailed)
                 return Result.Fail(departmentResult.Errors);
+            if (departmentResult.Value is null)
+                return new BadRequestError();
 
             // Get clinic's start datetime on the day of the appointment
             var clinicStartDateTime = appointmentDate.Add(departmentResult.Value.StartAt);
@@ -602,7 +608,7 @@ namespace HSS.System.V2.Services.Services
                 var addQueueResult = await _queueRepository.CreateQueue(new RadiologyCenterQueue
                 {
                     Id = Guid.NewGuid().ToString(),
-                    DepartmentId = app.RadiologyCeneterId,
+                    RadiologyCeneterId = app.RadiologyCeneterId,
                 });
                 if (addQueueResult.IsFailed)
                     return Result.Fail(addQueueResult.Errors);
@@ -717,6 +723,34 @@ namespace HSS.System.V2.Services.Services
             if (appointment.IsFailed)
                 return Result.Fail(appointment.Errors);
             return await _appointmentRepository.UpdateAppointmentAsync(appointment.Value);
+        }
+
+        public async Task<Result<PagedResult<TestDto<RadiologyTest>>>> GetAllRadiologyTestsInHospital(string hospitalId, int page, int size)
+        {
+            var tests = await _testsRepository.GetAllTestsInHospital<RadiologyTest>(hospitalId, page, size);
+            if (tests.IsFailed)
+                return Result.Fail(tests.Errors);
+            return new PagedResult<TestDto<RadiologyTest>>
+            {
+                Items = tests.Value.Items.Select(t => new TestDto<RadiologyTest>().MapFromModel(t)),
+                CurrentPage = page,
+                PageSize = size,
+                TotalCount = tests.Value.TotalCount,
+            };
+        }
+
+        public async Task<Result<PagedResult<TestDto<MedicalLabTest>>>> GetAllMedicalLabTestsTestsInHospital(string hospitalId, int page, int size)
+        {
+            var tests = await _testsRepository.GetAllTestsInHospital<MedicalLabTest>(hospitalId, page, size);
+            if (tests.IsFailed)
+                return Result.Fail(tests.Errors);
+            return new PagedResult<TestDto<MedicalLabTest>>
+            {
+                Items = tests.Value.Items.Select(t => new TestDto<MedicalLabTest>().MapFromModel(t)),
+                CurrentPage = page,
+                PageSize = size,
+                TotalCount = tests.Value.TotalCount,
+            };
         }
     }
 }

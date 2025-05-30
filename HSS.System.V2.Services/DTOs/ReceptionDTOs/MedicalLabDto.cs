@@ -5,6 +5,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
 {
     public class MedicalLabDto : IOutputDto<MedicalLabDto, MedicalLab>
     {
+        public string Id { set; get; }
         public TimeSpan StartAt { get; set; }
         public TimeSpan? EndAt { get; set; }
         public int NumberOfShifts { get; set; }
@@ -12,12 +13,13 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
         public TimeSpan PeriodPerAppointment { get; set; }
         public MedicalLabDto MapFromModel(MedicalLab model)
         {
+            Id = model.Id;
             StartAt = model.StartAt;
             EndAt = model.EndAt;
             NumberOfShifts = model.NumberOfShifts;
             PeriodPerAppointment = model.PeriodPerAppointment;
             var now = DateTime.Now.TimeOfDay;
-            CurrentTesterName = model.CurrentWorkingTester.Name;
+            CurrentTesterName = model.CurrentWorkingTester?.Name ?? "غير محدد";
 
             return this;
         }

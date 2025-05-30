@@ -23,5 +23,6 @@ namespace HSS.System.V2.DataAccess.Contracts
         Result<bool> IsRadiologyCenterDoTest(string radiologyCenterId, string testId);
         Task<Result<bool>> IsMedicalLabDoTestAsync(string labId, string testId);
         Result<bool> IsMedicalLabDoTest(string labId, string testId);
+        Task<Result<PagedResult<T>>> GetAllTestsInHospital<T>(string hospitalId, int page, int size) where T : Test;
     }
 }

@@ -89,6 +89,8 @@
             public const string GetAllHospitalDepartments = "/hospital-departments";
             public const string GetAllSpecializations = "/specializations";
             public const string GetAllClinics = "/clinics/{specializationId}";
+            public const string GetAllRadiologyTestsAvailableInHospital = "/radiology/tests";
+            public const string GetAllMedicalLabTestsAvailableInHospital = "/medical-lab/tests";
             public const string GetAllRadiologyCenters = "/radiology-centers";
             public const string GetAllRadiologyCentersDoTest = "/radiology-centers/test/{radiologyTestId}";
             public const string GetAllMedicalLabs = "/medical-labs";
@@ -121,7 +123,7 @@
             // Appointment Rescheduling
             public const string RescheduleClinicAppointment = "/appointments/clinic/{appointmentId}/reschedule";
             public const string RescheduleMedicalLabAppointment = "/appointments/medical-lab/{appointmentId}/reschedule";
-            public const string RescheduleRadiologyAppointment = "/appointments/radiology/{appointmentId}/reschedule";
+            public const string RescheduleRadiologyAppointment = "/appointments/radiology/{appointmentId}/reschedule/{departmentId}";
 
             // Queue Management
             public const string RemoveClinicAppointmentFromQueue = "/appointments/clinic/{appointmentId}/remove-from-queue";

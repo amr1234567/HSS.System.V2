@@ -10,7 +10,7 @@ public class MedicalLabQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<M
 {
     public virtual ICollection<MedicalLabAppointment> MedicalLabAppointments { get; set; }
 
-    [ForeignKey(nameof(DepartmentId))]
+    [ForeignKey(nameof(MedicalLabId))]
     public virtual MedicalLab MedicalLab { get; set; }
 
     public IEnumerable<Appointment> Appointments => MedicalLabAppointments;

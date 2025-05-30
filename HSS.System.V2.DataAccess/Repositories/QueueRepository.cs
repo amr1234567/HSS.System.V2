@@ -37,7 +37,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             {
                 var entity = await _context.Set<TQueue>()
                                     .AsNoTracking()
-                                    .Where(q => q.DepartmentId == departmentId)
+                                    .Where(q => q.ClinicId == departmentId || q.RadiologyCeneterId == departmentId || q.MedicalLabId == departmentId)
                                     .FirstOrDefaultAsync();
 
                 return entity is null
@@ -107,8 +107,7 @@ namespace HSS.System.V2.DataAccess.Repositories
             appointment.SetQueue(queue);
             appointment.ActualStartAt = CalculateNextAvailableAppointmentTime(queue, appointment.SchaudleStartAt.Date);
             RecalculateQueueAppointmentTimes(queue);
-            return await _appointmentRepository.UpdateAppointmentAsync(appointment)
-                        .ThenAsync(() => UpdateQueue(queue));
+            return await UpdateQueue(queue);
         }
 
         public async Task<Result> RemoveAppointmentFromQueue<TApp, TQueue>(string appointmentId)

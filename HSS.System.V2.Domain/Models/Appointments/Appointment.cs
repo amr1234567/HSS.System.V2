@@ -31,7 +31,7 @@ public class Appointment : BaseClass
     public string HospitalId { get; set; }
     public string HospitalName { get; set; }
 
-    public string EmployeeName { get; set; }
+    public string? EmployeeName { get; set; }
     public string DepartmentName { get; set; }
 
     public string? QueueId {  get; set; }
