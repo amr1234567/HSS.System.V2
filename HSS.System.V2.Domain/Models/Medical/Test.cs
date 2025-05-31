@@ -10,4 +10,4 @@ public class Test : BaseClass
     public double EstimatedDurationInMinutes { get; set; }
 
     public virtual ICollection<TestRequired> TestsRequired { get; set; }
-} 
+}

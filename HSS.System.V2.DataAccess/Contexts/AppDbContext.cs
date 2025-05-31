@@ -60,6 +60,7 @@ namespace HSS.System.V2.DataAccess.Contexts
         public DbSet<RadiologyTest> RadiologyTests { get; set; }
         public DbSet<MedicalLabTest> MedicalLabTests { get; set; }
         public DbSet<TestRequired> TestsRequired { get; set; }
+        public DbSet<MedicalLabTestResultField> MedicalLabTestResultFields { get; set; }
         public DbSet<Disease> Diseases { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<MedicalHistory> MedicalHistories { get; set; }

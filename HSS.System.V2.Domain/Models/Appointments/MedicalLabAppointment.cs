@@ -55,3 +55,4 @@ public class MedicalLabAppointment : Appointment,
         return x => ((MedicalLabAppointment)x).Tester;
     }
 } 
+
