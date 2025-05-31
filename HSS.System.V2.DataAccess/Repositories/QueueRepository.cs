@@ -223,6 +223,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                     orderedAppointments[i].ActualStartAt = null;
             }
         }
+
         public void RecalculateQueueAppointmentTimes<TQueue>(string queueId) where TQueue : SystemQueue, IQueueModel
         {
             var queue = _context.Set<TQueue>().FirstOrDefault(q => q.Id == queueId);

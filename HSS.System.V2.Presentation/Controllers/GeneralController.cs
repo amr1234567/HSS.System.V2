@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class GeneralController : CustomBaseController
     {
         private readonly IGeneralServices _generalServices;
@@ -26,7 +24,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// GET /api/General/radiology-tests?page=1&size=10
+        /// GET /radiology-tests?page=1&amp;size=10
         /// </code>
         /// Sample response:
         /// <code>
@@ -53,7 +51,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <returns>Paginated list of radiology tests.</returns>
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TestDto<RadiologyTest>>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TestDto<RadiologyTest>>>), StatusCodes.Status400BadRequest)]
-        [HttpGet("radiology-tests")]
+        [HttpGet(ApiRoutes.General.RadiologyTests)]
         public async Task<IActionResult> GetRadiologyTests([FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             var pagination = new PaginationRequest { Page = page, Size = size };
@@ -67,7 +65,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// GET /api/General/medical-lab-tests?page=1&size=10
+        /// GET /medical-lab-tests?page=1&amp;size=10
         /// </code>
         /// Sample response:
         /// <code>
@@ -94,7 +92,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <returns>Paginated list of medical lab tests.</returns>
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TestDto<MedicalLabTest>>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<PagedResult<TestDto<MedicalLabTest>>>), StatusCodes.Status400BadRequest)]
-        [HttpGet("medical-lab-tests")]
+        [HttpGet(ApiRoutes.General.MedicalLabTests)]
         public async Task<IActionResult> GetMedicalLabTests([FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             var pagination = new PaginationRequest { Page = page, Size = size };

@@ -15,6 +15,7 @@ namespace HSS.System.V2.Presentation.Helpers
             c.SwaggerDoc("RecpetionAPI", new OpenApiInfo { Title = "Recpetion API", Version = "v1" });
             c.SwaggerDoc("EmployeeAuthAPI", new OpenApiInfo { Title = "Employee Auth API", Version = "v1" });
             c.SwaggerDoc("ClinicAPI", new OpenApiInfo { Title = "Clinic API", Version = "v1" });
+            c.SwaggerDoc("RadiologyAPI", new OpenApiInfo { Title = "Radiology API", Version = "v1" });
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
@@ -58,6 +59,7 @@ namespace HSS.System.V2.Presentation.Helpers
             options.SwaggerEndpoint("/swagger/RecpetionAPI/swagger.json", "Reception API V1");
             options.SwaggerEndpoint("/swagger/EmployeeAuthAPI/swagger.json", "Employee Auth API V1");
             options.SwaggerEndpoint("/swagger/ClinicAPI/swagger.json", "Clinic API V1");
+            options.SwaggerEndpoint("/swagger/RadiologyAPI/swagger.json", "Radiology API V1");
         }
     }
 

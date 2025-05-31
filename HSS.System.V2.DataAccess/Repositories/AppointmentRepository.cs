@@ -210,7 +210,6 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .Include(c => c.ClinicAppointments)
                 .SelectMany(c => c.ClinicAppointments)
                 .Where(a => a.SchaudleStartAt >= dateFilters.DateFrom && a.SchaudleStartAt <= dateFilters.DateTo)
-                .AsNoTracking()
                 .OrderByDescending(a => a.SchaudleStartAt)
                 .Cast<Appointment>()
                 .ToListAsync();
@@ -272,7 +271,6 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             return await _context.Appointments
                 .Where(a => a.PatientNationalId == apiUserId)
-                .AsNoTracking()
                 .OrderByDescending(a => a.SchaudleStartAt)
                 .GetPagedAsync(pagination);
         }
@@ -281,7 +279,6 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             return await _context.Appointments
                 .Where(a => a.PatientNationalId == apiUserId && a.State == state)
-                .AsNoTracking()
                 .OrderByDescending(a => a.SchaudleStartAt)
                 .GetPagedAsync(pagination);
         }
@@ -317,9 +314,22 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             return await _context.Appointments
                 .Where(a => a.PatientNationalId == apiUserId)
-                .AsNoTracking()
                 .OrderByDescending(a => a.SchaudleStartAt)
                 .ToListAsync();
+        }
+
+        public async Task<Result> AddImageToRadiologyAppointmentResult(RadiologyReseltImage result)
+        {
+            try
+            {
+                await _context.RadiologyReseltImages.AddAsync(result);
+                await _context.SaveChangesAsync();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionalError(ex);
+            }
         }
     }
 }

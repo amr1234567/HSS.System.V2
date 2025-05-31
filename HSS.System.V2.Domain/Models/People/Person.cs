@@ -17,12 +17,13 @@ public class Person : BaseClass
 
     public int GetAge()
     {
-        var birthDate = BirthOfDate;
-        var age = DateTime.Now.Year - birthDate.Year;
+        var today = DateTime.Today;
+        var age = today.Year - BirthOfDate.Year;
 
-        if (birthDate.AddYears(age) > DateTime.Now)
+        if (BirthOfDate.Date > today.AddYears(-age))
             age--;
 
         return age;
     }
-} 
+
+}

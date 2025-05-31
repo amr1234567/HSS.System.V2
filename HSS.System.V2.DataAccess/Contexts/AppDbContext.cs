@@ -64,6 +64,7 @@ namespace HSS.System.V2.DataAccess.Contexts
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<MedicalHistory> MedicalHistories { get; set; }
         public DbSet<MedicinePharmacy> MedicinePharmacies { get; set; }
+        public DbSet<RadiologyReseltImage> RadiologyReseltImages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

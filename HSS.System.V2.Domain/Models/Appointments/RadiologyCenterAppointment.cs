@@ -11,7 +11,7 @@ namespace HSS.System.V2.Domain.Models.Appointments;
 
 public class RadiologyCeneterAppointment : Appointment, IAppointmentModel<RadiologyCenterQueue>
 {
-    public string Result { get; set; }
+    public virtual ICollection<RadiologyReseltImage> Results { get; set; }
     public string? ClinicAppointmentId { get; set; }
     [ForeignKey(nameof(ClinicAppointmentId))]
     public virtual ClinicAppointment? ClinicAppointment { get; set; }
@@ -47,3 +47,12 @@ public class RadiologyCeneterAppointment : Appointment, IAppointmentModel<Radiol
         return x => ((RadiologyCeneterAppointment)x).Tester;
     }
 } 
+
+public class RadiologyReseltImage : BaseClass
+{
+    public string ImagePath { get; set; }
+
+    [ForeignKey(nameof(AppointmentId))]
+    public virtual RadiologyCeneterAppointment Appointment { get; set; }
+    public string AppointmentId { get; set; }
+}

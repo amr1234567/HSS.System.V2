@@ -86,62 +86,81 @@
             public const string Base = "api/reception";
 
             // Hospital Departments
-            public const string GetAllHospitalDepartments = "/hospital-departments";
-            public const string GetAllSpecializations = "/specializations";
-            public const string GetAllClinics = "/clinics/{specializationId}";
-            public const string GetAllRadiologyTestsAvailableInHospital = "/radiology/tests";
-            public const string GetAllMedicalLabTestsAvailableInHospital = "/medical-lab/tests";
-            public const string GetAllRadiologyCenters = "/radiology-centers";
-            public const string GetAllRadiologyCentersDoTest = "/radiology-centers/test/{radiologyTestId}";
-            public const string GetAllMedicalLabs = "/medical-labs";
-            public const string GetAllMedicalLabsDoTest = "/medical-labs/test/{medicalTestId}";
+            public const string GetAllHospitalDepartments = Base + "/hospital-departments";
+            public const string GetAllSpecializations = Base + "/specializations";
+            public const string GetAllClinics = Base + "/clinics/{specializationId}";
+            public const string GetAllRadiologyTestsAvailableInHospital = Base + "/radiology/tests";
+            public const string GetAllMedicalLabTestsAvailableInHospital = Base + "/medical-lab/tests";
+            public const string GetAllRadiologyCenters = Base + "/radiology-centers";
+            public const string GetAllRadiologyCentersDoTest = Base + "/radiology-centers/test/{radiologyTestId}";
+            public const string GetAllMedicalLabs = Base + "/medical-labs";
+            public const string GetAllMedicalLabsDoTest = Base + "/medical-labs/test/{medicalTestId}";
 
             // Appointments
-            public const string GetAllAppointmentsForClinic = "/appointments/clinic/{clinicId}";
-            public const string GetQueueForClinic = "/queue/clinic/{clinicId}";
-            public const string GetAllAppointmentsForRadiologyCenter = "/appointments/radiology/{radiologyCenterId}";
-            public const string GetQueueForRadiologyCenter = "/queue/radiology/{radiologyCenterId}";
-            public const string GetAllAppointmentsForMedicalLab = "/appointments/medical-lab/{medicalLabId}";
-            public const string GetQueueForMedicalLab = "/queue/medical-lab/{medicalLabId}";
+            public const string GetAllAppointmentsForClinic = Base + "/appointments/clinic/{clinicId}";
+            public const string GetQueueForClinic = Base + "/queue/clinic/{clinicId}";
+            public const string GetAllAppointmentsForRadiologyCenter = Base + "/appointments/radiology/{radiologyCenterId}";
+            public const string GetQueueForRadiologyCenter = Base + "/queue/radiology/{radiologyCenterId}";
+            public const string GetAllAppointmentsForMedicalLab = Base + "/appointments/medical-lab/{medicalLabId}";
+            public const string GetQueueForMedicalLab = Base + "/queue/medical-lab/{medicalLabId}";
 
             // Tickets
-            public const string GetOpenTicketsByNationalId = "/tickets/national-id/{nationalId}";
-            public const string GetOpenTicketsByPatientId = "/tickets/patient/{patientId}";
-            public const string CreateNewTicket = "/tickets";
+            public const string GetOpenTicketsByNationalId = Base + "/tickets/national-id/{nationalId}";
+            public const string GetOpenTicketsByPatientId =         Base + "/tickets/patient/{patientId}";
+            public const string CreateNewTicket = Base + "/tickets";
 
             // Appointment Management
-            public const string CreateClinicAppointment = "/appointments/clinic";
-            public const string CreateRadiologyAppointment = "/appointments/radiology";
-            public const string CreateMedicalLabAppointment = "/appointments/medical-lab";
-            public const string TerminateAppointment = "/appointments/{appointmentId}/terminate";
+            public const string CreateClinicAppointment = Base + "/appointments/clinic";
+            public const string CreateRadiologyAppointment = Base + "/appointments/radiology";
+            public const string CreateMedicalLabAppointment = Base + "/appointments/medical-lab";
+            public const string TerminateAppointment = Base + "/appointments/{appointmentId}/terminate";
 
             // Appointment Swapping
-            public const string SwapClinicAppointments = "/appointments/clinic/swap";
-            public const string SwapMedicalLabAppointments = "/appointments/medical-lab/swap";
-            public const string SwapRadiologyCenterAppointments = "/appointments/radiology/swap";
+            public const string SwapClinicAppointments =  Base + "/appointments/clinic/swap";
+            public const string SwapMedicalLabAppointments = Base + "/appointments/medical-lab/swap";
+            public const string SwapRadiologyCenterAppointments = Base + "/appointments/radiology/swap";
 
             // Appointment Rescheduling
-            public const string RescheduleClinicAppointment = "/appointments/clinic/{appointmentId}/reschedule";
-            public const string RescheduleMedicalLabAppointment = "/appointments/medical-lab/{appointmentId}/reschedule";
-            public const string RescheduleRadiologyAppointment = "/appointments/radiology/{appointmentId}/reschedule/{departmentId}";
+            public const string RescheduleClinicAppointment = Base + "/appointments/clinic/{appointmentId}/reschedule";
+            public const string RescheduleMedicalLabAppointment = Base + "/appointments/medical-lab/{appointmentId}/reschedule";
+            public const string RescheduleRadiologyAppointment = Base + "/appointments/radiology/{appointmentId}/reschedule/{departmentId}";
 
             // Queue Management
-            public const string RemoveClinicAppointmentFromQueue = "/appointments/clinic/{appointmentId}/remove-from-queue";
-            public const string RemoveMedicalLabAppointmentFromQueue = "/appointments/medical-lab/{appointmentId}/remove-from-queue";
-            public const string RemoveRadiologyCenterAppointmentFromQueue = "/appointments/radiology/{appointmentId}/remove-from-queue";
-            public const string AddClinicAppointmentForQueue = "/appointments/clinic/{appointmentId}/add-to-queue";
-            public const string AddMedicalLabAppointmentForQueue = "/appointments/medical-lab/{appointmentId}/add-to-queue";
-            public const string AddRadiologyCenterAppointmentForQueue = "/appointments/radiology/{appointmentId}/add-to-queue";
+            public const string RemoveClinicAppointmentFromQueue = Base + "/appointments/clinic/{appointmentId}/remove-from-queue";
+            public const string RemoveMedicalLabAppointmentFromQueue = Base + "/appointments/medical-lab/{appointmentId}/remove-from-queue";
+            public const string RemoveRadiologyCenterAppointmentFromQueue = Base + "/appointments/radiology/{appointmentId}/remove-from-queue";
+            public const string AddClinicAppointmentForQueue = Base + "/appointments/clinic/{appointmentId}/add-to-queue";
+            public const string AddMedicalLabAppointmentForQueue = Base + "/appointments/medical-lab/{appointmentId}/add-to-queue";
+            public const string AddRadiologyCenterAppointmentForQueue = Base + "/appointments/radiology/{appointmentId}/add-to-queue";
 
             // Time Slots
-            public const string GetAvailableTimeSlotsForClinic = "/time-slots/clinic/{clinicId}";
-            public const string GetAvailableTimeSlotsForMedicalLab = "/time-slots/medical-lab/{medicalLabId}";
-            public const string GetAvailableTimeSlotsForRadiologyCenter = "/time-slots/radiology/{radiologyCenterId}";
+            public const string GetAvailableTimeSlotsForClinic = Base + "/time-slots/clinic/{clinicId}";
+            public const string GetAvailableTimeSlotsForMedicalLab = Base + "/time-slots/medical-lab/{medicalLabId}";
+            public const string GetAvailableTimeSlotsForRadiologyCenter = Base + "/time-slots/radiology/{radiologyCenterId}";
 
             // Appointment Start
-            public const string StartClinicAppointment = "/appointments/clinic/{appointmentId}/start";
-            public const string StartRadiologyAppointment = "/appointments/radiology/{appointmentId}/start";
-            public const string StartMedicalLabAppointment = "/appointments/medical-lab/{appointmentId}/start";
+            public const string StartClinicAppointment = Base + "/appointments/clinic/{appointmentId}/start";
+            public const string StartRadiologyAppointment = Base + "/appointments/radiology/{appointmentId}/start";
+            public const string StartMedicalLabAppointment = Base + "/appointments/medical-lab/{appointmentId}/start";
+        }
+
+
+        public static class General
+        {
+            public const string Base = "api/general";
+
+            public const string RadiologyTests = Base + "/radiology-tests";
+            public const string MedicalLabTests = Base + "/medical-lab-tests";
+        }
+
+        public static class RadiologyCenter
+        {
+            public const string Base = "api/radiology";
+
+            public const string CurrentRadiologyAppointment = Base + "/appointments/{appointmentId}";
+            public const string GetQueueForRadiologyCenter = Base + "/queue/{radiologyCenterId}";
+            public const string RadiologyAppointmentResult = Base + "/appointments/{appointmentId}/result";
+            public const string EndAppointment = Base + "/appointments/{appointmentId}/end";
         }
     }
 }
