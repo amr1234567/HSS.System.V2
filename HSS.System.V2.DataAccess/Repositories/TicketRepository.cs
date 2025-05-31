@@ -73,9 +73,6 @@ namespace HSS.System.V2.DataAccess.Repositories
             {
                 var ticket = await _context.Tickets
                     .Where(t => t.Id == ticketId)
-                    .Include(t => t.FirstClinicAppointment)
-                        .ThenInclude(t => t.ReExamiationClinicAppointemnt)
-                    .Include(t => t.Appointments)
                     .FirstOrDefaultAsync();
                 return ticket is null ? EntityNotExistsError.Happen<Ticket>(ticketId) : ticket;
             }

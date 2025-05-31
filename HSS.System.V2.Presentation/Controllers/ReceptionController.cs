@@ -11,6 +11,8 @@ using HSS.System.V2.Domain.Enums;
 using System.Security.Claims;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.DTOs;
+using HSS.System.V2.Services.DTOs.GeeneralDTOs;
+using HSS.System.V2.Domain.Models.Medical;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
@@ -88,6 +90,47 @@ namespace HSS.System.V2.Presentation.Controllers
         {
             var hospitalId = GetHospitalIdFromClaims();
             var result = await _receptionServices.GetAllClinics(specializationId, hospitalId, pagination.Page, pagination.Size);
+            return GetResponse(result);
+        }
+
+
+        /// <summary>
+        /// Get all radiology tests available in the hospital
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// <code>
+        /// GET /api/reception/radiology/tests?page=1&amp;size=10
+        /// </code>
+        /// </remarks>
+        /// <param name="pagination">Pagination parameters</param>
+        [ProducesResponseType(typeof(ApiResponse<PagedResult<TestDto<RadiologyTest>>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
+        [HttpGet(ApiRoutes.Reception.GetAllRadiologyTestsAvailableInHospital)]
+        public async Task<IActionResult> GetAllRadiologyTestsInHospital([FromQuery] PaginationRequest pagination)
+        {
+            var hospitalId = GetHospitalIdFromClaims();
+            var result = await _receptionServices.GetAllRadiologyTestsInHospital(hospitalId, pagination.Page, pagination.Size);
+            return GetResponse(result);
+        }
+
+        /// <summary>
+        /// Get all medical lab tests in the hospital
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// <code>
+        /// GET /api/reception/medical-lab/tests?page=1&amp;size=10
+        /// </code>
+        /// </remarks>
+        /// <param name="pagination">Pagination parameters</param>
+        [ProducesResponseType(typeof(ApiResponse<PagedResult<TestDto<MedicalLabTest>>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
+        [HttpGet(ApiRoutes.Reception.GetAllMedicalLabTestsAvailableInHospital)]
+        public async Task<IActionResult> GetAllMedicalLabTestsInHospital([FromQuery] PaginationRequest pagination)
+        {
+            var hospitalId = GetHospitalIdFromClaims();
+            var result = await _receptionServices.GetAllMedicalLabTestsTestsInHospital(hospitalId, pagination.Page, pagination.Size);
             return GetResponse(result);
         }
 

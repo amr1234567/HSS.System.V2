@@ -356,6 +356,56 @@ namespace HSS.System.V2.Services.Seeding
             await SeedTestsAndSpecilizations(context);
             await SeedHospitals(context, 3);
             await SeedDepartmentsWithEmployees(context);
+            await SeedQueues(context);
+        }
+
+        public static async Task SeedQueues(AppDbContext context)
+        {
+            if (!context.SystemQueues.Any())
+            {
+                var clinics = await context.Clinics.ToListAsync();
+                foreach (var clinic in clinics)
+                {
+                    var queue = new ClinicQueue
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ClinicId = clinic.Id,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        PeriodPerAppointment = clinic.PeriodPerAppointment,
+                    };
+                    await context.ClinicQueues.AddAsync(queue);
+                }
+                await context.SaveChangesAsync();
+                var medicalLabs = await context.MedicalLabs.ToListAsync();
+                foreach (var medicalLab in medicalLabs)
+                {
+                    var queue = new MedicalLabQueue
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        MedicalLabId = medicalLab.Id,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        PeriodPerAppointment = medicalLab.PeriodPerAppointment,
+                    };
+                    await context.MedicalLabQueues.AddAsync(queue);
+                }
+                await context.SaveChangesAsync();
+                var radiologyCenters = await context.RadiologyCenters.ToListAsync();
+                foreach (var radiologyCenter in radiologyCenters)
+                {
+                    var queue = new RadiologyCenterQueue
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        RadiologyCeneterId = radiologyCenter.Id,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        PeriodPerAppointment = radiologyCenter.PeriodPerAppointment,
+                    };
+                    await context.RadiologyCenterQueues.AddAsync(queue);
+                }
+                await context.SaveChangesAsync();
+            }
         }
 
         private static async Task SeedPatientsAsync(AppDbContext context, int v)
@@ -601,7 +651,7 @@ namespace HSS.System.V2.Services.Seeding
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow,
                         PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                        DepartmentId = clinic.Id
+                        ClinicId = clinic.Id
                     };
                     clinic.Queue = queue;
                 }
@@ -614,7 +664,7 @@ namespace HSS.System.V2.Services.Seeding
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow,
                         PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                        DepartmentId = medicalLab.Id
+                        MedicalLabId = medicalLab.Id
                     };
                     medicalLab.Queue = queue;
                 }
@@ -627,7 +677,7 @@ namespace HSS.System.V2.Services.Seeding
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow,
                         PeriodPerAppointment = new TimeSpan(0, 30, 0),
-                        DepartmentId = radiologyCenter.Id
+                        RadiologyCeneterId = radiologyCenter.Id
                     };
                     radiologyCenter.Queue = queue;
                 }

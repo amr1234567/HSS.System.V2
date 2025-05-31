@@ -26,5 +26,6 @@ namespace HSS.System.V2.DataAccess.Contracts
 
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsAsync<TDept>(string departmentId, DateTime dateFrom, DateTime dateTo) where TDept : BaseClass, IHospitalDepartmentItem;
         Task<Result<List<DateTime>>> GetAvailableTimeSlotsAsync<TDept>(string departmentId, DateTime date) where TDept : BaseClass, IHospitalDepartmentItem;
+        Task<Result<IEnumerable<Clinic>>> GetAllClinicsBySpecilizationId(string specializationId, string hospitalId);
     }
 }

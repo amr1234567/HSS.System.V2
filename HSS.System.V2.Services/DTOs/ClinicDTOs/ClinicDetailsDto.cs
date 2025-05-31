@@ -1,4 +1,4 @@
-﻿namespace HSS.System.V2.Application.DTOs.Clinic
+﻿namespace HSS.System.V2.Services.DTOs.ClinicDTOs
 {
     public class ClinicDetailsDto
     {

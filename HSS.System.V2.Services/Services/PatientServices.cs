@@ -919,7 +919,7 @@ namespace HSS.System.V2.Services.Services
                 {
                     var radiologyAppointment = await _context.RadiologyCeneterAppointments.AsNoTracking()
                         .Where(x => x.Id.Equals(appointment.Id))
-                        .Select(x => x.Result)
+                        .Select(x => string.Join(',', x.Results.Select(r => r.ImagePath)))
                         .ToListAsync();
 
                     if (radiologyAppointment is null || !radiologyAppointment.Any())

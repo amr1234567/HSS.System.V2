@@ -28,6 +28,7 @@ public static class DependencyInjection
         services.AddScoped<ITestRequiredRepository, TestRequiredRepository>();
         services.AddScoped<ITestsRepository, TestsRepository>();
         services.AddScoped<ITicketRepository, TicketRepository>();
+        services.AddScoped<IDiseaseRepository, DiseaseRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<ISpecializationReporitory, SpecializationReporitory>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();

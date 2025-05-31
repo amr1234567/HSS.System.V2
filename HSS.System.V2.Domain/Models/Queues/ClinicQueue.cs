@@ -10,7 +10,7 @@ public class ClinicQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<Clini
 {
     public virtual ICollection<ClinicAppointment> ClinicAppointments { get; set; }
     
-    [ForeignKey(nameof(DepartmentId))]
+    [ForeignKey(nameof(ClinicId))]
     public virtual Clinic Clinic { get; set; }
 
     public TimeSpan DepartmentStartAt => Clinic.StartAt;

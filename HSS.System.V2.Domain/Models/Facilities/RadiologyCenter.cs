@@ -15,7 +15,7 @@ public class RadiologyCenter : BaseClass, IHospitalDepartmentItem, ITestableDepa
     public TimeSpan EndAt { get; set; }
     public string? QueueId { get; set; }
     [ForeignKey(nameof(QueueId))]
-    public RadiologyCenterQueue Queue { get; set; }
+    public virtual RadiologyCenterQueue Queue { get; set; }
     public TimeSpan PeriodPerAppointment { get; set; }
 
     public string? CurrentWorkingTesterId { get; set; }

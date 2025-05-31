@@ -2,6 +2,8 @@
 
 using HSS.System.V2.Domain.DTOs;
 using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Services.DTOs.GeeneralDTOs;
 using HSS.System.V2.Services.DTOs.PatientDTOs;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
 
@@ -264,6 +266,8 @@ namespace HSS.System.V2.Services.Contracts
         Task<Result> CreateNewTicket(string patientIdentifier, PatientIdentifierType identifierType, string hospitalId);
         Task<Result> StartRadiologyAppointment(string appointmentId);
         Task<Result> StartMedicalLabAppointment(string appointmentId);
+        Task<Result<PagedResult<TestDto<RadiologyTest>>>> GetAllRadiologyTestsInHospital(string hospitalId, int page, int size);
+        Task<Result<PagedResult<TestDto<MedicalLabTest>>>> GetAllMedicalLabTestsTestsInHospital(string hospitalId, int page, int size);
     }
 
 }

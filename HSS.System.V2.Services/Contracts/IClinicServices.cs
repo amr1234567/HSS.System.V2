@@ -1,6 +1,5 @@
 ﻿using FluentResults;
 
-using HSS.System.V2.Application.DTOs.Clinic;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Services.DTOs.ClinicDTOs;
 
@@ -12,7 +11,7 @@ public interface IClinicServices
     Task<Result<AppointmentTicketDetailsDto>> GetCurrentTicketDetails(string appoitmentId);
     Task<Result<PagedResult<MinMedicalHistoryDto>>> GetMedicalHistoriesForPatient(string patientId, PaginationRequest pagination);
     Task<Result<IEnumerable<MinMedicalHistoryDto>>> GetMedicalHistoriesForPatient(string patientId);
-    Task<Result<MinMedicalHistoryDto>> GetMedicalHistoryDetails(string medicalHistoryId);
+    Task<Result<MidecalHistoryDto>> GetMedicalHistoryDetails(string medicalHistoryId);
     Task<Result> SubmitClinicResultAsync( ClinicResultRequestDto request);
-    Task<Result> EndAppointmentAsync(int appointmentId);
+    Task<Result> EndAppointmentAsync(string appointmentId);
 }

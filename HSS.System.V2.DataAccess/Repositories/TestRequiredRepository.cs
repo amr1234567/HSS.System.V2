@@ -74,7 +74,6 @@ namespace HSS.System.V2.DataAccess.Repositories
                     .ThenInclude(c => c.TestsRequired)
                 .Include(t => t.FirstClinicAppointment)
                     .ThenInclude(c => c.ReExamiationClinicAppointemnt)
-                .AsNoTracking()
                 .FirstOrDefaultAsync();
             if (ticket == null)
             {
@@ -100,7 +99,6 @@ namespace HSS.System.V2.DataAccess.Repositories
                     .ThenInclude(c => c.TestsRequired)
                 .Include(t => t.FirstClinicAppointment)
                     .ThenInclude(c => c.ReExamiationClinicAppointemnt)
-                .AsNoTracking()
                 .FirstOrDefaultAsync();
             if (ticket == null)
             {

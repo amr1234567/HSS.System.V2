@@ -18,6 +18,9 @@ namespace HSS.System.V2.DataAccess.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.15")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -46,7 +49,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .HasColumnType("nvarchar(34)");
 
                     b.Property<string>("EmployeeName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan>("ExpectedDuration")
@@ -84,9 +86,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.Property<string>("SystemQueueId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("TicketId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -102,8 +101,6 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.HasIndex("SystemQueueId");
-
                     b.HasIndex("TicketId");
 
                     b.ToTable("Appointments");
@@ -111,6 +108,32 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("Appointment");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.RadiologyReseltImage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AppointmentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.ToTable("RadiologyReseltImages");
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Common.LoginActivity", b =>
@@ -438,6 +461,10 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FinalDiagnosis")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstClinicAppointmentId")
                         .HasColumnType("nvarchar(450)");
@@ -931,19 +958,25 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ClinicId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
 
+                    b.Property<string>("MedicalLabId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<TimeSpan>("PeriodPerAppointment")
                         .HasColumnType("time");
+
+                    b.Property<string>("RadiologyCeneterId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -1088,10 +1121,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Result")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("TestId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -1114,9 +1143,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         {
                             t.Property("ClinicAppointmentId")
                                 .HasColumnName("RadiologyCeneterAppointment_ClinicAppointmentId");
-
-                            t.Property("Result")
-                                .HasColumnName("RadiologyCeneterAppointment_Result");
 
                             t.Property("TestId")
                                 .HasColumnName("RadiologyCeneterAppointment_TestId");
@@ -1245,7 +1271,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("ClinicId");
 
                     b.HasDiscriminator().HasValue("ClinicQueue");
                 });
@@ -1254,7 +1280,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("MedicalLabId");
 
                     b.HasDiscriminator().HasValue("MedicalLabQueue");
                 });
@@ -1263,7 +1289,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasBaseType("HSS.System.V2.Domain.Models.Queues.SystemQueue");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("RadiologyCeneterId");
 
                     b.HasDiscriminator().HasValue("RadiologyCenterQueue");
                 });
@@ -1286,10 +1312,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HSS.System.V2.Domain.Models.Queues.SystemQueue", null)
-                        .WithMany("Appointments")
-                        .HasForeignKey("SystemQueueId");
-
                     b.HasOne("HSS.System.V2.Domain.Models.Prescriptions.Ticket", "Ticket")
                         .WithMany("Appointments")
                         .HasForeignKey("TicketId")
@@ -1303,6 +1325,17 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Patient");
 
                     b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.RadiologyReseltImage", b =>
+                {
+                    b.HasOne("HSS.System.V2.Domain.Models.Appointments.RadiologyCeneterAppointment", "Appointment")
+                        .WithMany("Results")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Common.LoginActivity", b =>
@@ -1320,7 +1353,8 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.People.Doctor", "CurrentWorkingDoctor")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.Clinic", "CurrentWorkingDoctorId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.Clinic", "CurrentWorkingDoctorId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("Clinics")
@@ -1351,7 +1385,8 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.People.MedicalLabTester", "CurrentWorkingTester")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "CurrentWorkingTesterId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "CurrentWorkingTesterId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("MedicalLabs")
@@ -1385,7 +1420,8 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.People.RadiologyTester", "CurrentWorkingTester")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "CurrentWorkingTesterId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "CurrentWorkingTesterId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "Hospital")
                         .WithMany("RadiologyCenters")
@@ -1419,7 +1455,8 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "FirstClinicAppointment")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Medical.MedicalHistory", "FirstClinicAppointmentId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Medical.MedicalHistory", "FirstClinicAppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HSS.System.V2.Domain.Models.People.Patient", "Patient")
                         .WithMany("MedicalHistories")
@@ -1526,7 +1563,8 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "FirstClinicAppointment")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Prescriptions.Ticket", "FirstClinicAppointmentId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Prescriptions.Ticket", "FirstClinicAppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Hospital", "HospitalCreatedIn")
                         .WithMany("Tickets")
@@ -1595,7 +1633,8 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemnt")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemntId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "PreExamiationClinicAppointemntId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("HSS.System.V2.Domain.Models.Prescriptions.Prescription", "Prescription")
                         .WithMany()
@@ -1607,7 +1646,8 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasOne("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemnt")
                         .WithOne()
-                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemntId");
+                        .HasForeignKey("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", "ReExamiationClinicAppointemntId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Clinic");
 
@@ -1769,7 +1809,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.Clinic", "Clinic")
                         .WithMany()
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("ClinicId");
 
                     b.Navigation("Clinic");
                 });
@@ -1778,7 +1818,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.MedicalLab", "MedicalLab")
                         .WithMany()
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("MedicalLabId");
 
                     b.Navigation("MedicalLab");
                 });
@@ -1787,7 +1827,7 @@ namespace HSS.System.V2.DataAccess.Migrations
                 {
                     b.HasOne("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", "RadiologyCenter")
                         .WithMany()
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("RadiologyCeneterId");
 
                     b.Navigation("RadiologyCenter");
                 });
@@ -1888,11 +1928,6 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("Appointments");
                 });
 
-            modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.SystemQueue", b =>
-                {
-                    b.Navigation("Appointments");
-                });
-
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", b =>
                 {
                     b.Navigation("MedicalLabAppointments");
@@ -1900,6 +1935,11 @@ namespace HSS.System.V2.DataAccess.Migrations
                     b.Navigation("RadiologyCeneterAppointments");
 
                     b.Navigation("TestsRequired");
+                });
+
+            modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.RadiologyCeneterAppointment", b =>
+                {
+                    b.Navigation("Results");
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicalLabTest", b =>

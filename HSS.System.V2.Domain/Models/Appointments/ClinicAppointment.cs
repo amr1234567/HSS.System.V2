@@ -25,7 +25,7 @@ public class ClinicAppointment : Appointment, IAppointmentModel<ClinicQueue>
     public string? DoctorId { get; set; }
     public virtual Doctor Doctor { get; set; }
     [ForeignKey(nameof(QueueId))]
-    public ClinicQueue Queue { get; set; }
+    public virtual ClinicQueue Queue { get; set; }
     public string? PrescriptionId { get; set; }
     [ForeignKey(nameof(PrescriptionId))]
     public virtual Prescription Prescription { get; set; }

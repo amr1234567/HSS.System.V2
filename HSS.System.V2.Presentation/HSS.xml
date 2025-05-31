@@ -145,6 +145,184 @@
             <param name="result">The result object.</param>
             <returns>An IActionResult representing the result.</returns>
         </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetAppointmentDetails(System.String)">
+            <summary>
+            Retrieves the details of a specific appointment by its ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/appointments/{appointmentId}
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment to retrieve.</param>
+            <returns>The appointment details.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetCurrentTicketDetails(System.String)">
+            <summary>
+            Retrieves the details of a specific ticket by its ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/tickets/{ticketId}
+            </code>
+            </remarks>
+            <param name="ticketId">The ID of the ticket to retrieve.</param>
+            <returns>The ticket details with associated appointments.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetMedicalHistoriesForPatient(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves paginated medical histories for a specific patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/patients/{patientId}/medical-histories?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="patientId">The ID of the patient.</param>
+            <param name="page">The page number (default: 1).</param>
+            <param name="size">The number of items per page (default: 10).</param>
+            <returns>Paginated list of medical histories.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetAllMedicalHistoriesForPatient(System.String)">
+            <summary>
+            Retrieves all medical histories for a specific patient.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/patients/{patientId}/medical-histories/all
+            </code>
+            </remarks>
+            <param name="patientId">The ID of the patient.</param>
+            <returns>List of all medical histories.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetMedicalHistoryDetails(System.String)">
+            <summary>
+            Retrieves the details of a specific medical history by its ID.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/Clinic/medical-histories/{medicalHistoryId}
+            </code>
+            </remarks>
+            <param name="medicalHistoryId">The ID of the medical history.</param>
+            <returns>The medical history details.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.SubmitClinicResult(HSS.System.V2.Services.DTOs.ClinicDTOs.ClinicResultRequestDto)">
+            <summary>
+            Submits a clinic result for an appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/Clinic/results
+            {
+              "appointmentId": "123",
+              "diseaseId": "456",
+              "diagnosis": "Flu",
+              "reExaminationNeeded": true,
+              "testsRequired": [
+                {
+                  "testId": "789"
+                }
+              ],
+              "prescription": {
+                "items": [
+                  {
+                    "medicineId": "101",
+                    "dosage": "1 tablet daily"
+                  }
+                ]
+              }
+            }
+            </code>
+            </remarks>
+            <param name="request">The clinic result details.</param>
+            <returns>Confirmation of submission.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.EndAppointment(System.String)">
+            <summary>
+            Ends an appointment by updating its status to completed.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            PUT /api/Clinic/appointments/{appointmentId}/end
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment to end.</param>
+            <returns>Confirmation of appointment completion.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.GeneralController.GetRadiologyTests(System.Int32,System.Int32)">
+            <summary>
+            Retrieves a paginated list of radiology tests.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /radiology-tests?page=1&amp;size=10
+            </code>
+            Sample response:
+            <code>
+            {
+              "success": true,
+              "data": {
+                "items": [
+                  {
+                    "testId": "123",
+                    "testName": "X-Ray",
+                    "details": "Chest X-Ray"
+                  }
+                ],
+                "totalCount": 1,
+                "currentPage": 1,
+                "pageSize": 10
+              },
+              "errors": []
+            }
+            </code>
+            </remarks>
+            <param name="page">The page number (default: 1).</param>
+            <param name="size">The number of items per page (default: 10).</param>
+            <returns>Paginated list of radiology tests.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.GeneralController.GetMedicalLabTests(System.Int32,System.Int32)">
+            <summary>
+            Retrieves a paginated list of medical lab tests.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /medical-lab-tests?page=1&amp;size=10
+            </code>
+            Sample response:
+            <code>
+            {
+              "success": true,
+              "data": {
+                "items": [
+                  {
+                    "testId": "456",
+                    "testName": "Blood Test",
+                    "details": "Complete Blood Count"
+                  }
+                ],
+                "totalCount": 1,
+                "currentPage": 1,
+                "pageSize": 10
+              },
+              "errors": []
+            }
+            </code>
+            </remarks>
+            <param name="page">The page number (default: 1).</param>
+            <param name="size">The number of items per page (default: 10).</param>
+            <returns>Paginated list of medical lab tests.</returns>
+        </member>
         <member name="T:HSS.System.V2.Presentation.Controllers.PatientController">
             <summary>
             Controller for managing patient-related operations in the healthcare system.
@@ -675,6 +853,61 @@
             The profile picture file to upload.
             </summary>
         </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.RadiologyCenterController.GetQueueForRadiologyCenter(System.String,System.Int32,System.Int32)">
+            <summary>
+            Retrieves the queue for a specific radiology center.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/radiology/queue/{radiologyCenterId}?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="radiologyCenterId">The ID of the radiology center.</param>
+            <param name="page">The page number (default: 1).</param>
+            <param name="pageSize">The number of items per page (default: 10).</param>
+            <returns>Paginated list of appointments in the queue.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.RadiologyCenterController.GetCurrentRadiologyAppointment(System.String)">
+            <summary>
+            Retrieves the current radiology appointment details.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/radiology/appointments/{appointmentId}
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment.</param>
+            <returns>The radiology appointment details.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.RadiologyCenterController.AddRadiologyImagesToAppointment(System.String,HSS.System.V2.Presentation.Models.RadiologyAppointmentResultModel)">
+            <summary>
+            Adds radiology images to an appointment.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            POST /api/radiology/appointments/{appointmentId}/result
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment.</param>
+            <param name="model">The radiology appointment result model containing images.</param>
+            <returns>Confirmation of image upload.</returns>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.RadiologyCenterController.EndAppointment(System.String)">
+            <summary>
+            Ends a radiology appointment by updating its status to completed.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            PUT /api/radiology/appointments/{appointmentId}/end
+            </code>
+            </remarks>
+            <param name="appointmentId">The ID of the appointment to end.</param>
+            <returns>Confirmation of appointment completion.</returns>
+        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllHospitalDepartmentsInHospital">
             <summary>
             Get Hospital departments details
@@ -716,6 +949,30 @@
             <param name="pagination">Pagination parameters</param>
             <response code="200">Successfully retrieved clinics</response>
             <response code="400">Bad request error</response>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllRadiologyTestsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all radiology tests available in the hospital
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/radiology/tests?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
+        </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllMedicalLabTestsInHospital(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <summary>
+            Get all medical lab tests in the hospital
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /api/reception/medical-lab/tests?page=1&amp;size=10
+            </code>
+            </remarks>
+            <param name="pagination">Pagination parameters</param>
         </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.ReceptionController.GetAllRadiologyCenters(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
             <summary>
