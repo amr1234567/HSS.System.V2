@@ -853,7 +853,7 @@
             The profile picture file to upload.
             </summary>
         </member>
-        <member name="M:HSS.System.V2.Presentation.Controllers.RadiologyCenterController.GetQueueForRadiologyCenter(System.String,System.Int32,System.Int32)">
+        <member name="M:HSS.System.V2.Presentation.Controllers.RadiologyCenterController.GetQueueForRadiologyCenter(System.Int32,System.Int32)">
             <summary>
             Retrieves the queue for a specific radiology center.
             </summary>

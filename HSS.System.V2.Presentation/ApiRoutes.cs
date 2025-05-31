@@ -158,7 +158,7 @@
             public const string Base = "api/radiology";
 
             public const string CurrentRadiologyAppointment = Base + "/appointments/{appointmentId}";
-            public const string GetQueueForRadiologyCenter = Base + "/queue/{radiologyCenterId}";
+            public const string GetQueueForRadiologyCenter = Base + "/queue";
             public const string RadiologyAppointmentResult = Base + "/appointments/{appointmentId}/result";
             public const string EndAppointment = Base + "/appointments/{appointmentId}/end";
         }

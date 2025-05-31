@@ -38,9 +38,10 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<PagedResult<AppointmentDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<PagedResult<AppointmentDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet(ApiRoutes.RadiologyCenter.GetQueueForRadiologyCenter)]
-        public async Task<IActionResult> GetQueueForRadiologyCenter([FromRoute] string radiologyCenterId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetQueueForRadiologyCenter([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _radiologyCenterServices.GetQueueForRadiologyCenter(radiologyCenterId, page, pageSize);
+            var departmentId = GetDepartmentId();
+            var result = await _radiologyCenterServices.GetQueueForRadiologyCenter(departmentId, page, pageSize);
             return GetResponse(result);
         }
 

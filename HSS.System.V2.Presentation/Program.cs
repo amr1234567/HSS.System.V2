@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using HSS.System.V2.Services.Seeding;
 using HSS.System.V2.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,8 +55,6 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    //var jwtConf = builder.Configuration.GetValue<JwtHelper>(nameof(JwtHelper))
-    //?? throw new Exception("JWT builder.Configuration is missing");
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = false,
@@ -83,22 +80,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    // ???? ????? ?????? ???????
-    //options.InjectStylesheet("/SwaggerCss3.x/theme-feeling-blue.css");
-    //options.InjectStylesheet("/SwaggerCss3.x/theme-flattop.css");
     options.InjectStylesheet("/SwaggerCss3.x/theme-material.css");
-    //options.InjectStylesheet("/SwaggerCss3.x/theme-monokai.css");
-    //options.InjectStylesheet("/SwaggerCss3.x/theme-muted.css");
-    //options.InjectStylesheet("/SwaggerCss3.x/theme-newspaper.css");
-    // options.InjectStylesheet("/SwaggerCss3.x/theme-outline.css");
 });
-//}
 
 app.UseHttpsRedirection();
 
