@@ -99,7 +99,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <returns>Confirmation of appointment completion.</returns>
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
-        [HttpPut(ApiRoutes.RadiologyCenter.EndAppointment)]
+        [HttpPost(ApiRoutes.RadiologyCenter.EndAppointment)]
         public async Task<IActionResult> EndAppointment([FromRoute] string appointmentId)
         {
             var result = await _radiologyCenterServices.EndAppointmentAsync(appointmentId);

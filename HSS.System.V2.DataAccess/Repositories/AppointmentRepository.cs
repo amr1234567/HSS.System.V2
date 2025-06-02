@@ -149,7 +149,6 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             var appointments = await _context.ClinicAppointments
                     .Where(a => a.ClinicId == clinicId)
-                    .AsNoTracking()
                     .Include(c => c.Clinic)
                     .Include(c => c.Doctor)
                     .Include(c => c.Ticket)
@@ -197,7 +196,6 @@ namespace HSS.System.V2.DataAccess.Repositories
                .Include(c => c.Appointments)
                .SelectMany(c => c.Appointments)
                .Where(a => a.SchaudleStartAt >= dateFilters.DateFrom && a.SchaudleStartAt <= dateFilters.DateTo)
-               .AsNoTracking()
                .OrderByDescending(a => a.SchaudleStartAt)
                .ToListAsync();
         }
@@ -220,8 +218,8 @@ namespace HSS.System.V2.DataAccess.Repositories
             try
             {
                 var appointment = await _context.Appointments
-               .Where(a => a.Id == appointmentId)
-               .FirstOrDefaultAsync();
+                       .Where(a => a.Id == appointmentId)
+                       .FirstOrDefaultAsync();
                 if (appointment is null)
                     return EntityNotExistsError.Happen<Appointment>(appointmentId);
                 _context.Appointments.Remove(appointment);

@@ -6,19 +6,24 @@ using HSS.System.V2.Domain.Models.Appointments;
 
 namespace HSS.System.V2.Domain.Models.Queues;
 
-public class RadiologyCenterQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<RadiologyCenterQueue>
+public class RadiologyCenterQueue : SystemQueue
 {
     public virtual ICollection<RadiologyCeneterAppointment> RadiologyCeneterAppointments { get; set; }
     [ForeignKey(nameof(RadiologyCeneterId))]
     public virtual RadiologyCenter RadiologyCenter { get; set; }
-    public IEnumerable<Appointment> Appointments => RadiologyCeneterAppointments;
-
-    public TimeSpan DepartmentStartAt => RadiologyCenter.StartAt;
-    public TimeSpan DepartmentEndAt => RadiologyCenter.EndAt;
-
-
-    public Expression<Func<RadiologyCenterQueue, object>> GetInclude()
+    [NotMapped]
+    public override IEnumerable<Appointment> Appointments
     {
-        return x => x.RadiologyCeneterAppointments;
+        get
+        {
+            return RadiologyCeneterAppointments;
+        }
+        set
+        {
+            RadiologyCeneterAppointments = new HashSet<RadiologyCeneterAppointment>(value.Cast<RadiologyCeneterAppointment>());
+        }
     }
+
+    public override TimeSpan DepartmentStartAt => RadiologyCenter.StartAt;
+    public override TimeSpan DepartmentEndAt => RadiologyCenter.EndAt;
 } 

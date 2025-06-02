@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HSS.System.V2.Domain.Models.Queues;
 
-public class SystemQueue : BaseClass
+public abstract class SystemQueue : BaseClass
 {
     public TimeSpan PeriodPerAppointment { get; set; }
     //public string? DepartmentId { set; get; }
@@ -14,7 +14,13 @@ public class SystemQueue : BaseClass
     public string? MedicalLabId { set; get; }
 
     [NotMapped]
-    public IEnumerable<Appointment> Appointments => [];
+    public abstract IEnumerable<Appointment> Appointments { get; set; }
+
+    [NotMapped]
+    public abstract TimeSpan DepartmentStartAt { get; }
+
+    [NotMapped]
+    public abstract TimeSpan DepartmentEndAt { get; }
 
     public string? DepartmentId
     {

@@ -103,7 +103,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Appointments");
+                    b.ToTable("Appointments", (string)null);
 
                     b.HasDiscriminator().HasValue("Appointment");
 
@@ -133,7 +133,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("AppointmentId");
 
-                    b.ToTable("RadiologyReseltImages");
+                    b.ToTable("RadiologyReseltImages", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Common.LoginActivity", b =>
@@ -162,7 +162,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("LoginActivities");
+                    b.ToTable("LoginActivities", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Clinic", b =>
@@ -218,7 +218,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("SpecializationId");
 
-                    b.ToTable("Clinics");
+                    b.ToTable("Clinics", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Hospital", b =>
@@ -254,7 +254,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hospitals");
+                    b.ToTable("Hospitals", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.MedicalLab", b =>
@@ -304,7 +304,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("QueueId");
 
-                    b.ToTable("MedicalLabs");
+                    b.ToTable("MedicalLabs", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Pharmacy", b =>
@@ -342,7 +342,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("HospitalId");
 
-                    b.ToTable("Pharmacies");
+                    b.ToTable("Pharmacies", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.RadiologyCenter", b =>
@@ -392,7 +392,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("QueueId");
 
-                    b.ToTable("RadiologyCenters");
+                    b.ToTable("RadiologyCenters", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Facilities.Reception", b =>
@@ -427,7 +427,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("HospitalId");
 
-                    b.ToTable("Receptions");
+                    b.ToTable("Receptions", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Disease", b =>
@@ -451,7 +451,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Diseases");
+                    b.ToTable("Diseases", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicalHistory", b =>
@@ -496,7 +496,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("MedicalHistories");
+                    b.ToTable("MedicalHistories", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicalLabTestResultField", b =>
@@ -522,7 +522,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MedicalLabTestResultFields");
+                    b.ToTable("MedicalLabTestResultFields", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Medicine", b =>
@@ -546,7 +546,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medicines");
+                    b.ToTable("Medicines", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.MedicinePharmacy", b =>
@@ -584,7 +584,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("PharmacyId");
 
-                    b.ToTable("MedicinePharmacies");
+                    b.ToTable("MedicinePharmacies", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Specialization", b =>
@@ -611,7 +611,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Specializations");
+                    b.ToTable("Specializations", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Medical.Test", b =>
@@ -646,7 +646,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tests");
+                    b.ToTable("Tests", (string)null);
 
                     b.HasDiscriminator().HasValue("Test");
 
@@ -689,7 +689,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("TestId");
 
-                    b.ToTable("TestsRequired");
+                    b.ToTable("TestsRequired", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Notifications.AppNotification", b =>
@@ -720,7 +720,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.People.Employee", b =>
@@ -797,7 +797,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("HospitalId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
 
                     b.HasDiscriminator().HasValue("Employee");
 
@@ -858,7 +858,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Prescription", b =>
@@ -883,7 +883,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("ClinicAppointmentId");
 
-                    b.ToTable("Prescriptions");
+                    b.ToTable("Prescriptions", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.PrescriptionMedicineItem", b =>
@@ -927,7 +927,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("PrescriptionId");
 
-                    b.ToTable("PrescriptionMedicineItems");
+                    b.ToTable("PrescriptionMedicineItems", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Prescriptions.Ticket", b =>
@@ -976,7 +976,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Queues.SystemQueue", b =>
@@ -1009,7 +1009,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SystemQueues");
+                    b.ToTable("SystemQueues", (string)null);
 
                     b.HasDiscriminator().HasValue("SystemQueue");
 
@@ -1028,7 +1028,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("TestsId");
 
-                    b.ToTable("MedicalLabMedicalLabTest");
+                    b.ToTable("MedicalLabMedicalLabTest", (string)null);
                 });
 
             modelBuilder.Entity("MedicalLabTestMedicalLabTestResultField", b =>
@@ -1043,7 +1043,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("TestsId");
 
-                    b.ToTable("MedicalLabTestMedicalLabTestResultField");
+                    b.ToTable("MedicalLabTestMedicalLabTestResultField", (string)null);
                 });
 
             modelBuilder.Entity("RadiologyCenterRadiologyTest", b =>
@@ -1058,7 +1058,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("TestsId");
 
-                    b.ToTable("RadiologyCenterRadiologyTest");
+                    b.ToTable("RadiologyCenterRadiologyTest", (string)null);
                 });
 
             modelBuilder.Entity("HSS.System.V2.Domain.Models.Appointments.ClinicAppointment", b =>
@@ -1180,7 +1180,7 @@ namespace HSS.System.V2.DataAccess.Migrations
 
                     b.HasIndex("TesterId");
 
-                    b.ToTable("Appointments", t =>
+                    b.ToTable("Appointments", null, t =>
                         {
                             t.Property("ClinicAppointmentId")
                                 .HasColumnName("RadiologyCeneterAppointment_ClinicAppointmentId");

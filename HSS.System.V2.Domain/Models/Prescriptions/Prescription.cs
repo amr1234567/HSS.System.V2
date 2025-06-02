@@ -9,7 +9,6 @@ public class Prescription : BaseClass
 {
     public string? Notes { get; set; }
     public string ClinicAppointmentId { get; set; }
-    [ForeignKey(nameof(ClinicAppointmentId))]
     public virtual ClinicAppointment ClinicAppointment { get; set; }
 
     public virtual ICollection<PrescriptionMedicineItem> Items { get; set; }

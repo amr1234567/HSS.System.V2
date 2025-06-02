@@ -6,21 +6,27 @@ using HSS.System.V2.Domain.Models.Appointments;
 
 namespace HSS.System.V2.Domain.Models.Queues;
 
-public class MedicalLabQueue : SystemQueue, IQueueModel, IQueueIncludeStrategy<MedicalLabQueue>
+public class MedicalLabQueue : SystemQueue
 {
     public virtual ICollection<MedicalLabAppointment> MedicalLabAppointments { get; set; }
 
     [ForeignKey(nameof(MedicalLabId))]
     public virtual MedicalLab MedicalLab { get; set; }
 
-    public IEnumerable<Appointment> Appointments => MedicalLabAppointments;
-
-    public TimeSpan DepartmentStartAt => MedicalLab.StartAt;
-    public TimeSpan DepartmentEndAt => MedicalLab.EndAt;
-
-
-    public Expression<Func<MedicalLabQueue, object>> GetInclude()
+    [NotMapped]
+    public override IEnumerable<Appointment> Appointments
     {
-        return x => x.MedicalLabAppointments;
+        get
+        {
+            return MedicalLabAppointments;
+        }
+        set
+        {
+            MedicalLabAppointments = new HashSet<MedicalLabAppointment>(value.Cast<MedicalLabAppointment>());
+        }
     }
+
+    public override TimeSpan DepartmentStartAt => MedicalLab.StartAt;
+    public override TimeSpan DepartmentEndAt => MedicalLab.EndAt;
+
 } 
