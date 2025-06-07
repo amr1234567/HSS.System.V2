@@ -25,6 +25,7 @@ namespace HSS.System.V2.Services
             services.AddScoped<IReceptionServices, ReceptionServices>();
             services.AddScoped<IGeneralServices, GeneralServices>();
             services.AddScoped<IRadiologyCenterServices, RadiologyCenterServices>();
+            services.AddScoped<IMedicalLabServices, MedicalLabServices>();
 
             return services;
         }

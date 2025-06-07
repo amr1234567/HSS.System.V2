@@ -66,7 +66,7 @@ namespace HSS.System.V2.DataAccess.Contexts
         public DbSet<MedicalHistory> MedicalHistories { get; set; }
         public DbSet<MedicinePharmacy> MedicinePharmacies { get; set; }
         public DbSet<RadiologyReseltImage> RadiologyReseltImages { get; set; }
-
+        public DbSet<MedicalLabTestResult> MedicalLabTestResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -118,6 +118,20 @@ namespace HSS.System.V2.DataAccess.Contexts
                 .HasForeignKey<MedicalHistory>(c => c.FirstClinicAppointmentId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
+
+            modelBuilder.Entity<MedicalLabTestResult>()
+                .HasOne(c => c.Appointment)
+                .WithMany(a => a.TestResults)
+                .HasForeignKey(c => c.AppointmentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            modelBuilder.Entity<MedicalLabTestResult>()
+                .HasOne(c => c.MedicalLabTestResultField)
+                .WithMany(a => a.TestResults)
+                .HasForeignKey(c => c.FieldId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
 
             //#region Global Includes 
             //modelBuilder.Entity<ClinicAppointment>()

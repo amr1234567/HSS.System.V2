@@ -690,52 +690,757 @@ namespace HSS.System.V2.Services.Seeding
             if (!context.Tests.Any())
             {
                 var radiologyTests = new List<Test>
-            {
-                new RadiologyTest() {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Chest X-Ray",
-                    Description = "Standard chest radiography",
-                    TestPrice = 120.0,
-                    EstimatedDurationInMinutes = 15,
-                    BodyPart = "Chest",
-                    RequiresContrast = "some data",
-                    PreparationInstructions = "Remove metal objects from chest area",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                },
-                new RadiologyTest() {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Abdominal CT Scan",
-                    Description = "Computed tomography of abdomen",
-                    TestPrice = 450.0,
-                    EstimatedDurationInMinutes = 30,
-                    BodyPart = "Abdomen",
-                    RequiresContrast = "some data",
-                    PreparationInstructions = "Fast for 4 hours prior to scan",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                },
-                 new MedicalLabTest() {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Complete Blood Count",
-                    Description = "Standard blood cell analysis",
-                    TestPrice = 25.0,
-                    EstimatedDurationInMinutes = 5,
-                    SampleType = "Blood",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                },
-                new MedicalLabTest() {
-                    Id = Guid.NewGuid().ToString(),
-                    Name = "Urinalysis",
-                    Description = "Complete urine analysis",
-                    TestPrice = 15.0,
-                    SampleType = "Urine",
-                    UpdatedAt = DateTime.UtcNow,
-                    CreatedAt = DateTime.UtcNow,
-                    EstimatedDurationInMinutes = 10,
-                }
-            };
+                {
+                    new RadiologyTest() {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Chest X-Ray",
+                        Description = "Standard chest radiography",
+                        TestPrice = 120.0,
+                        EstimatedDurationInMinutes = 15,
+                        BodyPart = "Chest",
+                        RequiresContrast = "some data",
+                        PreparationInstructions = "Remove metal objects from chest area",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                    },
+                    new RadiologyTest() {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Abdominal CT Scan",
+                        Description = "Computed tomography of abdomen",
+                        TestPrice = 450.0,
+                        EstimatedDurationInMinutes = 30,
+                        BodyPart = "Abdomen",
+                        RequiresContrast = "some data",
+                        PreparationInstructions = "Fast for 4 hours prior to scan",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                    },
+                    new MedicalLabTest() {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Complete Blood Count (CBC)",
+                        Description = "Standard blood cell analysis",
+                        TestPrice = 200.0,
+                        EstimatedDurationInMinutes = 5,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Red-Blold-cell-Count (RBC)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "White-Blold-cell-Count (WBC)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Hemoglobin (Hb)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Hematocrit (Hct)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Corpuscular-Valume (MCV)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Corpuscular-Hemoglobin (MCH)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Corpuscular-Hemoglobin-Concentration (MCHC)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Red-cell-Distribution-Width (RDW)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Platelet-Count",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Platelet-Volume (MPV)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                
+                    },
+                    new MedicalLabTest()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Compelet Blood Count With Differentials(CBC with Differentials)",
+                        Description = "Standard blood cell analysis",
+                        TestPrice = 250.0,
+                        EstimatedDurationInMinutes = 5,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Red-Blood-Cell-Count (RBC)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "White-Blood-Cell-Count (WBC)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Hemoglobin (Hb)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Hematocrit (Hct)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Corpuscular-Volume (MCV)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Corpuscular-Hemoglobin (MCH)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Corpuscular-Hemoglobin-Concentration (MCHC)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Red-Cell-Distribution-Width (RDW)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Platelet-Count",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Mean-Platelet-Volume (MPV)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Neutrophils",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Lymphocytes",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Monocytes",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Eosinophils",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Basophils",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                    },
+                    new MedicalLabTest()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Comprehensive Metabolic Panel (CMP)",
+                        Description = "Comprehensive metabolic analysis",
+                        TestPrice = 300.0,
+                        EstimatedDurationInMinutes = 10,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "AST (SGOT)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "ALT (SGPT)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Alkaline-Phosphatase (ALP)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Bilirubin-Total",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Total-Protein",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Albumin",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "GFR",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Glucose, Fasting",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Sodium",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Potassium",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Calcium",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "BUN",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Creatinine",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                    },
+                    new MedicalLabTest()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Biochemistry Lipid Profile",
+                        Description = "Lipid profile analysis",
+                        TestPrice = 200.0,
+                        EstimatedDurationInMinutes = 8,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Total-Cholesterol",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Triglycerides-Level",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "HDL-Cholesterol",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "LDL-Cholesterol",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "VLDL-Cholesterol",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "LDL / HDL",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Total-Cholesterol / HDL",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "TG / HDL",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "NON-HDL Cholesterol",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                    },
+                    new MedicalLabTest()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Thyroid Function Test",
+                        Description = "Thyroid hormone analysis",
+                        TestPrice = 150.0,
+                        EstimatedDurationInMinutes = 7,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Triiodothyronine-Total (TT3)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Thyroxine-Total (TT4)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Thyroid-Stimulating-Hormone (TSH)",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                    },
+                    new MedicalLabTest()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Hemoglobin A1c (HbA1c)",
+                        Description = "Blood sugar control analysis",
+                        TestPrice = 100.0,
+                        EstimatedDurationInMinutes = 5,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "HbA1C",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Estimated-Average-Glucose",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                    },
+                    new MedicalLabTest()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Prothrombin Time (PT) and International Normalized Ratio (INR)",
+                        Description = "Blood clotting analysis",
+                        TestPrice = 120.0,
+                        EstimatedDurationInMinutes = 6,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Patient-Value",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Control-Value",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "INR-Value",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Index",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                    },
+                    new MedicalLabTest()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Basic Metabolic Panel (BMP)",
+                        Description = "Basic metabolic analysis",
+                        TestPrice = 180.0,
+                        EstimatedDurationInMinutes = 8,
+                        SampleType = "Blood",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Fields = new List<MedicalLabTestResultField>
+                        {
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Glucose",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "BUN",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Creatinine",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "eGFR If NonAfricn Am",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "eGFR If Africn Am",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "BUN/Creatinine Ratio",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Sodium",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Potassium",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Chloride",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Carbon Dioxide, Total",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                            new MedicalLabTestResultField
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                KeyName = "Calcium",
+                                ResultFieldType = ResultFieldType.Number,
+                                IsRequired = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                            },
+                        }
+                    },
+                    new MedicalLabTest() {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Urinalysis",
+                        Description = "Complete urine analysis",
+                        TestPrice = 15.0,
+                        SampleType = "Urine",
+                        UpdatedAt = DateTime.UtcNow,
+                        CreatedAt = DateTime.UtcNow,
+                        EstimatedDurationInMinutes = 10,
+                    }
+                };
                 await context.Tests.AddRangeAsync(radiologyTests);
             }
 

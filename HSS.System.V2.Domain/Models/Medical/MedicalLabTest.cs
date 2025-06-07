@@ -22,7 +22,7 @@ public class MedicalLabTestResultField : BaseClass
     public ResultFieldType ResultFieldType { get; set; }
     public bool IsRequired { get; set; }
 
-
+    public virtual ICollection<MedicalLabTestResult> TestResults { get; set; }
     public virtual ICollection<MedicalLabTest> Tests { get; set; }
 }
 
