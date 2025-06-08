@@ -267,5 +267,15 @@
         <member name="M:HSS.System.V2.Services.Services.ReceptionServices.CreateAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateRadiologyAppointmentModelForReception)">
             <inheritdoc/>
         </member>
+        <member name="T:HSS.System.V2.Services.Services.UserContext">
+            <summary>
+            A Context that hold the basic information about the user
+            </summary>
+        </member>
+        <member name="P:HSS.System.V2.Services.Services.UserContext.ApiUserId">
+            <summary>
+            Get The User Id who logged in the system
+            </summary>
+        </member>
     </members>
 </doc>

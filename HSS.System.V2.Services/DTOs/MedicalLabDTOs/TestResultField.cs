@@ -1,13 +1,4 @@
-﻿using HSS.System.V2.Domain.Models.Appointments;
-using HSS.System.V2.Domain.Models.Medical;
-using HSS.System.V2.Domain.Models.Prescriptions;
-using HSS.System.V2.Services.DTOs.ReceptionDTOs;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HSS.System.V2.Domain.Models.Medical;
 
 namespace HSS.System.V2.Services.DTOs.MedicalLabDTOs
 {

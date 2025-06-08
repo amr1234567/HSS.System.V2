@@ -21,67 +21,67 @@ namespace HSS.System.V2.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<Result> AddTestResult(ICollection<MedicalLabTestResult> result)
+        public async Task<Result> AddTestResult(IEnumerable<MedicalLabTestResultFieldValue> result)
         {
-            await _context.MedicalLabTestResults.AddRangeAsync(result);
+            await _context.MedicalLabTestResultFieldValues.AddRangeAsync(result);
             await _context.SaveChangesAsync();
             return Result.Ok();
         }
 
         public async Task<Result> DeleteTestResult(string appointmentId)
         {
-            var result = await _context.MedicalLabTestResults.Where(x => x.AppointmentId == appointmentId).ToListAsync();
+            var result = await _context.MedicalLabTestResultFieldValues.Where(x => x.AppointmentId == appointmentId).ToListAsync();
             if (result is null || !result.Any())
                 return Result.Fail("there are not found");
 
-            _context.MedicalLabTestResults.RemoveRange(result);
+            _context.MedicalLabTestResultFieldValues.RemoveRange(result);
             await _context.SaveChangesAsync();
             return Result.Ok();
         }
 
         public async Task<Result<IEnumerable<MedicalLabTestResultField>>> GetMedicalLabTestResultFieldsAsync(string testId)
         {
-            var test = await _context.MedicalLabTests.AsNoTracking()
+            return await _context.MedicalLabTests
                 .Where(x => x.Id == testId)
                 .SelectMany(x => x.Fields)
                 .ToListAsync();
-
-            if (test is null || !test.Any())
-                return Result.Fail("there are not Fields");
-
-            return Result.Ok<IEnumerable<MedicalLabTestResultField>>(test);
         }
 
-        public async Task<Result<IEnumerable<MedicalLabTestResult>>> GetTestResult(string appointmentId)
+        public async Task<Result<IEnumerable<MedicalLabTestResultFieldValue>>> GetTestResult(string appointmentId)
         {
-            var result = await _context.MedicalLabAppointments.AsNoTracking()
+            var result = await _context.MedicalLabAppointments
                 .Where(x => x.Id == appointmentId)
-                .SelectMany(x => x.TestResults)
+                .SelectMany(x => x.TestResultFieldValues)
                 .ToListAsync();
 
             if (result is null || !result.Any())
                 return Result.Fail("there are not result");
 
-            return Result.Ok<IEnumerable<MedicalLabTestResult>>(result);
+            return Result.Ok<IEnumerable<MedicalLabTestResultFieldValue>>(result);
         }
 
-        public async Task<Result> UpdateTestResult(ICollection<MedicalLabTestResult> result, string appointmentId)
+        public async Task<Result> UpdateTestResult(IEnumerable<MedicalLabTestResultFieldValue> result, string appointmentId)
         {
-            var appointment = await _context.MedicalLabAppointments.Include(x => x.TestResults)
+            var appointment = await _context.MedicalLabAppointments.Include(x => x.TestResultFieldValues)
                 .FirstOrDefaultAsync(x =>x.Id == appointmentId);
             if (appointment is null)
                 return Result.Fail("this appointment not found");
 
-            _context.MedicalLabTestResults.RemoveRange(appointment.TestResults);
+            _context.MedicalLabTestResultFieldValues.RemoveRange(appointment.TestResultFieldValues);
 
             foreach (var testResult in result)
             {
                 testResult.AppointmentId = appointmentId;
             }
 
-            await _context.MedicalLabTestResults.AddRangeAsync(result);
+            await _context.MedicalLabTestResultFieldValues.AddRangeAsync(result);
             await _context.SaveChangesAsync();
             return Result.Ok();
+        }
+
+        public async Task<Result<MedicalLabTestResultField>> GetTestFieldById(string fieldId)
+        {
+            return await _context.MedicalLabTestResultFields.Where(f => f.Id == fieldId).FirstOrDefaultAsync();
         }
     }
 }

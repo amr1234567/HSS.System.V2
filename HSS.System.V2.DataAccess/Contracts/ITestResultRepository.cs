@@ -10,10 +10,11 @@ namespace HSS.System.V2.DataAccess.Contracts
 {
     public interface ITestResultRepository
     {
-        Task<Result> AddTestResult(ICollection<MedicalLabTestResult> result);
-        Task<Result> UpdateTestResult(ICollection<MedicalLabTestResult> result, string appointmentId);
+        Task<Result> AddTestResult(IEnumerable<MedicalLabTestResultFieldValue> result);
+        Task<Result> UpdateTestResult(IEnumerable<MedicalLabTestResultFieldValue> result, string appointmentId);
         Task<Result> DeleteTestResult(string appointmentId);
-        Task<Result<IEnumerable<MedicalLabTestResult>>> GetTestResult(string appointmentId);
+        Task<Result<IEnumerable<MedicalLabTestResultFieldValue>>> GetTestResult(string appointmentId);
         Task<Result<IEnumerable<MedicalLabTestResultField>>> GetMedicalLabTestResultFieldsAsync(string tistId);
+        Task<Result<MedicalLabTestResultField>> GetTestFieldById(string fieldId);
     }
 }

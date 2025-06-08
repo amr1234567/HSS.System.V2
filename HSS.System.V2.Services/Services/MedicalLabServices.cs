@@ -1,22 +1,24 @@
 ﻿using FluentResults;
-using HSS.System.V2.DataAccess.Contexts;
+
+using Hangfire;
+
 using HSS.System.V2.DataAccess.Contracts;
+using HSS.System.V2.Domain.Constants;
+using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.Appointments;
-using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Medical;
+using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.MedicalLabDTOs;
 using HSS.System.V2.Services.DTOs.RadiologyCenterDTOs;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HSS.System.V2.Services.Helpers;
+
+using Microsoft.Extensions.Logging;
 
 namespace HSS.System.V2.Services.Services
 {
@@ -25,11 +27,20 @@ namespace HSS.System.V2.Services.Services
         private readonly IQueueRepository _queueRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly ITestResultRepository _testResultRepository;
-        public MedicalLabServices(IQueueRepository queueRepository, IAppointmentRepository appointmentRepository, ITestResultRepository testResultRepository)
+        private readonly IMedicalHistoryRepository _medicalHistoryRepository;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly ILogger<MedicalLabServices> _logger;
+
+        public MedicalLabServices(IQueueRepository queueRepository, IAppointmentRepository appointmentRepository,
+            ITestResultRepository testResultRepository, IMedicalHistoryRepository medicalHistoryRepository,
+            ITicketRepository ticketRepository, ILogger<MedicalLabServices> logger)
         {
             _appointmentRepository = appointmentRepository;
             _queueRepository = queueRepository;
             _testResultRepository = testResultRepository;
+            _medicalHistoryRepository = medicalHistoryRepository;
+            _ticketRepository = ticketRepository;
+            _logger = logger;
         }
 
 
@@ -40,7 +51,9 @@ namespace HSS.System.V2.Services.Services
                 return Result.Fail(appointmentResult.Errors);
             var appointment = appointmentResult.Value;
             appointment.State = Domain.Enums.AppointmentState.Completed;
-            return await _appointmentRepository.UpdateAppointmentAsync(appointment);
+            return await _appointmentRepository.UpdateAppointmentAsync(appointment)
+                 .OnSuccessAsync(() => BackgroundJob.Enqueue<IMedicalLabServices>(
+                     svg => svg.CreateMedicalHistoryIfPossible(appointment.TicketId)));
         }
 
         public async Task<Result<MedicaLabAppointmentModel>> GetCurrentMedicalLabAppointment(string appointmentId)
@@ -65,6 +78,9 @@ namespace HSS.System.V2.Services.Services
         {
             var apps = await _queueRepository.GetQueueByDepartmentId<MedicalLabQueue>(medicalLabId);
             return apps.Value.MedicalLabAppointments
+                .Where(a => a.State is AppointmentState.InQueue or AppointmentState.InProgress)
+                .OrderByDescending(x => x.CreatedAt)
+                .OrderBy(x => x.State)
                 .Select(a => new AppointmentDto().MapFromModel(a))
                 .GetPaged(page, pageSize);
         }
@@ -79,27 +95,92 @@ namespace HSS.System.V2.Services.Services
             return Result.Ok(allFields);
         }
 
-        public async Task<Result> AddMedicalLabTestResult(ICollection<DTOs.MedicalLabDTOs.TestResultDto> result, string appointmentId)
+        public async Task<Result> AddMedicalLabTestResult(IEnumerable<DTOs.MedicalLabDTOs.TestResultDto> result, string appointmentId)
         {
             if (result is null || string.IsNullOrEmpty(appointmentId))
                 return Result.Fail("null input");
 
-            var medicalLabTestResult = new MedicalLabTestResult();
-            var allResult = new List<MedicalLabTestResult>();
+            var allResult = new List<MedicalLabTestResultFieldValue>();
             foreach(var dto in result)
             {
-                medicalLabTestResult.Id = Guid.NewGuid().ToString();
-                medicalLabTestResult.AppointmentId = appointmentId;
-                medicalLabTestResult.FieldId = dto.FieldId;
-                medicalLabTestResult.Value = dto.Value;
+                var field = await _testResultRepository.GetTestFieldById(dto.FieldId);
+                if (field.IsFailed || field.Value is null)
+                    return new BadRequestError();
+                var medicalLabTestResult = new MedicalLabTestResultFieldValue
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    AppointmentId = appointmentId,
+                    FieldId = dto.FieldId,
+                    Value = dto.Value,
+                    CreatedAt = HelperDate.GetCurrentDate(),
+                    ResultFieldType = field.Value.ResultFieldType,
+                    UpdatedAt = HelperDate.GetCurrentDate(),
+                };
+
                 allResult.Add(medicalLabTestResult);
             }
 
             var signResult = await _testResultRepository.AddTestResult(allResult);
             if (signResult.IsFailed)
-                return Result.Fail("Failed Add Result");
+                return Result.Fail(signResult.Errors);
 
             return Result.Ok();
+        }
+
+
+        public async Task CreateMedicalHistoryIfPossible(Ticket ticket)
+        {
+            try
+            {
+                var app = ticket.FirstClinicAppointment;
+                if (app is null)
+                {
+                    if (ticket.Appointments is not null && ticket.Appointments.Count > 0)
+                    {
+                        await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                    }
+                    return;
+                }
+
+                while (app.ReExamiationClinicAppointemnt != null)
+                {
+                    app = app.ReExamiationClinicAppointemnt;
+                }
+
+                if (!app.ReExaminationNeeded.HasValue)
+                    return;
+
+                var checkTestRequireds = app.TestsRequired is not null && app.TestsRequired.Count != 0;
+                if (checkTestRequireds && !app.ReExaminationNeeded.Value)
+                {
+                    app.ReExaminationNeeded = true;
+                    await _appointmentRepository.UpdateAppointmentAsync(app);
+                }
+
+                if (!app.ReExaminationNeeded.Value)
+                {
+                    await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDescriptiveError(ex, nameof(CreateMedicalHistoryIfPossible), ticket, nameof(ticket));
+            }
+        }
+
+        public async Task CreateMedicalHistoryIfPossible(string ticketId)
+        {
+            try
+            {
+                var ticket = await _ticketRepository.GetTicketById(ticketId)
+                    .EnsureNoneAsync((t => t is null, new BadRequestError()));
+                if (ticket.IsSuccess)
+                    await CreateMedicalHistoryIfPossible(ticket.Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDescriptiveError(ex, nameof(CreateMedicalHistoryIfPossible), ticketId);
+            }
         }
     }
 }
