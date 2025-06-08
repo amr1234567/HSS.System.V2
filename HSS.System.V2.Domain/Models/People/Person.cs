@@ -17,13 +17,47 @@ public class Person : BaseClass
 
     public int GetAge()
     {
-        var today = DateTime.Today;
-        var age = today.Year - BirthOfDate.Year;
+        // Check if NationalId is null, empty, or not 14 digits
+        if (string.IsNullOrEmpty(NationalId) || NationalId.Length != 14)
+        {
+            throw new InvalidOperationException("Invalid national ID");
+        }
 
-        if (BirthOfDate.Date > today.AddYears(-age))
-            age--;
+        // Extract components from the NationalId string
+        char centuryDigit = NationalId[0];
+        string yearDigits = NationalId.Substring(1, 2); // Digits 2-3
+        string monthDigits = NationalId.Substring(3, 2); // Digits 4-5
+        string dayDigits = NationalId.Substring(5, 2);   // Digits 6-7
 
-        return age;
+        // Determine the full year based on the century digit
+        int year;
+        if (centuryDigit == '2')
+        {
+            year = 1900 + int.Parse(yearDigits);
+        }
+        else if (centuryDigit == '3')
+        {
+            year = 2000 + int.Parse(yearDigits);
+        }
+        else
+        {
+            throw new InvalidOperationException("Invalid century digit in national ID");
+        }
+
+        // Parse month and day
+        int month = int.Parse(monthDigits);
+        int day = int.Parse(dayDigits);
+
+        // Create and return the DateTime object, handling invalid dates
+        try
+        {
+            //return new DateTime(year, month, day);
+            return DateTime.UtcNow.Year - year;
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            throw new InvalidOperationException("Invalid date in national ID");
+        }
     }
 
 }

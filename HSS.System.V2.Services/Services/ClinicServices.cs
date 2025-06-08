@@ -179,11 +179,8 @@ public class ClinicServices : IClinicServices
         var appointment = appointmentResult.Value;
         appointment.State = Domain.Enums.AppointmentState.Completed;
         return await _appointmentRepository.UpdateAppointmentAsync(appointment)
-            .OnSuccessAsync(() => BackgroundJob.Enqueue(() => 
-                BackgroundJob.Enqueue<IClinicServices>(svc =>
-                    svc.CreateMedicalHistoryIfPossible(appointment.TicketId)
-                )
-            ));
+            .OnSuccessAsync(() => BackgroundJob.Enqueue<IClinicServices>(svc =>
+                    svc.CreateMedicalHistoryIfPossible(appointment.TicketId)));
     }
 
     public async Task<Result<PagedResult<AppointmentDto>>> GetQueue(string departmentId, int page, int pageSize)

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq.Expressions;
 
 using HSS.System.V2.Domain.Enums;
 using HSS.System.V2.Domain.Models.Common;
@@ -7,8 +6,6 @@ using HSS.System.V2.Domain.Models.Facilities;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.Models.Prescriptions;
-
-using Microsoft.EntityFrameworkCore;
 
 namespace HSS.System.V2.Domain.Models.Appointments;
 
@@ -37,7 +34,7 @@ public class Appointment : BaseClass
     public string? QueueId {  get; set; }
 
     public string? MedicalHistoryId {  get; set; }
-    [InverseProperty(nameof(MedicalHistory.Appointments))]
+    [InverseProperty(nameof(Medical.MedicalHistory.Appointments))]
     [ForeignKey(nameof(MedicalHistoryId))]
     public virtual MedicalHistory MedicalHistory {  get; set; }
 
