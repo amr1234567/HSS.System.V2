@@ -162,5 +162,17 @@
             public const string RadiologyAppointmentResult = Base + "/appointments/{appointmentId}/result";
             public const string EndAppointment = Base + "/appointments/{appointmentId}/end";
         }
+
+        public static class MedicalLab
+        {
+            public const string Base = "api/medicaLab";
+
+            public const string EndAppointment = Base + "/appointment/{appointmentId}/end";
+            public const string AddMedicalLabTestResult = Base + "/appointments/result";
+            public const string GetTestResultField = Base + "/Test-Field/{testId}";
+            public const string GetCurrentMedicalLabAppointment = Base + "/appointment/{appointmentId}";
+            public const string GetQueueForMedicalLab = Base + "/queue/{medicalLabId}";
+
+        }
     }
 }

@@ -67,6 +67,7 @@ namespace HSS.System.V2.Services
             services.AddScoped<IGeneralServices, GeneralServices>();
             services.AddScoped<IRadiologyCenterServices, RadiologyCenterServices>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IMedicalLabServices, MedicalLabServices>();
 
             return services;
         }

@@ -33,6 +33,7 @@ public class MedicalLabAppointment : Appointment,
     public string TestId { get; set; }
     [ForeignKey(nameof(TesterId))]
     public virtual MedicalLabTest Test { get; set; }
+    public virtual ICollection<MedicalLabTestResult> TestResults { get; set; }
 
     public void SetQueue(MedicalLabQueue? queue)
     {
