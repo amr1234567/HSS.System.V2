@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 
 using HSS.System.V2.Domain.Helpers.Models;
+using HSS.System.V2.Domain.Models.Prescriptions;
 using HSS.System.V2.Services.DTOs.ClinicDTOs;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
 
@@ -16,6 +17,7 @@ public interface IClinicServices
     Task<Result> SubmitClinicResultAsync( ClinicResultRequestDto request);
     Task<Result> EndAppointmentAsync(string appointmentId);
     Task<Result<PagedResult<AppointmentDto>>> GetQueue(string departmentId, int page, int pageSize);
-    Task<Result<IEnumerable<MedicineForClinicDto>>> GetMedinices(string querySearch);
-    Task<Result<IEnumerable<DiseaseForClinicDto>>> GetDiseases(string querySearch);
+    Task<Result<IEnumerable<MedicineForClinicDto>>> GetMedinices(string? querySearch);
+    Task<Result<IEnumerable<DiseaseForClinicDto>>> GetDiseases(string? querySearch);
+    Task CreateMedicalHistoryIfPossible(string ticketId);
 }

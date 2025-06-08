@@ -15,7 +15,7 @@ namespace HSS.System.V2.Services.DTOs.ClinicDTOs
                 CreatedAt = HelperDate.GetCurrentDate(),
                 UpdatedAt = HelperDate.GetCurrentDate(),
                 TestId = TestId,
-                Used = false
+                Used = false,
             };
         }
     }

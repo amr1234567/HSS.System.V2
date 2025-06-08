@@ -130,7 +130,7 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<IEnumerable<DiseaseForClinicDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<IEnumerable<DiseaseForClinicDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("clinic/diseases")]
-        public async Task<IActionResult> GetAllDiseasesBySearch([FromQuery] string querySearch)
+        public async Task<IActionResult> GetAllDiseasesBySearch([FromQuery] string? querySearch)
         {
             var result = await _clinicServices.GetDiseases(querySearch);
             return GetResponse(result);
@@ -139,7 +139,7 @@ namespace HSS.System.V2.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<IEnumerable<MedicineForClinicDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<IEnumerable<MedicineForClinicDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet("clinic/medinices")]
-        public async Task<IActionResult> GetAllMedicinesBySearch(string querySearch)
+        public async Task<IActionResult> GetAllMedicinesBySearch([FromQuery] string? querySearch)
         {
             var result = await _clinicServices.GetMedinices(querySearch);
             return GetResponse(result);

@@ -17,7 +17,7 @@ public record PrescriptionToCreateModel : IInputModel<Prescription>
             CreatedAt = HelperDate.GetCurrentDate(),
             UpdatedAt = HelperDate.GetCurrentDate(),
             Notes = Notes,
-            Items = Items.Select(item => item.ToModel()).ToList()
+            Items = Items.Select(item => item.ToModel()).ToList(),
         };
     }
 }
@@ -29,7 +29,6 @@ public class PrescriptionMedicineItemToCreate : IInputModel<PrescriptionMedicine
     public int TimesPerDay { get; set; }
     public int DurationInDays { get; set; }
     public string MedicineId { get; set; }
-    public string PrescriptionId { get; set; }
 
     public PrescriptionMedicineItem ToModel()
     {
@@ -43,7 +42,6 @@ public class PrescriptionMedicineItemToCreate : IInputModel<PrescriptionMedicine
             TimesPerDay = TimesPerDay,
             DurationInDays = DurationInDays,
             MedicineId = MedicineId,
-            PrescriptionId = PrescriptionId
         };
     }
 }

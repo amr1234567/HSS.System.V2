@@ -112,11 +112,11 @@ namespace HSS.System.V2.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<IEnumerable<Medicine>>> GetAllMedicinesAsync(string query)
+        public async Task<Result<IEnumerable<Medicine>>> GetAllMedicinesAsync(string? query)
         {
             try
             {
-                return await _context.Medicines.Where(m => m.Name.Contains(query)).ToListAsync();
+                return await _context.Medicines.Where(m => string.IsNullOrEmpty(query) || m.Name.Trim().Contains(query.Trim(), StringComparison.OrdinalIgnoreCase)).ToListAsync();
             }
             catch (Exception ex)
             {

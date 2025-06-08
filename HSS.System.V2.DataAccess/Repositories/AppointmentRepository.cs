@@ -42,7 +42,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                _context.Appointments.Update(model);
+                //_context.Appointments.Update(model);
                 await _context.SaveChangesAsync();
                 return Result.Ok();
             }

@@ -2,8 +2,8 @@
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Presentation.Controllers.Base;
 using HSS.System.V2.Services.Contracts;
+using HSS.System.V2.Services.DTOs;
 using HSS.System.V2.Services.DTOs.AuthDTOs;
-using HSS.System.V2.Services.Services;
 
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,6 @@
-﻿using HSS.System.V2.Domain.Helpers.Models;
+﻿using Hangfire;
+
+using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Presentation.Controllers.Base;
 using HSS.System.V2.Services.Contracts;

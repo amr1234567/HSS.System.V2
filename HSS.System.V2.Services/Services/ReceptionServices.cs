@@ -132,6 +132,7 @@ namespace HSS.System.V2.Services.Services
         {
             var apps = await _queueRepository.GetQueueByDepartmentId<ClinicQueue>(clinicId);
             return apps.Value.ClinicAppointments
+                .Where(a => a.State is AppointmentState.InQueue or AppointmentState.InProgress)
                 .OrderByDescending(x => x.CreatedAt)
                 .OrderBy(x => x.State)
                 .Select(a => new AppointmentDto().MapFromModel(a)).GetPaged(page, pageSize);
@@ -150,6 +151,7 @@ namespace HSS.System.V2.Services.Services
         {
             var apps = await _queueRepository.GetQueueByDepartmentId<RadiologyCenterQueue>(radiologyCenterId);
             return apps.Value.RadiologyCeneterAppointments
+                .Where(a => a.State is AppointmentState.InQueue or AppointmentState.InProgress)
                 .OrderByDescending(x => x.CreatedAt)
                 .OrderBy(x => x.State)
                 .Select(a => new AppointmentDto().MapFromModel(a)).GetPaged(page, pageSize);
@@ -168,6 +170,7 @@ namespace HSS.System.V2.Services.Services
         {
             var apps = await _queueRepository.GetQueueByDepartmentId<MedicalLabQueue>(medicalLabId);
             return apps.Value.MedicalLabAppointments
+                .Where(a => a.State is AppointmentState.InQueue or AppointmentState.InProgress)
                 .OrderByDescending(x => x.CreatedAt)
                 .OrderBy(x => x.State)
                 .Select(a => new AppointmentDto().MapFromModel(a)).GetPaged(page, pageSize);
@@ -187,7 +190,7 @@ namespace HSS.System.V2.Services.Services
             return new PatientDetailsWithTicketsDto()
             {
                 PatientId = patient.Value.Id,
-                Tickets = tickets.GetPaged(page, pageSize),
+                Tickets = tickets.OrderByDescending(t => t.AbleToBook).GetPaged(page, pageSize),
                 PatientName = patient.Value.Name,
                 PatientNationalId = nationalId
             };
@@ -355,27 +358,7 @@ namespace HSS.System.V2.Services.Services
             // 5) إنشاء كيان الـ Appointment من الـ DTO
             var entity = model.ToModel();
 
-            if (hasTicketAndTest)
-            {
-                // ======== Branch A: المستخدم أعطى TicketId + TestId ========
-                var ticketResult = await _ticketRepository.GetTicketById(model.TicketId);
-                if (ticketResult.IsFailed || ticketResult.Value == null)
-                    return new BadArgumentsError("التذكرة غير موجودة في النظام");
-
-                // تأكد أن الليستClinicAppointmentId فارغ (أي لم يتم حجز في العيادة بعد)
-                if (!string.IsNullOrEmpty(ticketResult.Value.FirstClinicAppointmentId))
-                    return new BadRequestError("هذه التذكرة تحتوي بالفعل على حجز");
-
-                // (اختياري) إذا كان لديك مستودع خاص بالـ RadiologyTest:
-                // var testResult = await _radiologyTestRepository.GetById(model.TestId);
-                // if (testResult.IsFailed || testResult.Value == null)
-                //     return new BadArgumentsError("الاختبار المطلوب غير موجود في النظام");
-
-                entity.TicketId = ticketResult.Value.Id;
-                entity.TestId = model.TestId!;
-                entity.ClinicAppointmentId = null;
-            }
-            else
+            if (hasTestRequired)
             {
                 // ======== Branch B: المستخدم أعطى TestRequiredId فقط ========
                 var testRequiredResult =
@@ -398,6 +381,27 @@ namespace HSS.System.V2.Services.Services
                 var updateResult = await _testRequiredRepository.UpdateTestRequiredAsync(testRequiredResult.Value);
                 if (updateResult.IsFailed)
                     return Result.Fail(updateResult.Errors);
+            }
+
+            else if (hasTicketAndTest)
+            {
+                // ======== Branch A: المستخدم أعطى TicketId + TestId ========
+                var ticketResult = await _ticketRepository.GetTicketById(model.TicketId);
+                if (ticketResult.IsFailed || ticketResult.Value == null)
+                    return new BadArgumentsError("التذكرة غير موجودة في النظام");
+
+                // تأكد أن الليستClinicAppointmentId فارغ (أي لم يتم حجز في العيادة بعد)
+                if (!string.IsNullOrEmpty(ticketResult.Value.FirstClinicAppointmentId))
+                    return new BadRequestError("هذه التذكرة تحتوي بالفعل على حجز");
+
+                // (اختياري) إذا كان لديك مستودع خاص بالـ RadiologyTest:
+                // var testResult = await _radiologyTestRepository.GetById(model.TestId);
+                // if (testResult.IsFailed || testResult.Value == null)
+                //     return new BadArgumentsError("الاختبار المطلوب غير موجود في النظام");
+
+                entity.TicketId = ticketResult.Value.Id;
+                entity.TestId = model.TestId!;
+                entity.ClinicAppointmentId = null;
             }
 
             // 6) املأ باقي الحقول المشتركة
@@ -815,7 +819,7 @@ namespace HSS.System.V2.Services.Services
                 return new BadRequestError("الحجز قد ألغي، من فضلك أحجز موعد جديد");
             var updateResult = await ChangeAppointmentState(appointmentId, AppointmentState.InProgress);
             if (updateResult.IsSuccess)
-                BackgroundJob.Schedule(() => CheckAppointemnt(a), a.ExpectedDuration.Add(TimeSpan.FromSeconds(60)));
+                BackgroundJob.Schedule(() => CheckAppointemnt(a.Id), a.ExpectedDuration.Add(TimeSpan.FromSeconds(60)));
             return updateResult;
         }
 
@@ -835,7 +839,7 @@ namespace HSS.System.V2.Services.Services
 
             var updateResult = await ChangeAppointmentState(appointmentId, AppointmentState.InProgress);
             if (updateResult.IsSuccess)
-                BackgroundJob.Schedule(() => CheckAppointemnt(a), a.ExpectedDuration.Add(TimeSpan.FromSeconds(60)));
+                BackgroundJob.Schedule(() => CheckAppointemnt(a.Id), a.ExpectedDuration.Add(TimeSpan.FromSeconds(60)));
             return updateResult;
         }
 
@@ -854,7 +858,7 @@ namespace HSS.System.V2.Services.Services
 
             var updateResult = await ChangeAppointmentState(appointmentId, AppointmentState.InProgress);
             if (updateResult.IsSuccess)
-                BackgroundJob.Schedule(() => CheckAppointemnt(a), a.ExpectedDuration.Add(TimeSpan.FromSeconds(60)));
+                BackgroundJob.Schedule(() => CheckAppointemnt(a.Id), a.ExpectedDuration.Add(TimeSpan.FromSeconds(60)));
             return updateResult;
         }
 
@@ -873,6 +877,17 @@ namespace HSS.System.V2.Services.Services
             {
                 app.State = AppointmentState.Terminated;
                 await _appointmentRepository.UpdateAppointmentAsync(app);
+            }
+        }
+
+        public async Task CheckAppointemnt(string appId)
+        {
+            var appResult = await _appointmentRepository.GetAppointmentByIdAsync(appId)
+                .EnsureNoneAsync((a => a is null, new BadRequestError()));
+            if (appResult.IsSuccess)
+            {
+                var app = appResult.Value;
+                await CheckAppointemnt(app);
             }
         }
 

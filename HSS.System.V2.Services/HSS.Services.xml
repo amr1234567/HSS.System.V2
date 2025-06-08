@@ -239,6 +239,16 @@
             Data transfer object representing a ticket.
             </summary>
         </member>
+        <member name="M:HSS.System.V2.Services.Helpers.LoggerExtensions.LogDescriptiveError``2(Microsoft.Extensions.Logging.ILogger{``0},System.Exception,System.String,``1,System.String)">
+            <summary>
+            Logs an exception with a structured context and optional payload.
+            </summary>
+        </member>
+        <member name="M:HSS.System.V2.Services.Helpers.LoggerExtensions.LogDescriptiveError``1(Microsoft.Extensions.Logging.ILogger{``0},System.Exception,System.String,System.String)">
+            <summary>
+            Logs an exception with a structured context and optional payload.
+            </summary>
+        </member>
         <member name="T:HSS.System.V2.Services.Services.PatientServices">
             <inheritdoc/>
         </member>

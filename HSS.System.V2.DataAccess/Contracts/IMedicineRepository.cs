@@ -12,7 +12,7 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<Medicine>> GetMedicineByIdAsync(string id, params Expression<Func<Medicine, object>>[]? includes);
         Task<Result<PagedResult<Medicine>>> GetAllMedicinesAsync(int page = 1, int size = 10, params Expression<Func<Medicine, object>>[]? includes);
         Task<Result<PagedResult<Medicine>>> GetAllMedicinesAsync(string query, int page = 1, int size = 10, params Expression<Func<Medicine, object>>[]? includes);
-        Task<Result<IEnumerable<Medicine>>> GetAllMedicinesAsync(string query);
+        Task<Result<IEnumerable<Medicine>>> GetAllMedicinesAsync(string? query);
         Task<Result<PagedResult<MedicinePharmacy>>> GetAllMedicinesInPharmacyAsync(string pharmacyId, int page = 1, int size = 10);
         Task<Result<MedicinePharmacy?>> GetMedicineInPharmacyAsync(string pharmacyId, string medicineId);
     }

@@ -6,6 +6,6 @@ namespace HSS.System.V2.DataAccess.Contracts;
 
 public interface IDiseaseRepository
 {
-    Task<Result<IEnumerable<Disease>>> GetAllDiseases(string querySearch);
-    Task<Result<Disease>> GetDiseaseById(string diseaseId);
+    Task<Result<IEnumerable<Disease>>> GetAllDiseases(string? querySearch);
+    Task<Result<Disease>> GetDiseaseById(string? diseaseId);
 }

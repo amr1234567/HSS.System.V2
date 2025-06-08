@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using HSS.System.V2.Services.Seeding;
 using HSS.System.V2.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Hangfire;
+using HSS.System.V2.Services.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.CustomSchemaIds(type => type.FullName); // Use full name including namespace
 });
+
 
 #region Auth Services
 
@@ -95,7 +98,11 @@ using (var scope = app.Services.CreateScope())
         await dbContext.Database.MigrateAsync();
         await SeedingData.SeedAsync(dbContext);
     }
+
+
 }
+
+
 
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();

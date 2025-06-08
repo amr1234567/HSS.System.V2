@@ -22,8 +22,8 @@ public class DiseaseRepository : IDiseaseRepository
         return await _context.Diseases.FirstOrDefaultAsync(d => d.Id == diseaseId);
     }
 
-    public async Task<Result<IEnumerable<Disease>>> GetAllDiseases(string querySearch)
+    public async Task<Result<IEnumerable<Disease>>> GetAllDiseases(string? querySearch)
     {
-        return await _context.Diseases.Where(d => d.Name.Contains(querySearch) || d.Description.Contains(querySearch)).ToListAsync();
+        return await _context.Diseases.Where(d => string.IsNullOrEmpty(querySearch) || (d.Name.Trim().Contains(querySearch.Trim(), StringComparison.CurrentCultureIgnoreCase) || d.Description.Trim().Contains(querySearch.Trim(), StringComparison.CurrentCultureIgnoreCase))).ToListAsync();
     }
 }

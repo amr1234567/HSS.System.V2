@@ -3,7 +3,6 @@
 using HSS.System.V2.DataAccess.Contracts;
 using HSS.System.V2.Domain.Constants;
 using HSS.System.V2.Domain.Enums;
-using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.People;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
@@ -13,6 +12,7 @@ using HSS.System.V2.Domain.Models.Facilities;
 
 using System.Security.Claims;
 using HSS.System.V2.Domain.Helpers.Methods;
+using HSS.System.V2.Services.DTOs;
 
 namespace HSS.System.V2.Services.Services
 {
@@ -251,14 +251,5 @@ namespace HSS.System.V2.Services.Services
             return Result.Ok();
         }
 
-    }
-
-    public class UserDetails
-    {
-        public string UserName { get; set; }
-        public string UserNationalId { get; set; }
-        public string UserId { get; set; }
-        public string UserRole { get; set; }
-        public TokenModel TokenModel { get; set; }
     }
 }
