@@ -1,4 +1,5 @@
-﻿using HSS.System.V2.Domain.Models.Common;
+﻿using HSS.System.V2.Domain.Helpers.Methods;
+using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Prescriptions;
 
 namespace HSS.System.V2.Services.DTOs.ClinicDTOs;
@@ -13,8 +14,8 @@ public record PrescriptionToCreateModel : IInputModel<Prescription>
         return new()
         {
             Id = Guid.NewGuid().ToString(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            CreatedAt = HelperDate.GetCurrentDate(),
+            UpdatedAt = HelperDate.GetCurrentDate(),
             Notes = Notes,
             Items = Items.Select(item => item.ToModel()).ToList()
         };
@@ -35,8 +36,8 @@ public class PrescriptionMedicineItemToCreate : IInputModel<PrescriptionMedicine
         return new()
         {
             Id = Guid.NewGuid().ToString(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            CreatedAt = HelperDate.GetCurrentDate(),
+            UpdatedAt = HelperDate.GetCurrentDate(),
             Instructions = Instructions,
             Quantity = Quantity,
             TimesPerDay = TimesPerDay,

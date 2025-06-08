@@ -12,6 +12,7 @@ using HSS.System.V2.Services.Helpers;
 using HSS.System.V2.Domain.Models.Facilities;
 
 using System.Security.Claims;
+using HSS.System.V2.Domain.Helpers.Methods;
 
 namespace HSS.System.V2.Services.Services
 {
@@ -51,8 +52,8 @@ namespace HSS.System.V2.Services.Services
                 Gender = dto.Gender,
                 Role = UserRole.Patient,
                 NationalId = dto.NationalId,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
+                CreatedAt = HelperDate.GetCurrentDate(),
+                UpdatedAt = HelperDate.GetCurrentDate(),
                 Email = dto.Email,
                 Salt = salt,
                 HashPassword = hashPass

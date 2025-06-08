@@ -11,11 +11,11 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
     public class ClinicDto : IOutputDto<ClinicDto, Clinic>
     {
         public string ClinicId { set; get; }
-        public string?  CurrentDoctor        { get; set; } = "غير معروف";
-        public string   QueueId              { get; set; }
+        public string? CurrentDoctor { get; set; } = "غير معروف";
+        public string QueueId { get; set; }
         public TimeSpan PeriodPerAppointment { get; set; }
-        public string   SpecializationName   { get; set; }
-        public string   SpecializationId     { get; set; }
+        public string SpecializationName { get; set; }
+        public string SpecializationId { get; set; }
         public string ClinicName { set; get; }
 
         public ClinicDto MapFromModel(Clinic model)

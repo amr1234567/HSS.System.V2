@@ -22,8 +22,7 @@ namespace HSS.System.V2.Domain.Attributes
 
         public AuthorizeByEnumAttribute(params object[] enumValues)
         {
-            if (enumValues == null)
-                throw new ArgumentNullException(nameof(enumValues));
+            ArgumentNullException.ThrowIfNull(enumValues);
 
             var roles = new List<string>();
             foreach ( var enumValue in enumValues )

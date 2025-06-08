@@ -6,20 +6,24 @@ using Microsoft.EntityFrameworkCore;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.DataAccess.Contracts;
 
-namespace HSS.System.V2.DataAccess.Repositories
+namespace HSS.System.V2.DataAccess.Repositories;
+
+public class DiseaseRepository : IDiseaseRepository
 {
-    public class DiseaseRepository : IDiseaseRepository
+    private readonly AppDbContext _context;
+
+    public DiseaseRepository(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public DiseaseRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+    public async Task<Result<Disease>> GetDiseaseById(string diseaseId)
+    {
+        return await _context.Diseases.FirstOrDefaultAsync(d => d.Id == diseaseId);
+    }
 
-        public async Task<Result<Disease>> GetDiseaseById(string diseaseId)
-        {
-            return await _context.Diseases.FirstOrDefaultAsync(d => d.Id == diseaseId);
-        }
+    public async Task<Result<IEnumerable<Disease>>> GetAllDiseases(string querySearch)
+    {
+        return await _context.Diseases.Where(d => d.Name.Contains(querySearch) || d.Description.Contains(querySearch)).ToListAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using HSS.System.V2.Domain.Models.Common;
+﻿using HSS.System.V2.Domain.Helpers.Methods;
+using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Prescriptions;
 
 namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
@@ -13,7 +14,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
         {
             return new()
             {
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = HelperDate.GetCurrentDate(),
                 Id = Guid.NewGuid().ToString(),
                 HospitalCreatedInId = HospitalId,
             };

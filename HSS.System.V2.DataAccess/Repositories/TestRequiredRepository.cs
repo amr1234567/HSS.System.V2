@@ -38,7 +38,6 @@ namespace HSS.System.V2.DataAccess.Repositories
             try
             {
                 _context.TestsRequired.Update(model);
-                await _context.SaveChangesAsync();
                 return Result.Ok();
             }
             catch (Exception ex)

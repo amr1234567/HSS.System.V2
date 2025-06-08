@@ -137,7 +137,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                                   .OrderBy(a => a.ActualStartAt ?? a.SchaudleStartAt)
                                   .ToList();
 
-            DateTime now = DateTime.Now;
+            DateTime now = HelperDate.GetCurrentDate();
             TimeSpan period = queue.PeriodPerAppointment;
 
             if (!sortedList.Any())
@@ -320,7 +320,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                 }
 
                 TimeSpan period = queue.PeriodPerAppointment;
-                DateTime now = DateTime.Now;
+                DateTime now = HelperDate.GetCurrentDate();
 
                 // 6. Compute today’s “department start” as a DateTime
                 //    (e.g. if DepartmentStartAt is 08:30, then deptStartDt = Today @ 08:30)

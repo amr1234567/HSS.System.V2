@@ -4,6 +4,8 @@ using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Presentation.Controllers.Base;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.ClinicDTOs;
+using HSS.System.V2.Services.DTOs.ReceptionDTOs;
+using HSS.System.V2.Services.Services;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,12 +23,34 @@ namespace HSS.System.V2.Presentation.Controllers
         }
 
         /// <summary>
+        /// Retrieves the queue for a clinic.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// <code>
+        /// GET /clinic/queue?page=1&amp;pageSize=10
+        /// </code>
+        /// </remarks>
+        /// <param name="page">The page number (default: 1).</param>
+        /// <param name="pageSize">The number of items per page (default: 10).</param>
+        /// <returns>Paginated list of appointments in the queue.</returns>
+        [ProducesResponseType(typeof(ApiResponse<PagedResult<AppointmentDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<PagedResult<AppointmentDto>>), StatusCodes.Status400BadRequest)]
+        [HttpGet("clinic/queue")]
+        public async Task<IActionResult> GetQueue([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var departmentId = GetDepartmentId();
+            var result = await _clinicServices.GetQueue(departmentId, page, pageSize);
+            return GetResponse(result);
+        }
+
+        /// <summary>
         /// Retrieves the details of a specific appointment by its ID.
         /// </summary>
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// GET /api/Clinic/appointments/{appointmentId}
+        /// GET /clinic/appointments/{appointmentId}
         /// </code>
         /// </remarks>
         /// <param name="appointmentId">The ID of the appointment to retrieve.</param>
@@ -46,7 +70,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// GET /api/Clinic/tickets/{ticketId}
+        /// GET /clinic/tickets/{ticketId}
         /// </code>
         /// </remarks>
         /// <param name="ticketId">The ID of the ticket to retrieve.</param>
@@ -66,7 +90,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// GET /api/Clinic/patients/{patientId}/medical-histories?page=1&amp;size=10
+        /// GET /clinic/patients/{patientId}/medical-histories?page=1&amp;size=10
         /// </code>
         /// </remarks>
         /// <param name="patientId">The ID of the patient.</param>
@@ -89,7 +113,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// GET /api/Clinic/patients/{patientId}/medical-histories/all
+        /// GET /clinic/patients/{patientId}/medical-histories/all
         /// </code>
         /// </remarks>
         /// <param name="patientId">The ID of the patient.</param>
@@ -103,13 +127,32 @@ namespace HSS.System.V2.Presentation.Controllers
             return GetResponse(result);
         }
 
+        [ProducesResponseType(typeof(ApiResponse<IEnumerable<DiseaseForClinicDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<IEnumerable<DiseaseForClinicDto>>), StatusCodes.Status400BadRequest)]
+        [HttpGet("clinic/diseases")]
+        public async Task<IActionResult> GetAllDiseasesBySearch([FromQuery] string querySearch)
+        {
+            var result = await _clinicServices.GetDiseases(querySearch);
+            return GetResponse(result);
+        }
+
+        [ProducesResponseType(typeof(ApiResponse<IEnumerable<MedicineForClinicDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<IEnumerable<MedicineForClinicDto>>), StatusCodes.Status400BadRequest)]
+        [HttpGet("clinic/medinices")]
+        public async Task<IActionResult> GetAllMedicinesBySearch(string querySearch)
+        {
+            var result = await _clinicServices.GetMedinices(querySearch);
+            return GetResponse(result);
+        }
+
+
         /// <summary>
         /// Retrieves the details of a specific medical history by its ID.
         /// </summary>
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// GET /api/Clinic/medical-histories/{medicalHistoryId}
+        /// GET /clinic/medical-histories/{medicalHistoryId}
         /// </code>
         /// </remarks>
         /// <param name="medicalHistoryId">The ID of the medical history.</param>
@@ -129,7 +172,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// POST /api/Clinic/results
+        /// POST /clinic/results
         /// {
         ///   "appointmentId": "123",
         ///   "diseaseId": "456",
@@ -168,7 +211,7 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <remarks>
         /// Sample request:
         /// <code>
-        /// PUT /api/Clinic/appointments/{appointmentId}/end
+        /// PUT clinic/appointments/{appointmentId}/end
         /// </code>
         /// </remarks>
         /// <param name="appointmentId">The ID of the appointment to end.</param>

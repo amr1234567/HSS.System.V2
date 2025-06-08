@@ -1,4 +1,5 @@
-﻿using HSS.System.V2.Domain.Models.Common;
+﻿using HSS.System.V2.Domain.Helpers.Methods;
+using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Facilities;
 
 namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
@@ -18,7 +19,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
             EndAt = model.EndAt;
             NumberOfShifts = model.NumberOfShifts;
             PeriodPerAppointment = model.PeriodPerAppointment;
-            var now = DateTime.Now.TimeOfDay;
+            var now = HelperDate.GetCurrentDate().TimeOfDay;
             CurrentTesterName = model.CurrentWorkingTester?.Name ?? "غير محدد";
 
             return this;

@@ -13,13 +13,20 @@ using System.Linq.Expressions;
 
 namespace HSS.System.V2.DataAccess.Repositories
 {
-    public class MedicineRepository(AppDbContext context) : IMedicineRepository
+    public class MedicineRepository : IMedicineRepository
     {
+        private readonly AppDbContext _context;
+
+        public MedicineRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<Result<PagedResult<Medicine>>> GetAllMedicinesAsync(int page = 1, int size = 10, params Expression<Func<Medicine, object>>[]? includes)
         {
             try
             {
-                IQueryable<Medicine> medicinesQuery = context.Medicines;
+                IQueryable<Medicine> medicinesQuery = _context.Medicines;
                 if (includes is not null)
                 {
                     foreach (var item in includes)
@@ -39,7 +46,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                IQueryable<Medicine> medicinesQuery = context.Medicines.Where(item => item.Name.Contains(query));
+                IQueryable<Medicine> medicinesQuery = _context.Medicines.Where(item => item.Name.Contains(query));
                 if (includes is not null)
                 {
                     foreach (var item in includes)
@@ -59,7 +66,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                return await context.MedicinePharmacies
+                return await _context.MedicinePharmacies
                     .Where(item => item.PharmacyId == pharmacyId)
                     .GetPagedAsync(page, size);
             }
@@ -73,7 +80,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                IQueryable<Medicine> medicinesQuery = context.Medicines.Where(item => item.Id == id);
+                IQueryable<Medicine> medicinesQuery = _context.Medicines.Where(item => item.Id == id);
                 if (includes is not null)
                 {
                     foreach (var item in includes)
@@ -94,10 +101,22 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             try
             {
-                return await context.MedicinePharmacies
+                return await _context.MedicinePharmacies
                     .Where(item => item.PharmacyId == pharmacyId && item.MedicineId == medicineId)
                     .Include(i => i.Medicine)
                     .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                return new RetrievingDataFromDbContextError(ex);
+            }
+        }
+
+        public async Task<Result<IEnumerable<Medicine>>> GetAllMedicinesAsync(string query)
+        {
+            try
+            {
+                return await _context.Medicines.Where(m => m.Name.Contains(query)).ToListAsync();
             }
             catch (Exception ex)
             {

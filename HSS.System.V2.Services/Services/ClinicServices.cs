@@ -1,11 +1,14 @@
 ﻿using FluentResults;
 
 using HSS.System.V2.DataAccess.Contracts;
+using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Helpers.Models;
 using HSS.System.V2.Domain.Models.Appointments;
+using HSS.System.V2.Domain.Models.Queues;
 using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.ClinicDTOs;
+using HSS.System.V2.Services.DTOs.ReceptionDTOs;
 
 namespace HSS.System.V2.Services.Services;
 
@@ -17,10 +20,11 @@ public class ClinicServices : IClinicServices
     private readonly IDiseaseRepository _diseaseRepository;
     private readonly ITestsRepository _testsRepository;
     private readonly IMedicineRepository _medicineRepository;
+    private readonly IQueueRepository _queueRepository;
 
     public ClinicServices(IAppointmentRepository appointmentRepository, ITicketRepository ticketRepository,
         IMedicalHistoryRepository medicalHistoryRepository, IDiseaseRepository diseaseRepository,
-        ITestsRepository testsRepository, IMedicineRepository medicineRepository)
+        ITestsRepository testsRepository, IMedicineRepository medicineRepository, IQueueRepository queueRepository)
     {
         _appointmentRepository = appointmentRepository;
         _ticketRepository = ticketRepository;
@@ -28,6 +32,7 @@ public class ClinicServices : IClinicServices
         _diseaseRepository = diseaseRepository;
         _testsRepository = testsRepository;
         _medicineRepository = medicineRepository;
+        _queueRepository = queueRepository;
     }
     public async Task<Result<ClinicAppointmentDto>> GetAppointmentDetailsById(string appointmentId)
     {
@@ -109,7 +114,7 @@ public class ClinicServices : IClinicServices
         appointment.EmployeeName = appointment.Clinic.CurrentWorkingDoctor.Name ?? "غير معروف";
         appointment.ReExaminationNeeded = request.ReExaminationNeeded;
 
-        if(request.TestsRequired is not null && request.TestsRequired.Any())
+        if (request.TestsRequired is not null && request.TestsRequired.Count != 0)
         {
             foreach(var testRequired in request.TestsRequired)
             {
@@ -144,5 +149,27 @@ public class ClinicServices : IClinicServices
         var appointment = appointmentResult.Value;
         appointment.State = Domain.Enums.AppointmentState.Completed;
         return await _appointmentRepository.UpdateAppointmentAsync(appointment);
+    }
+
+    public async Task<Result<PagedResult<AppointmentDto>>> GetQueue(string departmentId, int page, int pageSize)
+    {
+        return await _queueRepository.GetQueueByDepartmentId<ClinicQueue>(departmentId)
+            .MapAsync(q => q.Appointments
+                                        .OrderByDescending(x => x.CreatedAt)
+                                        .OrderBy(x => x.State)
+                                        .Select(a => new AppointmentDto().MapFromModel(a))
+                                        .GetPaged(page, pageSize));
+    }
+
+    public async Task<Result<IEnumerable<MedicineForClinicDto>>> GetMedinices(string querySearch)
+    {
+        return await _medicineRepository.GetAllMedicinesAsync(querySearch)
+            .MapAsync(m => m.Select(m1 => new MedicineForClinicDto().MapFromModel(m1)));
+    }
+
+    public async Task<Result<IEnumerable<DiseaseForClinicDto>>> GetDiseases(string querySearch)
+    {
+        return await _diseaseRepository.GetAllDiseases(querySearch)
+            .MapAsync(ds => ds.Select(d => new DiseaseForClinicDto().MapFromModel(d)));
     }
 }

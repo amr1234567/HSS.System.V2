@@ -9,9 +9,11 @@ using HSS.System.V2.Domain.ResultHelpers.Errors;
 using HSS.System.V2.Services.Contracts;
 using HSS.System.V2.Services.DTOs.RadiologyCenterDTOs;
 using HSS.System.V2.Services.DTOs.ReceptionDTOs;
+using HSS.System.V2.Domain.Enums;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using HSS.System.V2.Domain.Constants;
 
 namespace HSS.System.V2.Services.Services
 {
@@ -32,6 +34,9 @@ namespace HSS.System.V2.Services.Services
         {
             var apps = await _queueRepository.GetQueueByDepartmentId<RadiologyCenterQueue>(radiologyCenterId);
             return apps.Value.RadiologyCeneterAppointments
+                .Where(a => a.ActualStartAt!.Value.Date == HelperDate.GetCurrentDate().Date)
+                .OrderByDescending(x => x.CreatedAt)
+                .OrderBy(x => x.State)
                 .Select(a => new AppointmentDto().MapFromModel(a))
                 .GetPaged(page, pageSize);
         }
@@ -39,18 +44,22 @@ namespace HSS.System.V2.Services.Services
         public async Task<Result<RadiologyAppointmentModel>> GetCurrentRadiologyAppointment(string appointmentId)
         {
             var appResult = await _appointmentRepository.GetAppointmentByIdAsync<RadiologyCeneterAppointment>(appointmentId)
-                .EnsureNoneAsync((r => r is null, new EntityNotExistsError("this appointment can't be found")));
+                .EnsureNoneAsync(
+                (r => r is null, new EntityNotExistsError("this appointment can't be found")),
+                (r => r.State is AppointmentState.InProgress, new BadArgumentsError("هذا الحجز لم يبدأ بعد")));
             if (appResult.IsFailed)
                 return Result.Fail(appResult.Errors);
             return new RadiologyAppointmentModel()
             {
                 AppointmentId = appointmentId,
-                LastAppointmentDiagnosis = appResult.Value.ClinicAppointment!.Diagnosis ?? "لم يتم التحديد",
+                LastAppointmentDiagnosis = appResult.Value.ClinicAppointment is null ? null : appResult.Value.ClinicAppointment.Diagnosis ?? "لم يتم التحديد",
                 PatientId = appResult.Value.PatientId,
                 PatientName = appResult.Value.PatientName,
                 PatientNationalId = appResult.Value.PatientNationalId,
                 TestNeededId = appResult.Value.TestId,
                 TestNeededName = appResult.Value.Test.Name,
+                Images = (await _appointmentRepository.GetRadiologyAppointmentResultImages(appointmentId)).Value
+                            .Select(r => DomainPaths.Domain + r.ImagePath).ToList()
             };
         }
 
@@ -59,7 +68,9 @@ namespace HSS.System.V2.Services.Services
             try
             {
                 var appResult = await _appointmentRepository.GetAppointmentByIdAsync<RadiologyCeneterAppointment>(appointmentId)
-                                .EnsureNoneAsync((r => r is null, new EntityNotExistsError("this appointment can't be found")));
+                                .EnsureNoneAsync(
+                                    (r => r is null, new EntityNotExistsError("this appointment can't be found")),
+                                    (r => r.State is AppointmentState.InProgress, new BadArgumentsError("هذا الحجز لم يبدأ بعد")));
                 if (appResult.IsFailed)
                     return Result.Fail(appResult.Errors);
 
@@ -94,7 +105,7 @@ namespace HSS.System.V2.Services.Services
             if (appointmentResult.IsFailed)
                 return Result.Fail(appointmentResult.Errors);
             var appointment = appointmentResult.Value;
-            appointment.State = Domain.Enums.AppointmentState.Completed;
+            appointment.State = AppointmentState.Completed;
             return await _appointmentRepository.UpdateAppointmentAsync(appointment);
         }
     }

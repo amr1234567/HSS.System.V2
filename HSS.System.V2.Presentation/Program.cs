@@ -101,6 +101,9 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireRoutes();
+app.UseSerilog();
+
 app.MapControllers();
 
 app.Run();

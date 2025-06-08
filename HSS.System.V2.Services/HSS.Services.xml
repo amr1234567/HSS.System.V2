@@ -206,6 +206,29 @@
             Data transfer object representing a clinic.
             </summary>
         </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateAppointmentModelForReception">
+            <summary>
+            Model that recive the data that responsible for create a new appointment
+            </summary>
+        </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateClinicAppointmentModelForReception">
+            <inheritdoc/>
+        </member>
+        <member name="M:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateClinicAppointmentModelForReception.ToModel">
+            <inheritdoc/>
+        </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateRadiologyAppointmentModelForReception">
+            <inheritdoc/>
+        </member>
+        <member name="M:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateRadiologyAppointmentModelForReception.ToModel">
+            <inheritdoc/>
+        </member>
+        <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateMedicalLabAppointmentModelForReception">
+            <inheritdoc/>
+        </member>
+        <member name="M:HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateMedicalLabAppointmentModelForReception.ToModel">
+            <inheritdoc/>
+        </member>
         <member name="T:HSS.System.V2.Services.DTOs.ReceptionDTOs.RadiologyCenterDto">
             <summary>
             Data transfer object representing a radiology center.
@@ -220,6 +243,18 @@
             <inheritdoc/>
         </member>
         <member name="M:HSS.System.V2.Services.Services.PatientServices.GetCurrentMedicalLabAppointments(HSS.System.V2.Domain.Helpers.Models.PaginationRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HSS.System.V2.Services.Services.ReceptionServices.GetOpenTicketsForPatientByNationalId(System.String,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HSS.System.V2.Services.Services.ReceptionServices.GetOpenTicketsForPatientById(System.String,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HSS.System.V2.Services.Services.ReceptionServices.CreateAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateClinicAppointmentModelForReception)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HSS.System.V2.Services.Services.ReceptionServices.CreateAppointment(HSS.System.V2.Services.DTOs.ReceptionDTOs.CreateRadiologyAppointmentModelForReception)">
             <inheritdoc/>
         </member>
     </members>

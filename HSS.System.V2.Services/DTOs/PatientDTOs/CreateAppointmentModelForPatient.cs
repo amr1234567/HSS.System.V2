@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Facilities;
@@ -27,8 +28,8 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
                 Id = Guid.NewGuid().ToString(),
                 TicketId = TicketId,
                 State = Domain.Enums.AppointmentState.NotStarted,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = HelperDate.GetCurrentDate(),
+                UpdatedAt = HelperDate.GetCurrentDate(),
                 SchaudleStartAt = ExpectedTimeForStart
             };
         }
@@ -47,9 +48,9 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
             return new()
             {
                 SchaudleStartAt = ExpectedTimeForStart,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = HelperDate.GetCurrentDate(),
                 Id = Guid.NewGuid().ToString(),
-                UpdatedAt = DateTime.UtcNow,
+                UpdatedAt = HelperDate.GetCurrentDate(),
                 State = Domain.Enums.AppointmentState.NotStarted,
                 RadiologyCeneterId = RadiologyCenterId
             };
@@ -69,9 +70,9 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
             return new()
             {
                 SchaudleStartAt = ExpectedTimeForStart,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = HelperDate.GetCurrentDate(),
                 Id = Guid.NewGuid().ToString(),
-                UpdatedAt = DateTime.UtcNow,
+                UpdatedAt = HelperDate.GetCurrentDate(),
                 State = Domain.Enums.AppointmentState.NotStarted,
                 MedicalLabId = MedicalLabId
             };

@@ -16,7 +16,7 @@ using HSS.System.V2.Domain.Models.Medical;
 
 namespace HSS.System.V2.Presentation.Controllers
 {
-    [AuthorizeByEnum(UserRole.Receptionist)]
+    [AuthorizeByEnum(UserRole.Receptionist, UserRole.Doctor)]
     [ApiExplorerSettings(GroupName = "RecpetionAPI")]
     public class ReceptionController : CustomBaseController
     {

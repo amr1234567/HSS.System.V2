@@ -2,6 +2,7 @@
 
 using HSS.System.V2.DataAccess.Contexts;
 using HSS.System.V2.DataAccess.Contracts;
+using HSS.System.V2.Domain.Helpers.Methods;
 using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Medical;
 using HSS.System.V2.Domain.Models.People;
@@ -64,8 +65,8 @@ public class MedicalHistoryRepository : IMedicalHistoryRepository
             PatientId = ticket.PatientId,
             PatientName = ticket.PatientName,
             PatientNationalId = ticket.PatientNationalId,
-            UpdatedAt = DateTime.UtcNow,
-            TicketId = ticket.Id
+            UpdatedAt = HelperDate.GetCurrentDate(),
+            TicketId = ticket.Id,
         };
         await _context.MedicalHistories.AddAsync(model);
         await _context.SaveChangesAsync();

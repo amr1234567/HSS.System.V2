@@ -30,7 +30,6 @@ namespace HSS.System.V2.DataAccess.Repositories
             try
             {
                 await _context.Appointments.AddAsync(model);
-                await _context.SaveChangesAsync();
                 return Result.Ok();
             }
             catch (Exception ex)
@@ -323,6 +322,18 @@ namespace HSS.System.V2.DataAccess.Repositories
                 await _context.RadiologyReseltImages.AddAsync(result);
                 await _context.SaveChangesAsync();
                 return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionalError(ex);
+            }
+        }
+
+        public async Task<Result<IEnumerable<RadiologyReseltImage>>> GetRadiologyAppointmentResultImages(string appId)
+        {
+            try
+            {
+                return await _context.RadiologyReseltImages.Where(r => r.AppointmentId == appId).ToListAsync();
             }
             catch (Exception ex)
             {

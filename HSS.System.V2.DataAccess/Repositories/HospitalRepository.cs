@@ -293,7 +293,7 @@ public class HospitalRepository : IHospitalRepository
             currentDay = SafeAddTime(currentDay, TimeSpan.FromDays(1));
         }
 
-        return resultSlots.Where(d => DateTime.UtcNow <= d).ToList();
+        return resultSlots.Where(d => HelperDate.GetCurrentDate() <= d).ToList();
     }
 
     public async Task<Result<List<DateTime>>> GetAvailableTimeSlotsAsync<TDept>(string departmentId, DateTime date) where TDept : BaseClass, IHospitalDepartmentItem
@@ -409,7 +409,7 @@ public class HospitalRepository : IHospitalRepository
                 currentDateTime = currentDateTime.Add(radiologyCenter.PeriodPerAppointment);
             }
         }
-        return dates.Where(d => DateTime.UtcNow <= d).ToList();
+        return dates.Where(d => HelperDate.GetCurrentDate() <= d).ToList();
     }
 
     private DateTime SafeAddTime(DateTime date, TimeSpan time)

@@ -32,5 +32,6 @@ namespace HSS.System.V2.DataAccess.Contracts
         Task<Result<PagedResult<Appointment>>> GetAllAppointmentsForUser(string apiUserId, PaginationRequest pagination, AppointmentState state);
 
         Task<Result> AddImageToRadiologyAppointmentResult(RadiologyReseltImage result);
+        Task<Result<IEnumerable<RadiologyReseltImage>>> GetRadiologyAppointmentResultImages(string appId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using HSS.System.V2.Domain.Models.Common;
+﻿using HSS.System.V2.Domain.Helpers.Methods;
+using HSS.System.V2.Domain.Models.Common;
 using HSS.System.V2.Domain.Models.Medical;
 
 namespace HSS.System.V2.Services.DTOs.ClinicDTOs
@@ -11,8 +12,8 @@ namespace HSS.System.V2.Services.DTOs.ClinicDTOs
             return new()
             {
                 Id = Guid.NewGuid().ToString(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = HelperDate.GetCurrentDate(),
+                UpdatedAt = HelperDate.GetCurrentDate(),
                 TestId = TestId,
                 Used = false
             };

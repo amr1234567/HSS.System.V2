@@ -456,14 +456,14 @@ namespace HSS.System.V2.Services.Services
                 PatientName = patient.Name,
                 HospitalCreatedInId = hospital.Id,
                 State = TicketState.Active,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = HelperDate.GetCurrentDate(),
             };
             return await _ticketRepository.CreateTicket(ticket);
         }
 
         public async Task<Result> CreateClinicAppointment(CreateClinicAppointmentModelForPatient model)
         {
-            if (model.ExpectedTimeForStart < DateTime.UtcNow)
+            if (model.ExpectedTimeForStart < HelperDate.GetCurrentDate())
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
             var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
             if(patient.IsFailed)
@@ -505,7 +505,7 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModelForPatient model)
         {
-            if (model.ExpectedTimeForStart < DateTime.UtcNow)
+            if (model.ExpectedTimeForStart < HelperDate.GetCurrentDate())
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
             var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
             if (patient.IsFailed)
@@ -545,7 +545,7 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModelForPatient model)
         {
-            if (model.ExpectedTimeForStart < DateTime.UtcNow)
+            if (model.ExpectedTimeForStart < HelperDate.GetCurrentDate())
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
             var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
             if (patient.IsFailed)
@@ -983,7 +983,7 @@ namespace HSS.System.V2.Services.Services
             if (appointment.IsFailed)
                 return Result.Fail(appointment.Errors);
             appointment.Value.State = AppointmentState.Cancelled;
-            appointment.Value.UpdatedAt = DateTime.UtcNow;
+            appointment.Value.UpdatedAt = HelperDate.GetCurrentDate();
             return await _appointmentRepository.UpdateAppointmentAsync(appointment.Value);
         }
 

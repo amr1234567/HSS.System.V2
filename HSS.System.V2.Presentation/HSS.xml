@@ -145,6 +145,20 @@
             <param name="result">The result object.</param>
             <returns>An IActionResult representing the result.</returns>
         </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetQueue(System.Int32,System.Int32)">
+            <summary>
+            Retrieves the queue for a clinic.
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /clinic/queue?page=1&amp;pageSize=10
+            </code>
+            </remarks>
+            <param name="page">The page number (default: 1).</param>
+            <param name="pageSize">The number of items per page (default: 10).</param>
+            <returns>Paginated list of appointments in the queue.</returns>
+        </member>
         <member name="M:HSS.System.V2.Presentation.Controllers.ClinicController.GetAppointmentDetails(System.String)">
             <summary>
             Retrieves the details of a specific appointment by its ID.
@@ -152,7 +166,7 @@
             <remarks>
             Sample request:
             <code>
-            GET /api/Clinic/appointments/{appointmentId}
+            GET /clinic/appointments/{appointmentId}
             </code>
             </remarks>
             <param name="appointmentId">The ID of the appointment to retrieve.</param>
@@ -165,7 +179,7 @@
             <remarks>
             Sample request:
             <code>
-            GET /api/Clinic/tickets/{ticketId}
+            GET /clinic/tickets/{ticketId}
             </code>
             </remarks>
             <param name="ticketId">The ID of the ticket to retrieve.</param>
@@ -178,7 +192,7 @@
             <remarks>
             Sample request:
             <code>
-            GET /api/Clinic/patients/{patientId}/medical-histories?page=1&amp;size=10
+            GET /clinic/patients/{patientId}/medical-histories?page=1&amp;size=10
             </code>
             </remarks>
             <param name="patientId">The ID of the patient.</param>
@@ -193,7 +207,7 @@
             <remarks>
             Sample request:
             <code>
-            GET /api/Clinic/patients/{patientId}/medical-histories/all
+            GET /clinic/patients/{patientId}/medical-histories/all
             </code>
             </remarks>
             <param name="patientId">The ID of the patient.</param>
@@ -206,7 +220,7 @@
             <remarks>
             Sample request:
             <code>
-            GET /api/Clinic/medical-histories/{medicalHistoryId}
+            GET /clinic/medical-histories/{medicalHistoryId}
             </code>
             </remarks>
             <param name="medicalHistoryId">The ID of the medical history.</param>
@@ -219,7 +233,7 @@
             <remarks>
             Sample request:
             <code>
-            POST /api/Clinic/results
+            POST /clinic/results
             {
               "appointmentId": "123",
               "diseaseId": "456",
@@ -251,7 +265,7 @@
             <remarks>
             Sample request:
             <code>
-            PUT /api/Clinic/appointments/{appointmentId}/end
+            PUT clinic/appointments/{appointmentId}/end
             </code>
             </remarks>
             <param name="appointmentId">The ID of the appointment to end.</param>

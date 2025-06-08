@@ -1,86 +1,91 @@
-﻿using HSS.System.V2.Domain.Models.Appointments;
+﻿using HSS.System.V2.Domain.Helpers.Methods;
+using HSS.System.V2.Domain.Models.Appointments;
 using HSS.System.V2.Domain.Models.Common;
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
+namespace HSS.System.V2.Services.DTOs.ReceptionDTOs;
+
+/// <summary>
+/// Model that recive the data that responsible for create a new appointment
+/// </summary>
+public record CreateAppointmentModelForReception
 {
-    public record CreateAppointmentModelForReception
-    {
-        [Required]
-        public DateTime ExpectedTimeForStart { get; set; }
-        [Required]
-        public string NationalId { get; set; }
-    }
+    [Required]
+    public DateTime ExpectedTimeForStart { get; set; }
+    [Required]
+    public string NationalId { get; set; }
+}
 
-    public record CreateClinicAppointmentModelForReception : CreateAppointmentModelForReception, IInputModel<ClinicAppointment>
-    {
-        [Required]
-        public string ClinicId { set; get; }
-        [Required]
-        public string TicketId { get; set; }
+/// <inheritdoc/>
+public record CreateClinicAppointmentModelForReception : CreateAppointmentModelForReception, IInputModel<ClinicAppointment>
+{
+    [Required]
+    public string ClinicId { set; get; }
+    [Required]
+    public string TicketId { get; set; }
 
-        public ClinicAppointment ToModel()
+    /// <inheritdoc/>
+    public ClinicAppointment ToModel()
+    {
+        return new()
         {
-            return new()
-            {
-                ClinicId = ClinicId,
-                Id = Guid.NewGuid().ToString(),
-                TicketId = TicketId,
-                State = Domain.Enums.AppointmentState.NotStarted,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                SchaudleStartAt = ExpectedTimeForStart
-            };
-        }
+            ClinicId = ClinicId,
+            Id = Guid.NewGuid().ToString(),
+            TicketId = TicketId,
+            State = Domain.Enums.AppointmentState.NotStarted,
+            CreatedAt = HelperDate.GetCurrentDate(),
+            UpdatedAt = HelperDate.GetCurrentDate(),
+            SchaudleStartAt = ExpectedTimeForStart
+        };
     }
+}
 
-    public record CreateRadiologyAppointmentModelForReception : CreateAppointmentModelForReception, IInputModel<RadiologyCeneterAppointment>
+/// <inheritdoc/>
+public record CreateRadiologyAppointmentModelForReception : CreateAppointmentModelForReception, IInputModel<RadiologyCeneterAppointment>
+{
+    [Required]
+    public string RadiologyCenterId { get; set; }
+    public string? TicketId { get; set; }
+    public string? TextRequiredId { get; set; }
+    public string? TestId { set; get; }
+
+
+    /// <inheritdoc/>
+    public RadiologyCeneterAppointment ToModel()
     {
-        [Required]
-        public string RadiologyCenterId { get; set; }
-        public string? TicketId { get; set; }
-        public string? TextRequiredId { get; set; }
-
-
-        public RadiologyCeneterAppointment ToModel()
+        return new()
         {
-            return new()
-            {
-                SchaudleStartAt = ExpectedTimeForStart,
-                CreatedAt = DateTime.UtcNow,
-                Id = Guid.NewGuid().ToString(),
-                UpdatedAt = DateTime.UtcNow,
-                State = Domain.Enums.AppointmentState.NotStarted,
-                RadiologyCeneterId = RadiologyCenterId
-            };
-        }
+            SchaudleStartAt = ExpectedTimeForStart,
+            CreatedAt = HelperDate.GetCurrentDate(),
+            Id = Guid.NewGuid().ToString(),
+            UpdatedAt = HelperDate.GetCurrentDate(),
+            State = Domain.Enums.AppointmentState.NotStarted,
+            RadiologyCeneterId = RadiologyCenterId,
+        };
     }
+}
 
-    public record CreateMedicalLabAppointmentModelForReception : CreateAppointmentModelForReception, IInputModel<MedicalLabAppointment>
+/// <inheritdoc/>
+public record CreateMedicalLabAppointmentModelForReception : CreateAppointmentModelForReception, IInputModel<MedicalLabAppointment>
+{
+    [Required]
+    public string MedicalLabId { get; set; }
+    public string? TicketId { get; set; }
+    public string? TextRequiredId { get; set; }
+
+
+    /// <inheritdoc/>
+    public MedicalLabAppointment ToModel()
     {
-        [Required]
-        public string MedicalLabId { get; set; }
-        public string? TicketId { get; set; }
-        public string? TextRequiredId { get; set; }
-
-
-        public MedicalLabAppointment ToModel()
+        return new()
         {
-            return new()
-            {
-                SchaudleStartAt = ExpectedTimeForStart,
-                CreatedAt = DateTime.UtcNow,
-                Id = Guid.NewGuid().ToString(),
-                UpdatedAt = DateTime.UtcNow,
-                State = Domain.Enums.AppointmentState.NotStarted,
-                MedicalLabId = MedicalLabId
-            };
-        }
+            SchaudleStartAt = ExpectedTimeForStart,
+            CreatedAt = HelperDate.GetCurrentDate(),
+            Id = Guid.NewGuid().ToString(),
+            UpdatedAt = HelperDate.GetCurrentDate(),
+            State = Domain.Enums.AppointmentState.NotStarted,
+            MedicalLabId = MedicalLabId
+        };
     }
 }

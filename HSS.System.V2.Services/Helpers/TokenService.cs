@@ -25,7 +25,7 @@ namespace HSS.System.V2.Services.Helpers
             if (customClaims != null)
                 claims.AddRange(customClaims);
 
-            var expirationDate = DateTime.UtcNow.AddMinutes(_jwtHelper.JwtExpireMinutes);
+            var expirationDate = HelperDate.GetCurrentDate().AddMinutes(_jwtHelper.JwtExpireMinutes);
 
             var token = new JwtSecurityToken(
                 claims: claims,
