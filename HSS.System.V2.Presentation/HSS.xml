@@ -4,6 +4,16 @@
         <name>HSS.System.V2.Presentation</name>
     </assembly>
     <members>
+        <member name="T:HSS.System.V2.Presentation.ApiRoutes">
+            <summary>
+            The routes of the hole application
+            </summary>
+        </member>
+        <member name="T:HSS.System.V2.Presentation.ApiRoutes.Patient">
+            <summary>
+            The routes of the patient endpoints
+            </summary>
+        </member>
         <member name="T:HSS.System.V2.Presentation.Controllers.AuthEmployeeController">
             <summary>
             Controller for managing employee authentication operations.
