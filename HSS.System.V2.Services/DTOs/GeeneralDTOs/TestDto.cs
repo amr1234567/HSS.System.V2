@@ -12,6 +12,7 @@ namespace HSS.System.V2.Services.DTOs.GeeneralDTOs
         public string Description { get; set; }
         public double TestPrice { get; set; }
         public double EstimatedDurationInMinutes { get; set; }
+        public string? Icon { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? SampleType { get; set; }
@@ -30,6 +31,7 @@ namespace HSS.System.V2.Services.DTOs.GeeneralDTOs
             Description = model.Description;
             TestPrice = model.TestPrice;
             EstimatedDurationInMinutes = model.EstimatedDurationInMinutes;
+            Icon = model.Icon;
             if (model is MedicalLabTest labTest)
             {
                 SampleType = labTest.SampleType;

@@ -7,6 +7,7 @@ public class MedicalLabTest : Test
 {
     public string SampleType { get; set; }
 
+
     public virtual ICollection<MedicalLabAppointment> MedicalLabAppointments { get; set; }
     public virtual ICollection<MedicalLab> MedicalLabs { get; set; }
 
