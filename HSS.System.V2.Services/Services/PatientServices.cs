@@ -268,25 +268,32 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result<object>> GetAppointmentDetails(string appointmentId)
         {
-            var appointmentResult = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
-
-            if (appointmentResult.IsFailed)
-                return Result.Fail(appointmentResult.Errors);
-
-            var appointment = appointmentResult.Value;
-
-
-            if (appointment == null)
-                return Result.Fail("this appointment don't have details");
-
-            var details = await _queueRepository.GetAppointemntCustomDetails(appointment);
-
-            return Result.Ok<object>(new
+            try
             {
-                appointment.Hospital.Address,
-                AppointmentNumber = details.Index,
-                AppoitnmentStartAt = details.StartAt
-            });
+                var appointmentResult = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+
+                if (appointmentResult.IsFailed)
+                    return Result.Fail(appointmentResult.Errors);
+
+                var appointment = appointmentResult.Value;
+
+
+                if (appointment == null)
+                    return Result.Fail("this appointment don't have details");
+
+                var details = await _queueRepository.GetAppointemntCustomDetails(appointment);
+
+                return Result.Ok<object>(new
+                {
+                    appointment.Hospital.Address,
+                    AppointmentNumber = details.Index,
+                    AppoitnmentStartAt = details.StartAt
+                });
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new BadRequestError(ex.Message));
+            }
         }
 
         public async Task<Result<List<SpecialzationDto>>> GetAllSpecialzations()
@@ -307,6 +314,7 @@ namespace HSS.System.V2.Services.Services
                 {
                     Id = t.Id,
                     Name = t.Name,
+                    Icon = t.Icon
                 }), data.TotalCount, data.CurrentPage, data.PageSize));
         }
 
@@ -317,6 +325,7 @@ namespace HSS.System.V2.Services.Services
                 {
                     Id = t.Id,
                     Name = t.Name,
+                    Icon = t.Icon
                 }), data.TotalCount, data.CurrentPage, data.PageSize));
         }
 

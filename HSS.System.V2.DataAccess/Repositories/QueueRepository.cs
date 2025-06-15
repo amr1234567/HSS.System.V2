@@ -479,9 +479,60 @@ namespace HSS.System.V2.DataAccess.Repositories
         }
 
 
-        public Task<(DateTime StartAt, int Index)> GetAppointemntCustomDetails(Appointment appointment)
+        public async Task<(DateTime StartAt, int Index)> GetAppointemntCustomDetails(Appointment appointment)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(appointment.QueueId))
+                throw new Exception("Appointment not in the queue");
+            if (appointment is ClinicAppointment c)
+            {
+                var queue = await _context.ClinicQueues
+                    .Where(q => q.Id == c.QueueId)
+                    .Include(q => q.ClinicAppointments)
+                    .FirstOrDefaultAsync()
+                    ?? throw new Exception("Queue is not exist");
+
+                var index = queue.ClinicAppointments.ToList()
+                        .FindIndex(a => a.Id == c.Id);
+
+                if (index == -1)
+                    throw new Exception("Appointment not found in queue");
+
+                return (c.ActualStartAt.Value, index + 1);
+            }
+            else if (appointment is MedicalLabAppointment m)
+            {
+                var queue = await _context.MedicalLabQueues
+                    .Where(q => q.Id == m.QueueId)
+                    .Include(q => q.MedicalLabAppointments)
+                    .FirstOrDefaultAsync()
+                    ?? throw new Exception("Queue is not exist");
+
+                var index = queue.MedicalLabAppointments.ToList()
+                        .FindIndex(a => a.Id == m.Id);
+
+                if (index == -1)
+                    throw new Exception("Appointment not found in queue");
+
+                return (m.ActualStartAt.Value, index + 1);
+            }
+            else if (appointment is RadiologyCeneterAppointment r)
+            {
+                var queue = await _context.RadiologyCenterQueues
+                    .Where(q => q.Id == r.QueueId)
+                    .Include(q => q.RadiologyCeneterAppointments)
+                    .FirstOrDefaultAsync()
+                    ?? throw new Exception("Queue is not exist");
+
+                var index = queue.RadiologyCeneterAppointments.ToList()
+                        .FindIndex(a => a.Id == r.Id);
+
+                if (index == -1)
+                    throw new Exception("Appointment not found in queue");
+
+                return (r.ActualStartAt.Value, index + 1);
+            }
+            else
+                throw new Exception("Unexpected end");
         }
     }
 }
