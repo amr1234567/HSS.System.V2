@@ -445,6 +445,7 @@ namespace HSS.System.V2.Presentation.Controllers
         [HttpPost(ApiRoutes.Patient.CreateRadiologyAppointment)]
         public async Task<IActionResult> CreateRadiologyAppointment([FromBody] CreateRadiologyAppointmentModelForPatient model)
         {
+            model.NationalId = GetNationalId();
             var result = await _patientService.CreateRadiologyAppointMent(model);
             return GetResponseWithoutType(result);
         }

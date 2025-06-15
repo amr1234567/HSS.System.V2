@@ -41,6 +41,7 @@ namespace HSS.System.V2.Services.Services
         private readonly AppDbContext _context;
         private readonly IMedicalLabTestResultServices _medicalLabTestResultServices;
         private readonly ISpecializationReporitory _specializationReporitory;
+        private readonly IUnitOfWork _unitOfWork;
         public readonly BaseUrls _baseUrlsModel;
 
         public PatientServices(IUserContext userContext, INotificationRepository notificationRepository,
@@ -49,7 +50,7 @@ namespace HSS.System.V2.Services.Services
             IHospitalRepository hospitalRepository, ITicketRepository ticketRepository,
             ITestRequiredRepository testRequiredRepository, IPrescriptionRepository prescriptionRepository,
             IWebHostEnvironment env, AppDbContext context, IMedicalLabTestResultServices medicalLabTestResultServices,
-            ISpecializationReporitory specializationReporitory, IOptions<BaseUrls> options)
+            ISpecializationReporitory specializationReporitory, IOptions<BaseUrls> options, IUnitOfWork unitOfWork)
         {
             _userContext = userContext;
             _notificationRepository = notificationRepository;
@@ -65,6 +66,7 @@ namespace HSS.System.V2.Services.Services
             _context = context;
             _medicalLabTestResultServices = medicalLabTestResultServices;
             _specializationReporitory = specializationReporitory;
+            _unitOfWork = unitOfWork;
             _baseUrlsModel = options.Value;
         }
 
@@ -474,27 +476,36 @@ namespace HSS.System.V2.Services.Services
         {
             if (model.ExpectedTimeForStart < HelperDate.GetCurrentDate())
                 return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
-            var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
-            if(patient.IsFailed)
-                return Result.Fail(patient.Errors);
-            var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId);
-            if(clinic.IsFailed)
+
+            var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId)
+                .EnsureNoneAsync((c => c is null, new EntityNotExistsError("هذه العيادة غير موجودة")));
+            if (clinic.IsFailed)
                 return Result.Fail(clinic.Errors);
             var ticket = await _ticketRepository.GetTicketById(model.TicketId);
-            if(ticket.IsFailed)
+            if (ticket.IsFailed)
                 return Result.Fail(ticket.Errors);
+
+            var patient = ticket.Value.Patient;
+
             var clinicAppointment = ticket.Value.FirstClinicAppointment;
             var entity = model.ToModel();
+            entity.ClinicId = clinic.Value!.Id;
             entity.DepartmentName = clinic.Value.Name;
             entity.HospitalName = clinic.Value.Hospital.Name;
             entity.HospitalId = clinic.Value.HospitalId;
-            entity.PatientNationalId = patient.Value.NationalId;
-            entity.PatientName = patient.Value.Name;
+            entity.PatientNationalId = patient.NationalId;
+            entity.PatientName = patient.Name;
+            entity.PatientId = patient.Id;
             entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
             entity.EmployeeName = string.Empty;
 
             var check = await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId);
-            if (check.Value)
+            if (string.IsNullOrEmpty(ticket.Value.FirstClinicAppointmentId))
+            {
+                ticket.Value.FirstClinicAppointment = entity;
+                ticket.Value.Appointments.Add(entity);
+            }
+            else if (check.Value)
             {
                 while (clinicAppointment.ReExamiationClinicAppointemnt is not null)
                 {
@@ -502,10 +513,11 @@ namespace HSS.System.V2.Services.Services
                 }
                 clinicAppointment.ReExamiationClinicAppointemntId = entity.Id;
                 entity.PreExamiationClinicAppointemntId = clinicAppointment.Id;
+                ticket.Value.Appointments.Add(entity);
             }
             else
             {
-                ticket.Value.FirstClinicAppointment = entity;
+                return new BadRequestError("هذه التذكرة ممتلئة، من فضلك افتح تذكرة جديدة");
             }
 
 
@@ -514,42 +526,101 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModelForPatient model)
         {
+            // 1) تأكد أن وقت الحجز ليس في الماضي
             if (model.ExpectedTimeForStart < HelperDate.GetCurrentDate())
-                return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
-            var patient = await _patientRepository.GetPatientById(_userContext.ApiUserId);
-            if (patient.IsFailed)
-                return Result.Fail(patient.Errors);
-            var radiologyCenter = await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(model.RadiologyCenterId);
-            if (radiologyCenter.IsFailed)
-                return Result.Fail(radiologyCenter.Errors);
-            var entity = model.ToModel();
-            var ticket = await _ticketRepository.GetTicketById(model.TicketId);
-            if (ticket.IsFailed)
-            {
-                var testRequired = await _testRequiredRepository.GetTestRequiredByIdAsync(model.TextRequiredId);
-                if (!testRequired.IsFailed && testRequired.Value is not null)
-                {
-                    entity.ClinicAppointmentId = testRequired.Value.ClinicAppointmentId;
-                    testRequired.Value.Used = true;
-                    await _testRequiredRepository.UpdateTestRequiredAsync(testRequired.Value);
-                }
-                else
-                {
-                    return new BadRequestError("you must provide ticket id or test required id");
-                }
-            }
-            entity.TicketId = ticket.Value.Id;
-            entity.ClinicAppointmentId = null;
-            entity.RadiologyCeneterId = radiologyCenter.Value!.Id;
-            entity.DepartmentName = radiologyCenter.Value!.Name;
-            entity.HospitalName = radiologyCenter.Value.Hospital.Name;
-            entity.PatientName = patient.Value.Name;
-            entity.HospitalId = radiologyCenter.Value.Hospital.Id;
-            entity.PatientNationalId = patient.Value.NationalId;
-            entity.ExpectedDuration = radiologyCenter.Value.PeriodPerAppointment;
+                return new BadArgumentsError("لا يمكن بدء الحجز في الماضي");
 
-            return await _appointmentRepository.CreateAppointmentAsync(entity)
-                .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
+            // 2) حدد ما إذا كان المستخدم أعطى (TicketId + TestId) أو (TestRequiredId)
+            bool hasTicketAndTest =
+                !string.IsNullOrEmpty(model.TicketId) &&
+                !string.IsNullOrEmpty(model.TestId);
+
+            bool hasTestRequired =
+                !string.IsNullOrEmpty(model.TextRequiredId);
+
+            // إذا لم يتم تلبية أيٍّ من الشروط، ارجع خطأ
+            if (!hasTicketAndTest && !hasTestRequired)
+                return new BadArgumentsError("البيانات المطلوبة غير متوفرة");
+
+            // 3) جلب بيانات الـ Patient
+            var patientResult = await _patientRepository.GetPatientByNationalId(model.NationalId);
+            if (patientResult.IsFailed)
+                return Result.Fail(patientResult.Errors);
+
+            // 4) جلب بيانات الـ RadiologyCenter
+            var radiologyCenterResult =
+                await _hospitalRepository.GetHospitalDepartmentItem<RadiologyCenter>(model.RadiologyCenterId);
+            if (radiologyCenterResult.IsFailed)
+                return Result.Fail(radiologyCenterResult.Errors);
+
+            // 5) إنشاء كيان الـ Appointment من الـ DTO
+            var entity = model.ToModel();
+
+            if (hasTestRequired)
+            {
+                // ======== Branch B: المستخدم أعطى TestRequiredId فقط ========
+                var testRequiredResult =
+                    await _testRequiredRepository.GetTestRequiredByIdAsync(model.TextRequiredId);
+
+                if (testRequiredResult.IsFailed || testRequiredResult.Value == null)
+                    return new BadArgumentsError("الاختبار الموصوف غير موجود في النظام");
+
+                // تأكد أن الـ testRequired مرتبط بحجز في العيادة
+                if (testRequiredResult.Value.ClinicAppointment == null)
+                    return new BadArgumentsError("لا يوجد حجز عيادة مرتبط بهذا الاختبار");
+
+                // انسخ الـ ClinicAppointmentId و TicketId من الـ testRequired
+                entity.ClinicAppointmentId = testRequiredResult.Value.ClinicAppointmentId;
+                entity.TicketId = testRequiredResult.Value.ClinicAppointment.TicketId;
+                entity.TestId = testRequiredResult.Value.TestId;
+
+                // وضع حالة Used = true على الـ testRequired
+                testRequiredResult.Value.Used = true;
+                var updateResult = await _testRequiredRepository.UpdateTestRequiredAsync(testRequiredResult.Value);
+                if (updateResult.IsFailed)
+                    return Result.Fail(updateResult.Errors);
+            }
+
+            else if (hasTicketAndTest)
+            {
+                // ======== Branch A: المستخدم أعطى TicketId + TestId ========
+                var ticketResult = await _ticketRepository.GetTicketById(model.TicketId);
+                if (ticketResult.IsFailed || ticketResult.Value == null)
+                    return new BadArgumentsError("التذكرة غير موجودة في النظام");
+
+                // تأكد أن الليستClinicAppointmentId فارغ (أي لم يتم حجز في العيادة بعد)
+                if (!string.IsNullOrEmpty(ticketResult.Value.FirstClinicAppointmentId))
+                    return new BadRequestError("هذه التذكرة تحتوي بالفعل على حجز");
+
+                // (اختياري) إذا كان لديك مستودع خاص بالـ RadiologyTest:
+                // var testResult = await _radiologyTestRepository.GetById(model.TestId);
+                // if (testResult.IsFailed || testResult.Value == null)
+                //     return new BadArgumentsError("الاختبار المطلوب غير موجود في النظام");
+
+                entity.TicketId = ticketResult.Value.Id;
+                entity.TestId = model.TestId!;
+                entity.ClinicAppointmentId = null;
+            }
+
+            // 6) املأ باقي الحقول المشتركة
+            var center = radiologyCenterResult.Value!;
+            var patient = patientResult.Value;
+
+            entity.DepartmentName = center.Name;
+            entity.HospitalName = center.Hospital.Name;
+            entity.PatientName = patient.Name;
+            entity.PatientId = patient.Id;
+            entity.HospitalId = center.Hospital.Id;
+            entity.PatientNationalId = patient.NationalId;
+            entity.EmployeeName = string.Empty;                     // فعليًا سيتم حجز الاسم لاحقًا أو يبقى فارغًا
+            entity.ExpectedDuration = center.PeriodPerAppointment;
+
+            // 7) أخيرًا، اضف الـ entity إلى قاعدة البيانات
+            var updateAppResult = await _appointmentRepository.CreateAppointmentAsync(entity);
+            if (updateAppResult.IsFailed)
+                return Result.Fail(updateAppResult.Errors);
+
+            return await _unitOfWork.SaveAllChanges() > 0 ? Result.Ok() : new BadRequestError();
         }
 
         public async Task<Result> CreateMedicalLabAppointment(CreateMedicalLabAppointmentModelForPatient model)

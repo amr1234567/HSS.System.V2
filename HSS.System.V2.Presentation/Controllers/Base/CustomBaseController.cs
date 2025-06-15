@@ -91,5 +91,7 @@ namespace HSS.System.V2.Presentation.Controllers.Base
         }
 
         protected string GetDepartmentId() => User.FindFirst(CustomClaimTypes.DepartmentItemId)?.Value ?? string.Empty;
+
+        protected string GetNationalId() => User.FindFirst(CustomClaimTypes.NationalId)?.Value ?? string.Empty;
     }
 }

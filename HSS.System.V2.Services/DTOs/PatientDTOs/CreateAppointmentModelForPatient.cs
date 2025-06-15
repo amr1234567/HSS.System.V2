@@ -41,6 +41,8 @@ namespace HSS.System.V2.Services.DTOs.PatientDTOs
         public string RadiologyCenterId { get; set; }
         public string? TicketId { get; set; }
         public string? TextRequiredId { get; set; }
+        public string TestId { get; set; }
+        public string NationalId { get; set; }
 
 
         public RadiologyCeneterAppointment ToModel()
