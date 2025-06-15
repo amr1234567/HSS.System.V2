@@ -479,7 +479,7 @@ namespace HSS.System.V2.DataAccess.Repositories
         }
 
 
-        public async Task<(DateTime StartAt, int Index)> GetAppointemntCustomDetails(Appointment appointment)
+        public async Task<(DateTime StartAt, int Index, string Name)> GetAppointemntCustomDetails(Appointment appointment)
         {
             if (string.IsNullOrEmpty(appointment.QueueId))
                 throw new Exception("Appointment not in the queue");
@@ -497,7 +497,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                 if (index == -1)
                     throw new Exception("Appointment not found in queue");
 
-                return (c.ActualStartAt.Value, index + 1);
+                return (c.ActualStartAt.Value, index + 1, c.Clinic.Name);
             }
             else if (appointment is MedicalLabAppointment m)
             {
@@ -513,7 +513,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                 if (index == -1)
                     throw new Exception("Appointment not found in queue");
 
-                return (m.ActualStartAt.Value, index + 1);
+                return (m.ActualStartAt.Value, index + 1, m.MedicalLab.Name);
             }
             else if (appointment is RadiologyCeneterAppointment r)
             {
@@ -529,7 +529,7 @@ namespace HSS.System.V2.DataAccess.Repositories
                 if (index == -1)
                     throw new Exception("Appointment not found in queue");
 
-                return (r.ActualStartAt.Value, index + 1);
+                return (r.ActualStartAt.Value, index + 1, r.RadiologyCeneter.Name);
             }
             else
                 throw new Exception("Unexpected end");

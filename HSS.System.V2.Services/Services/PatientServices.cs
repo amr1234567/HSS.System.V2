@@ -287,9 +287,12 @@ namespace HSS.System.V2.Services.Services
 
                 return Result.Ok<object>(new
                 {
-                    appointment.Hospital.Address,
+                    Address = appointment.Hospital.Address,
                     AppointmentNumber = details.Index,
-                    AppoitnmentStartAt = details.StartAt
+                    AppoitnmentStartAt = details.StartAt,
+                    Hospital = appointment.HospitalName,
+                    Doctor = appointment.EmployeeName,
+                    Name = details.Name
                 });
             }
             catch (Exception ex)
