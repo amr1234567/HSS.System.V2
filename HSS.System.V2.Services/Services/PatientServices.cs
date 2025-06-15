@@ -292,7 +292,8 @@ namespace HSS.System.V2.Services.Services
                     AppoitnmentStartAt = details.StartAt,
                     Hospital = appointment.HospitalName,
                     Doctor = appointment.EmployeeName,
-                    Name = details.Name
+                    Name = details.Name,
+                    Type = details.Type
                 });
             }
             catch (Exception ex)
