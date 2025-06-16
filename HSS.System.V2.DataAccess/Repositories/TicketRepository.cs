@@ -44,7 +44,6 @@ namespace HSS.System.V2.DataAccess.Repositories
                 model.UpdatedAt = DateTime.UtcNow;
 
                 _context.Tickets.Update(model);
-                await _context.SaveChangesAsync();
                 return Result.Ok();
             }
             catch (Exception ex)
@@ -118,6 +117,8 @@ namespace HSS.System.V2.DataAccess.Repositories
                 .Include(t => t.FirstClinicAppointment)
                     .ThenInclude(t => t.ReExamiationClinicAppointemnt)
                 .Include(t => t.FirstClinicAppointment)
+                .OrderBy(t => t.State)
+                    .ThenByDescending(t => t.CreatedAt)
                 .ToListAsync();
         }
 
@@ -126,6 +127,8 @@ namespace HSS.System.V2.DataAccess.Repositories
             return await _context.Tickets
                 .AsNoTracking()
                 .Where(t => t.PatientNationalId == nationalId && t.State == TicketState.Active)
+                .OrderBy(t => t.State)
+                    .ThenByDescending(t => t.CreatedAt)
                 .GetPagedAsync(page, size);
         }
 
@@ -134,6 +137,8 @@ namespace HSS.System.V2.DataAccess.Repositories
             return await _context.Tickets
                 .AsNoTracking()
                 .Where(t => t.PatientId == patientId)
+                .OrderBy(t => t.State)
+                    .ThenByDescending(t => t.CreatedAt)
                 .GetPagedAsync(page, size);
         }
 
@@ -142,6 +147,8 @@ namespace HSS.System.V2.DataAccess.Repositories
             return await _context.Tickets
                 .AsNoTracking()
                 .Where(t => t.PatientNationalId == patientNationalId)
+                .OrderBy(t => t.State)
+                    .ThenByDescending(t => t.CreatedAt)
                 .GetPagedAsync(page, size);
         }
 
@@ -149,7 +156,8 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             return await _context.Tickets.AsNoTracking()
                 .Where(x => x.HospitalCreatedInId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
-                .OrderBy(x=>x.CreatedAt)
+                .OrderBy(t => t.State)
+                    .ThenByDescending(t => t.CreatedAt)
                 .GetPagedAsync(page, size);
         }
 
@@ -183,13 +191,15 @@ namespace HSS.System.V2.DataAccess.Repositories
             {
                 clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
             }
-            return clinicAppointment.ReExaminationNeeded;
+            return clinicAppointment.ReExaminationNeeded ?? false;
         }
 
         public async Task<Result<IEnumerable<Ticket>>> GetAllTicketForPatient(string patientId)
         {
             var tickets = await _context.Tickets.AsNoTracking()
                 .Where(x => x.PatientId == patientId)
+                .OrderBy(t => t.State)
+                    .ThenByDescending(t => t.CreatedAt)
                 .ToListAsync();
             return tickets;
         }
@@ -198,6 +208,8 @@ namespace HSS.System.V2.DataAccess.Repositories
         {
             var tickets = await _context.Tickets.AsNoTracking()
                 .Where(x => x.HospitalCreatedInId == hospitalId && x.PatientId == patientId && x.State == TicketState.Active)
+                .OrderBy(t => t.State)
+                    .ThenByDescending(t => t.CreatedAt)
                 .ToListAsync();
             return tickets;
         }

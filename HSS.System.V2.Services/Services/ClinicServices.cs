@@ -31,11 +31,12 @@ public class ClinicServices : IClinicServices
     private readonly IMedicineRepository _medicineRepository;
     private readonly IQueueRepository _queueRepository;
     private readonly ILogger<ClinicServices> _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
     public ClinicServices(IAppointmentRepository appointmentRepository, ITicketRepository ticketRepository,
         IMedicalHistoryRepository medicalHistoryRepository, IDiseaseRepository diseaseRepository,
         ITestsRepository testsRepository, IMedicineRepository medicineRepository, 
-        IQueueRepository queueRepository, ILogger<ClinicServices> logger)
+        IQueueRepository queueRepository, ILogger<ClinicServices> logger, IUnitOfWork unitOfWork)
     {
         _appointmentRepository = appointmentRepository;
         _ticketRepository = ticketRepository;
@@ -45,6 +46,7 @@ public class ClinicServices : IClinicServices
         _medicineRepository = medicineRepository;
         _queueRepository = queueRepository;
         _logger = logger;
+        _unitOfWork = unitOfWork;
     }
     public async Task<Result<ClinicAppointmentDto>> GetAppointmentDetailsById(string appointmentId)
     {
@@ -228,7 +230,11 @@ public class ClinicServices : IClinicServices
 
             if (!app.ReExaminationNeeded.Value)
             {
-                await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                var create = await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                ticket.State = TicketState.InActive;
+                var update = await _ticketRepository.UpdateTicket(ticket);
+                if (create.IsSuccess && update.IsSuccess)
+                    await _unitOfWork.SaveAllChanges();
             }
         }
         catch (Exception ex)

@@ -72,11 +72,10 @@ public class MedicalHistoryRepository : IMedicalHistoryRepository
             PatientNationalId = ticket.PatientNationalId,
             UpdatedAt = HelperDate.GetCurrentDate(),
             TicketId = ticket.Id,
-            FinalDiagnosis = app.Diagnosis
+            FinalDiagnosis = app.Diagnosis,
         };
 
         await _context.MedicalHistories.AddAsync(model);
-        await _context.SaveChangesAsync();
         return Result.Ok();
     }
 

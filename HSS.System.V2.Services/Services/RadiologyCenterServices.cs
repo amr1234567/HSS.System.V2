@@ -30,10 +30,11 @@ namespace HSS.System.V2.Services.Services
         private readonly IMedicalHistoryRepository _medicalHistoryRepository;
         private readonly ILogger<RadiologyCenterServices> _logger;
         private readonly ITicketRepository _ticketRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RadiologyCenterServices(IQueueRepository queueRepository, IAppointmentRepository appointmentRepository,
             IWebHostEnvironment env, IMedicalHistoryRepository medicalHistoryRepository, ILogger<RadiologyCenterServices> logger,
-            ITicketRepository ticketRepository)
+            ITicketRepository ticketRepository, IUnitOfWork unitOfWork)
         {
             _queueRepository = queueRepository;
             _appointmentRepository = appointmentRepository;
@@ -41,6 +42,7 @@ namespace HSS.System.V2.Services.Services
             _medicalHistoryRepository = medicalHistoryRepository;
             _logger = logger;
             _ticketRepository = ticketRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result<PagedResult<AppointmentDto>>> GetQueueForRadiologyCenter(string radiologyCenterId, int page = 1, int pageSize = 10)
@@ -155,7 +157,11 @@ namespace HSS.System.V2.Services.Services
 
                 if (!app.ReExaminationNeeded.Value)
                 {
-                    await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                    var create = await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                    ticket.State = TicketState.InActive;
+                    var update = await _ticketRepository.UpdateTicket(ticket);
+                    if (create.IsSuccess && update.IsSuccess)
+                        await _unitOfWork.SaveAllChanges();
                 }
             }
             catch (Exception ex)

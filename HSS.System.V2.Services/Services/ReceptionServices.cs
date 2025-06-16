@@ -260,7 +260,10 @@ namespace HSS.System.V2.Services.Services
             }
 
 
-            return await _ticketRepository.UpdateTicket(ticket.Value);
+            var update = await _ticketRepository.UpdateTicket(ticket.Value);
+            if (update.IsSuccess)
+                return await _unitOfWork.SaveAllChanges() > 0 ? update : new BadRequestError("no rows effected");
+            return update;
         }
 
         //public async Task<Result> CreateAppointment(CreateRadiologyAppointmentModelForReception model)
@@ -472,7 +475,10 @@ namespace HSS.System.V2.Services.Services
             entity.PatientNationalId = patient.Value.NationalId;
             entity.ExpectedDuration = medicalLab.Value.PeriodPerAppointment;
 
-            return await  _ticketRepository.UpdateTicket(ticket.Value);
+            var update = await _ticketRepository.UpdateTicket(ticket.Value);
+            if (update.IsSuccess)
+                return await _unitOfWork.SaveAllChanges() > 0 ? update : new BadRequestError("no rows effected");
+            return update;
         }
 
         public async Task<Result> TerminateAppointment(string appointmentId)

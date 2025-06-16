@@ -30,10 +30,11 @@ namespace HSS.System.V2.Services.Services
         private readonly IMedicalHistoryRepository _medicalHistoryRepository;
         private readonly ITicketRepository _ticketRepository;
         private readonly ILogger<MedicalLabServices> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
         public MedicalLabServices(IQueueRepository queueRepository, IAppointmentRepository appointmentRepository,
             ITestResultRepository testResultRepository, IMedicalHistoryRepository medicalHistoryRepository,
-            ITicketRepository ticketRepository, ILogger<MedicalLabServices> logger)
+            ITicketRepository ticketRepository, ILogger<MedicalLabServices> logger, IUnitOfWork unitOfWork)
         {
             _appointmentRepository = appointmentRepository;
             _queueRepository = queueRepository;
@@ -41,6 +42,7 @@ namespace HSS.System.V2.Services.Services
             _medicalHistoryRepository = medicalHistoryRepository;
             _ticketRepository = ticketRepository;
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -159,7 +161,11 @@ namespace HSS.System.V2.Services.Services
 
                 if (!app.ReExaminationNeeded.Value)
                 {
-                    await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                    var create = await _medicalHistoryRepository.CreateMedicalHistory(ticket);
+                    ticket.State = TicketState.InActive;
+                    var update = await _ticketRepository.UpdateTicket(ticket);
+                    if (create.IsSuccess && update.IsSuccess)
+                        await _unitOfWork.SaveAllChanges();
                 }
             }
             catch (Exception ex)

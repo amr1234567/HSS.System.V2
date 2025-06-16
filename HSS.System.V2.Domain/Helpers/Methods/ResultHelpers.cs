@@ -720,6 +720,33 @@ public static class ResultHelpers
     /// and returns a new asynchronous <see cref="Result{TSecond}"/>.</param>
     /// <returns>A new <see cref="Result{TSecond}"/>: 
     /// either the success from <paramref name="newTask"/> or the carried-over errors.</returns>
+    public static async Task<Result<TOut>> ThenAsync<T, TOut>(
+        this Task<Result> task,
+        Func<Task<TOut>> newTask)
+    {
+        var result = await task.ConfigureAwait(false);
+
+        if (result.IsSuccess)
+        {
+            return await newTask().ConfigureAwait(false);
+        }
+
+        // If the first task is not successful, carry over its errors to the new result.
+        return Result.Fail<TOut>(result.Errors);
+    }
+
+    /// <summary>
+    /// If the <paramref name="task"/> <see cref="Result{TFirst}"/> is successful, 
+    /// invokes <paramref name="newTask"/> on its value to get a new <see cref="Result{TSecond}"/>.
+    /// Otherwise, returns a failed <see cref="Result{TSecond}"/> carrying over the original errors.
+    /// </summary>
+    /// <typeparam name="TFirst">The type of the successful value in the first result.</typeparam>
+    /// <typeparam name="T">The type of the successful value in the new result.</typeparam>
+    /// <param name="task">An asynchronous operation returning <see cref="Result{TFirst}"/>.</param>
+    /// <param name="newTask">A function that takes the successful value of type <typeparamref name="TFirst"/> 
+    /// and returns a new asynchronous <see cref="Result{TSecond}"/>.</param>
+    /// <returns>A new <see cref="Result{TSecond}"/>: 
+    /// either the success from <paramref name="newTask"/> or the carried-over errors.</returns>
     public static async Task<Result<T>> ThenAsync<T>(
         this Task<Result> task,
         Task<Result<T>> newTask)

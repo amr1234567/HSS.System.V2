@@ -42,7 +42,7 @@ namespace HSS.System.V2.Services.Services
         private readonly IMedicalLabTestResultServices _medicalLabTestResultServices;
         private readonly ISpecializationReporitory _specializationReporitory;
         private readonly IUnitOfWork _unitOfWork;
-        public readonly BaseUrls _baseUrlsModel;
+        private readonly BaseUrls _baseUrlsModel;
 
         public PatientServices(IUserContext userContext, INotificationRepository notificationRepository,
             IPatientRepository patientRepository, IAppointmentRepository appointmentRepository,
@@ -478,54 +478,67 @@ namespace HSS.System.V2.Services.Services
 
         public async Task<Result> CreateClinicAppointment(CreateClinicAppointmentModelForPatient model)
         {
-            if (model.ExpectedTimeForStart < HelperDate.GetCurrentDate())
-                return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
-
-            var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId)
-                .EnsureNoneAsync((c => c is null, new EntityNotExistsError("هذه العيادة غير موجودة")));
-            if (clinic.IsFailed)
-                return Result.Fail(clinic.Errors);
-            var ticket = await _ticketRepository.GetTicketById(model.TicketId);
-            if (ticket.IsFailed)
-                return Result.Fail(ticket.Errors);
-
-            var patient = ticket.Value.Patient;
-
-            var clinicAppointment = ticket.Value.FirstClinicAppointment;
-            var entity = model.ToModel();
-            entity.ClinicId = clinic.Value!.Id;
-            entity.DepartmentName = clinic.Value.Name;
-            entity.HospitalName = clinic.Value.Hospital.Name;
-            entity.HospitalId = clinic.Value.HospitalId;
-            entity.PatientNationalId = patient.NationalId;
-            entity.PatientName = patient.Name;
-            entity.PatientId = patient.Id;
-            entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
-            entity.EmployeeName = string.Empty;
-
-            var check = await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId);
-            if (string.IsNullOrEmpty(ticket.Value.FirstClinicAppointmentId))
+            try
             {
-                ticket.Value.FirstClinicAppointment = entity;
-                ticket.Value.Appointments.Add(entity);
-            }
-            else if (check.Value)
-            {
-                while (clinicAppointment.ReExamiationClinicAppointemnt is not null)
+                if (model.ExpectedTimeForStart < HelperDate.GetCurrentDate())
+                    return new BadArgumentsError("لا يمكن بدأ الحجز في الماضي");
+
+                var clinic = await _hospitalRepository.GetHospitalDepartmentItem<Clinic>(model.ClinicId)
+                    .EnsureNoneAsync((c => c is null, new EntityNotExistsError("هذه العيادة غير موجودة")));
+                if (clinic.IsFailed)
+                    return Result.Fail(clinic.Errors);
+
+                var ticket = await _ticketRepository.GetTicketById(model.TicketId);
+                if (ticket.IsFailed)
+                    return Result.Fail(ticket.Errors);
+
+                else if (ticket.Value is null)
+                    return new BadRequestError("ticket not found");
+
+                var patient = ticket.Value.Patient;
+
+                var clinicAppointment = ticket.Value.FirstClinicAppointment;
+                var entity = model.ToModel();
+                entity.ClinicId = clinic.Value!.Id;
+                entity.DepartmentName = clinic.Value.Name;
+                entity.HospitalName = clinic.Value.Hospital.Name;
+                entity.HospitalId = clinic.Value.HospitalId;
+                entity.PatientNationalId = patient.NationalId;
+                entity.PatientName = patient.Name;
+                entity.PatientId = patient.Id;
+                entity.ExpectedDuration = clinic.Value.PeriodPerAppointment;
+                entity.EmployeeName = string.Empty;
+
+                if (string.IsNullOrEmpty(ticket.Value.FirstClinicAppointmentId))
                 {
-                    clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
+                    ticket.Value.FirstClinicAppointment = entity;
+                    ticket.Value.Appointments.Add(entity);
                 }
-                clinicAppointment.ReExamiationClinicAppointemntId = entity.Id;
-                entity.PreExamiationClinicAppointemntId = clinicAppointment.Id;
-                ticket.Value.Appointments.Add(entity);
+                else if ((await _ticketRepository.IsTicketHasReExaminationNow(model.TicketId)).Value)
+                {
+                    while (clinicAppointment.ReExamiationClinicAppointemnt is not null)
+                    {
+                        clinicAppointment = clinicAppointment.ReExamiationClinicAppointemnt;
+                    }
+                    clinicAppointment.ReExamiationClinicAppointemntId = entity.Id;
+                    entity.PreExamiationClinicAppointemntId = clinicAppointment.Id;
+                    ticket.Value.Appointments.Add(entity);
+                }
+                else
+                {
+                    return new BadRequestError("هذه التذكرة ممتلئة، من فضلك افتح تذكرة جديدة");
+                }
+
+
+                var update = await _ticketRepository.UpdateTicket(ticket.Value);
+                if (update.IsSuccess)
+                    return await _unitOfWork.SaveAllChanges() > 0 ? Result.Ok() : update;
+                return update;
             }
-            else
+            catch (Exception ex)
             {
-                return new BadRequestError("هذه التذكرة ممتلئة، من فضلك افتح تذكرة جديدة");
+                return new ExceptionalError(ex);
             }
-
-
-            return await _ticketRepository.UpdateTicket(ticket.Value);
         }
 
         public async Task<Result> CreateRadiologyAppointMent(CreateRadiologyAppointmentModelForPatient model)
@@ -663,8 +676,11 @@ namespace HSS.System.V2.Services.Services
             entity.PatientNationalId = patient.Value.NationalId;
             entity.ExpectedDuration = medicalLab.Value.PeriodPerAppointment;
 
-            return await _appointmentRepository.CreateAppointmentAsync(entity)
+            var update = await _appointmentRepository.CreateAppointmentAsync(entity)
                 .ThenAsync(() => _ticketRepository.UpdateTicket(ticket.Value));
+            if (update.IsSuccess)
+                return await _unitOfWork.SaveAllChanges() > 0 ? update : Result.Fail(new BadRequestError("no rows effected"));
+            return update;
         }
 
         public async Task<Result<List<TestRquired>>> GetMedicalLabTestRequired()
