@@ -424,6 +424,9 @@ namespace HSS.System.V2.Services.Services
                     {
                         Id = c.Id,
                         Name = c.Name,
+                        CurrentWorkingEmpolyee = c.CurrentWorkingDoctor.Name,
+                        EndAt = c.EndAt,
+                        StartAt = c.StartAt
                     }).ToList());
         }
 
