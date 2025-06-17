@@ -33,5 +33,7 @@ namespace HSS.System.V2.DataAccess.Contracts
 
         Task<Result> AddImageToRadiologyAppointmentResult(RadiologyReseltImage result);
         Task<Result<IEnumerable<RadiologyReseltImage>>> GetRadiologyAppointmentResultImages(string appId);
+        TimeSpan GetPeroidForAppointment(Appointment value);
+        Task<int> GetAppointmentIndexAsync(string appointmentId);
     }
 }

@@ -12,7 +12,6 @@ using HSS.System.V2.Domain.Models.Facilities;
 
 using System.Security.Claims;
 using HSS.System.V2.Domain.Helpers.Methods;
-using HSS.System.V2.Services.DTOs;
 
 namespace HSS.System.V2.Services.Services
 {

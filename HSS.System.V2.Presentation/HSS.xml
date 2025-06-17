@@ -867,6 +867,17 @@
             <response code="200">The appointment was successfully cancelled</response>
             <response code="400">If the appointment was not found or there was an error</response>
         </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetFinalStepBookingAppointmentDetailsAsync(System.String)">
+            <summary>
+            Get all details about the appointment after creation
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /appointment/last-stage/{appointmentId}
+            </code>
+            </remarks>
+        </member>
         <member name="T:HSS.System.V2.Presentation.Controllers.UploadProfilePictureParam">
             <summary>
             Parameters for uploading a patient's profile picture.

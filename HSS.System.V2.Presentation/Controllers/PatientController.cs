@@ -790,6 +790,42 @@ namespace HSS.System.V2.Presentation.Controllers
             var result = await _patientService.CancelAppointment(appointmentId);
             return GetResponseWithoutType(result);
         }
+
+        /// <summary>
+        /// Get all details about the appointment after creation
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// <code>
+        /// GET /appointment/last-stage/{appointmentId}
+        /// </code>
+        /// </remarks>
+        [ProducesResponseType(typeof(ApiResponse<FinalStepBookingAppointmentDetails>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<FinalStepBookingAppointmentDetails>), StatusCodes.Status400BadRequest)]
+        [HttpGet(ApiRoutes.Patient.GetLastStageAppointment)]
+        public async Task<IActionResult> GetFinalStepBookingAppointmentDetailsAsync([FromRoute] string appointmentId)
+        {
+            var result = await _patientService.GetFinalStepBookingAppointmentDetailsAsync(appointmentId);
+            return GetResponse(result);
+        }
+
+        /// <summary>
+        /// Get all details about the appointment after creation
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// <code>
+        /// GET /tests-required/{testRequiredId}
+        /// </code>
+        /// </remarks>
+        [ProducesResponseType(typeof(ApiResponse<TestRquiredForPatientDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<TestRquiredForPatientDto>), StatusCodes.Status400BadRequest)]
+        [HttpGet(ApiRoutes.Patient.GetTestRequiredById)]
+        public async Task<IActionResult> GetTestRequiredById([FromRoute] string testRequiredId)
+        {
+            var result = await _patientService.GetTestRequiredById(testRequiredId);
+            return GetResponse(result);
+        }
     }
 
     /// <summary>

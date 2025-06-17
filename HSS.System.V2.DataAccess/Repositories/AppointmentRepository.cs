@@ -340,5 +340,22 @@ namespace HSS.System.V2.DataAccess.Repositories
                 return new ExceptionalError(ex);
             }
         }
+
+        public TimeSpan GetPeroidForAppointment(Appointment value)
+        {
+            throw new Exception();
+        }
+
+        public async Task<int> GetAppointmentIndexAsync(string appointmentId)
+        {
+            var appointment = await _context.Appointments.FirstOrDefaultAsync(a => a.Id == appointmentId);
+            if (appointment == null)
+                return -1;
+            var appDate = appointment.SchaudleStartAt;
+            var apps = await _context.Appointments.Where(a => a.SchaudleStartAt.Date == appDate.Date)
+                                            .OrderBy(a => a.SchaudleStartAt)
+                                            .ToListAsync();
+            return apps.FindIndex(a => a.Id == appointmentId) + 1;
+        }
     }
 }

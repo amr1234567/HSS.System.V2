@@ -31,6 +31,7 @@ public static class ApiRoutes
         public const string GetAppointmentDetails = "/appointment-details/{appointmentId}";
         public const string CancelAppointment = "/cancel-appointment/{appointmentId}";
         public const string GetAppointmentContent = "/appointment-content/{appointmentId}";
+        public const string GetLastStageAppointment = "/appointment/last-stage/{appointmentId}";
 
         // Specifications
         public const string GetAllSpecifications = "/specilzation";
@@ -70,6 +71,7 @@ public static class ApiRoutes
         // Required Tests
         public const string GetMedicalLabTestsRequired = "/tests-required/medical-lab";
         public const string GetRadiologyTestsRequired = "/tests-required/radiology";
+        public const string GetTestRequiredById = "/tests-required/{testRequiredId}";
 
         // Prescriptions
         public const string GetAllPrescriptionsRequired = "/prescriptions";

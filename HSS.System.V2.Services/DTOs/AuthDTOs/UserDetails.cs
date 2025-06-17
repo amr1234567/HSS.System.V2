@@ -1,6 +1,6 @@
 ﻿using HSS.System.V2.Domain.Helpers.Models;
 
-namespace HSS.System.V2.Services.DTOs
+namespace HSS.System.V2.Services.DTOs.AuthDTOs
 {
     public class UserDetails
     {

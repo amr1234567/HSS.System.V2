@@ -704,7 +704,7 @@ namespace HSS.System.V2.Services.Services
                 }).ToList();
         }
 
-        public async Task<Result<List<TestRquired>>> GetRadiologyTestRequired()
+        public async Task<Result<List<TestRquiredForPatientDto>>> GetRadiologyTestRequired()
         {
             var testsResult = await _testRequiredRepository.GetAllTestsRequiredAvailableForUser(_userContext.ApiUserId);
             if (testsResult.IsFailed)
@@ -712,7 +712,7 @@ namespace HSS.System.V2.Services.Services
             var tests = testsResult.Value;
 
             return tests.Where(t => t.Test is RadiologyTest)
-                .Select(r => new TestRquired
+                .Select(r => new TestRquiredForPatientDto
                 {
                     TestName = r.TestName,
                     ClinicName = r.ClinicAppointment.DepartmentName,
@@ -722,22 +722,48 @@ namespace HSS.System.V2.Services.Services
                 }).ToList();
         }
 
+        public async Task<Result<TestRquiredForPatientDto>> GetTestRequiredById(string testRequiredId)
+        {
+            try
+            {
+                return await _testRequiredRepository.GetTestRequiredByIdAsync(testRequiredId)
+                    .EnsureNoneAsync((t => t is null, new BadRequestError("no test required with this id")))
+                    .MapAsync(r => new TestRquiredForPatientDto()
+                    {
+                        TestName = r.TestName,
+                        ClinicName = r.ClinicAppointment.DepartmentName,
+                        DoctorName = r.ClinicAppointment.EmployeeName,
+                        HospitalName = r.ClinicAppointment.HospitalName,
+                        Date = r.ClinicAppointment.SchaudleStartAt
+                    });
+
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionalError(ex);
+            }
+        }
+
         public async Task<Result<PagedResult<PrescriptionDto>>> GetAllPrescriptionsRequired(PaginationRequest pagination)
         {
-            var preResult = await _prescriptionRepository.GetAllMedicalPrescription(_userContext.ApiUserId);
-            if (preResult.IsFailed)
-                return Result.Fail(preResult.Errors);
-            var prescriptions = preResult.Value;
-            return prescriptions
-                 .Select(p => new PrescriptionDto
-                 {
-                     PrescriptionId = p.Id,
-                     ClinicName = p.ClinicAppointment.DepartmentName,
-                     DoctorName = p.ClinicAppointment.EmployeeName,
-                     HospitalName = p.ClinicAppointment.Hospital.Name,
-                     MedicineCount = p.Items.Count(),
-                     Date = p.ClinicAppointment.ActualStartAt ?? p.ClinicAppointment.SchaudleStartAt
-                 }).GetPaged(pagination);
+            try
+            {
+                return await _prescriptionRepository.GetAllMedicalPrescription(_userContext.ApiUserId)
+                .MapAsync(v => v
+                     .Select(p => new PrescriptionDto
+                     {
+                         PrescriptionId = p.Id,
+                         ClinicName = p.ClinicAppointment.DepartmentName,
+                         DoctorName = p.ClinicAppointment.EmployeeName,
+                         HospitalName = p.ClinicAppointment.HospitalName,
+                         MedicineCount = p.Items.Count,
+                         Date = p.ClinicAppointment.ActualStartAt ?? p.ClinicAppointment.SchaudleStartAt
+                     }).GetPaged(pagination));
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionalError(ex);
+            }
         }
 
         public async Task<Result<List<MedicineDto>>> GetMedicineByPrescriptionId(string prescriptionId)
@@ -1090,5 +1116,31 @@ namespace HSS.System.V2.Services.Services
             return await _appointmentRepository.UpdateAppointmentAsync(appointment.Value);
         }
 
+        public async Task<Result<FinalStepBookingAppointmentDetails>> GetFinalStepBookingAppointmentDetailsAsync(string appointmentId)
+        {
+            try
+            {
+                var app = await _appointmentRepository.GetAppointmentByIdAsync(appointmentId);
+                if (app.IsFailed)
+                    return Result.Fail(app.Errors);
+                if (app.Value is null)
+                    return new BadRequestError("Appointment with id '" + appointmentId + "' not found");
+
+                return new FinalStepBookingAppointmentDetails
+                {
+                    HospitalAddress = app.Value.Hospital.Address,
+                    DepartmentName = app.Value.DepartmentName,
+                    HospitalName = app.Value.Hospital.Name,
+                    PeriodPerAppointment = app.Value.ExpectedDuration,
+                    StartAt = app.Value.SchaudleStartAt,
+                    EmployeeName = app.Value.EmployeeName,
+                    AppointmentIndex = await _appointmentRepository.GetAppointmentIndexAsync(appointmentId),
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionalError(ex);
+            }
+        }
     }
 }

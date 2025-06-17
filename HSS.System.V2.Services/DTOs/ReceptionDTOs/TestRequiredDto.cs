@@ -28,7 +28,7 @@ namespace HSS.System.V2.Services.DTOs.ReceptionDTOs
 
     public enum TestType
     {
-        RadiologyTest,
-        MedicalLabTest
+        RadiologyTest = 1,
+        MedicalLabTest = 2
     }
 }

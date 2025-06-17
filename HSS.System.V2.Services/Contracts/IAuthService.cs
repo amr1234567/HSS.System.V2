@@ -1,7 +1,6 @@
 ﻿using FluentResults;
 
 using HSS.System.V2.Domain.Helpers.Models;
-using HSS.System.V2.Services.DTOs;
 using HSS.System.V2.Services.DTOs.AuthDTOs;
 
 using System.Security.Claims;

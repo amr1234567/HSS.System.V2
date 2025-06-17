@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HSS.System.V2.Services.DTOs.PatientDTOs
 {
-    public class TestRquiredForPatientDto
+    public class TestRquired
     {
         public string? TestName  { get; set; }
         public string? ClinicName { get; set; }

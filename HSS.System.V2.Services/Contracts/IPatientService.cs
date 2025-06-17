@@ -71,6 +71,8 @@ namespace HSS.System.V2.Services.Contracts
         Task<Result<List<SpecialzationDto>>> GetAllSpecialzations();
         Task<Result<IEnumerable<TicketViewDto>>> GetActiveTicketInHospital(string hospitalId);
         Task<Result<PagedResult<TicketViewDto>>> GetActiveTicketForPatient(PaginationRequest pagination);
+        Task<Result<FinalStepBookingAppointmentDetails>> GetFinalStepBookingAppointmentDetailsAsync(string appointmentId);
+        Task<Result<TestRquiredForPatientDto>> GetTestRequiredById(string testRequiredId);
         #endregion
     }
 } 
