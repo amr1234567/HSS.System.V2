@@ -489,12 +489,12 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <returns>List of required medical lab tests</returns>
         /// <response code="200">Returns the list of required medical lab tests</response>
         /// <response code="400">If there was an error retrieving the tests</response>
-        [ProducesResponseType(typeof(ApiResponse<List<TestRquired>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<List<TestRquired>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<List<TestRquiredForPatientDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<TestRquiredForPatientDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet(ApiRoutes.Patient.GetMedicalLabTestsRequired)]
         public async Task<IActionResult> GetMedicalLabTestsRequired()
         {
-            var result = await _patientService.GetMedicalLabTestRequired();
+            var result = await _patientService.GetMedicalLabTestsRequired();
             return GetResponse(result);
         }
 
@@ -510,12 +510,12 @@ namespace HSS.System.V2.Presentation.Controllers
         /// <returns>List of required radiology tests</returns>
         /// <response code="200">Returns the list of required radiology tests</response>
         /// <response code="400">If there was an error retrieving the tests</response>
-        [ProducesResponseType(typeof(ApiResponse<List<TestRquired>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponse<List<TestRquired>>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<List<TestRquiredForPatientDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<TestRquiredForPatientDto>>), StatusCodes.Status400BadRequest)]
         [HttpGet(ApiRoutes.Patient.GetRadiologyTestsRequired)]
         public async Task<IActionResult> GetRadiologyTestsRequired()
         {
-            var result = await _patientService.GetRadiologyTestRequired();
+            var result = await _patientService.GetRadiologyTestsRequired();
             return GetResponse(result);
         }
 

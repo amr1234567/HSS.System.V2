@@ -48,8 +48,8 @@ namespace HSS.System.V2.Services.Contracts
         #endregion
 
         #region Required
-        Task<Result<List<TestRquired>>> GetMedicalLabTestRequired();
-        Task<Result<List<TestRquired>>> GetRadiologyTestRequired();
+        Task<Result<List<TestRquiredForPatientDto>>> GetMedicalLabTestsRequired();
+        Task<Result<List<TestRquiredForPatientDto>>> GetRadiologyTestsRequired();
         Task<Result<PagedResult<PrescriptionDto>>> GetAllPrescriptionsRequired(PaginationRequest pagination);
         Task<Result<List<MedicineDto>>> GetMedicineByPrescriptionId(string prescriptionId);
         #endregion

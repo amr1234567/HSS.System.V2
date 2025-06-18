@@ -878,6 +878,17 @@
             </code>
             </remarks>
         </member>
+        <member name="M:HSS.System.V2.Presentation.Controllers.PatientController.GetTestRequiredById(System.String)">
+            <summary>
+            Get all details about the appointment after creation
+            </summary>
+            <remarks>
+            Sample request:
+            <code>
+            GET /tests-required/{testRequiredId}
+            </code>
+            </remarks>
+        </member>
         <member name="T:HSS.System.V2.Presentation.Controllers.UploadProfilePictureParam">
             <summary>
             Parameters for uploading a patient's profile picture.

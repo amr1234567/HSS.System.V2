@@ -5,6 +5,9 @@ using HSS.System.V2.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+using Serilog;
 
 namespace HSS.System.V2.DataAccess;
 
@@ -17,7 +20,10 @@ public static class DependencyInjection
             var connectionString = configuration.GetConnectionString("default");
             optionsBuilder.UseSqlServer(connectionString);
             optionsBuilder.UseLazyLoadingProxies();
+            optionsBuilder.LogTo(Log.Logger.Information, [DbLoggerCategory.Database.Command.Name], LogLevel.Information)
+                        .EnableSensitiveDataLogging();
         });
+
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
         services.AddScoped<IHospitalRepository, HospitalRepository>();
         services.AddScoped<IMedicalLabTestResultServices, MedicalTestResultServices>();

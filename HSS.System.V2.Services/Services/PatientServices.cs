@@ -424,7 +424,7 @@ namespace HSS.System.V2.Services.Services
                     {
                         Id = c.Id,
                         Name = c.Name,
-                        CurrentWorkingEmpolyee = c.CurrentWorkingDoctor.Name,
+                        CurrentWorkingEmpolyee = c.CurrentWorkingDoctor?.Name ?? "لا يوجد الان",
                         EndAt = c.EndAt,
                         StartAt = c.StartAt
                     }).ToList());
@@ -439,6 +439,9 @@ namespace HSS.System.V2.Services.Services
                     {
                         Id = c.Id,
                         Name = c.Name,
+                        CurrentWorkingEmpolyee = c.CurrentWorkingTester?.Name ?? "لا يوجد الان",
+                        EndAt = c.EndAt,
+                        StartAt = c.StartAt
                     }).ToList()); throw new NotImplementedException();
         }
 
@@ -451,6 +454,9 @@ namespace HSS.System.V2.Services.Services
                    {
                        Id = c.Id,
                        Name = c.Name,
+                       CurrentWorkingEmpolyee = c.CurrentWorkingTester?.Name ?? "لا يوجد الان",
+                       EndAt = c.EndAt,
+                       StartAt = c.StartAt
                    }).ToList());
         }
 
@@ -536,6 +542,7 @@ namespace HSS.System.V2.Services.Services
                 var update = await _ticketRepository.UpdateTicket(ticket.Value);
                 if (update.IsSuccess)
                     return await _unitOfWork.SaveAllChanges() > 0 ? Result.Ok() : update;
+
                 return update;
             }
             catch (Exception ex)
@@ -686,7 +693,7 @@ namespace HSS.System.V2.Services.Services
             return update;
         }
 
-        public async Task<Result<List<TestRquired>>> GetMedicalLabTestRequired()
+        public async Task<Result<List<TestRquiredForPatientDto>>> GetMedicalLabTestsRequired()
         {
             var testsResult = await _testRequiredRepository.GetAllTestsRequiredAvailableForUser(_userContext.ApiUserId);
             if (testsResult.IsFailed)
@@ -694,7 +701,7 @@ namespace HSS.System.V2.Services.Services
             var tests = testsResult.Value;
 
             return tests.Where(t => t.Test is MedicalLabTest)
-                .Select(r => new TestRquired
+                .Select(r => new TestRquiredForPatientDto
                 {
                     TestName = r.TestName,
                     ClinicName = r.ClinicAppointment.DepartmentName,
@@ -704,7 +711,7 @@ namespace HSS.System.V2.Services.Services
                 }).ToList();
         }
 
-        public async Task<Result<List<TestRquiredForPatientDto>>> GetRadiologyTestRequired()
+        public async Task<Result<List<TestRquiredForPatientDto>>> GetRadiologyTestsRequired()
         {
             var testsResult = await _testRequiredRepository.GetAllTestsRequiredAvailableForUser(_userContext.ApiUserId);
             if (testsResult.IsFailed)
@@ -749,16 +756,17 @@ namespace HSS.System.V2.Services.Services
             try
             {
                 return await _prescriptionRepository.GetAllMedicalPrescription(_userContext.ApiUserId)
-                .MapAsync(v => v
-                     .Select(p => new PrescriptionDto
-                     {
-                         PrescriptionId = p.Id,
-                         ClinicName = p.ClinicAppointment.DepartmentName,
-                         DoctorName = p.ClinicAppointment.EmployeeName,
-                         HospitalName = p.ClinicAppointment.HospitalName,
-                         MedicineCount = p.Items.Count,
-                         Date = p.ClinicAppointment.ActualStartAt ?? p.ClinicAppointment.SchaudleStartAt
-                     }).GetPaged(pagination));
+                    .EnsureNoneAsync((p => p is null || !p.Any(), new BadRequestError("لا يوجد روشتات لهذا المريض")))
+                    .MapAsync(v => v
+                         .Select(p => new PrescriptionDto
+                         {
+                             PrescriptionId = p.Id,
+                             ClinicName = p.ClinicAppointment.DepartmentName,
+                             DoctorName = p.ClinicAppointment.EmployeeName,
+                             HospitalName = p.ClinicAppointment.HospitalName,
+                             MedicineCount = p.Items.Count,
+                             Date = p.ClinicAppointment.ActualStartAt ?? p.ClinicAppointment.SchaudleStartAt
+                         }).GetPaged(pagination));
             }
             catch (Exception ex)
             {

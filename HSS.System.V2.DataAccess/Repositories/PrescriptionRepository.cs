@@ -93,12 +93,19 @@ namespace HSS.System.V2.DataAccess.Repositories
 
         public async Task<Result<IEnumerable<Prescription>>> GetAllMedicalPrescription(string userId)
         {
-            return await context.Tickets
-                .Where(x => x.PatientId == userId)
-                .SelectMany(x => x.Appointments)
-                .OfType<ClinicAppointment>()
-                .Select(x => x.Prescription)
+            
+            return await context.ClinicAppointments.Where(a => a.PatientId == userId && a.Prescription != null)
+                .Include(a => a.Prescription)
+                    .ThenInclude(p => p.Items)
+                .Select(a => a.Prescription)
                 .ToListAsync();
+
+            //return await context.Tickets
+            //    .Where(x => x.PatientId == userId)
+            //    .SelectMany(x => x.Appointments)
+            //    .OfType<ClinicAppointment>()
+            //    .Select(x => x.Prescription)
+            //    .ToListAsync();
         }
 
         public async Task<Result> DeleteMedicalPrescription(Prescription model)

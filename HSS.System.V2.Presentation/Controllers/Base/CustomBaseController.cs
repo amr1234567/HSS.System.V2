@@ -70,7 +70,8 @@ namespace HSS.System.V2.Presentation.Controllers.Base
             if (result.HasError<HttpRequestResponseError>() ||
                 result.HasError<UnKnownError>() ||
                 result.HasError<UnExpectedResponseError>() ||
-                result.HasError<UnSupportedTypeError>())
+                result.HasError<UnSupportedTypeError>() || 
+                result.HasError<ExceptionalError>())
                 return Ok(ApiResponse<T>.Error(errorMessage, 500));
 
             if (result.HasError<EntityNotExistsError>())
